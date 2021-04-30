@@ -6,14 +6,14 @@
 -User specifies preferred gas limit(s)  
 -User deposits asset and receives an ERC721 in exchange  
 -User is rewarded ERC20 NOCT tokens after trade is executed  
--User can monitor accumulated NOCT rewards while assets are deposited  
--User can withdraw assets from contract at anytime, but will not receive NOCT rewards if assets are withdrawn early   
--User's NOCT rewards are a function of total deposited asset (in USDC at time of deposit) and total time deposited   
--Fees are collected from users upon each trade execution or upon each early trade withdrawal  
--A portion of the trading fees is collected for Chainlink price feed data (no premium)  
--A portion of the trading fees is collected for Ethereum transaction gas costs (no premium)  
+-User can monitor accumulated NOCT rewards while the assets are deposited  
+-User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early   
+-User's NOCT rewards are a function of total deposited assets (in USDC at time of deposit) and total time deposited   
+-Fees are collected from users upon each asset deposit, each trade execution, and each early trade withdrawal  
+-A portion of the fees is collected for Chainlink price feed data (no premium)  
+-A portion of the fees is collected for Ethereum transaction gas costs (no premium)  
 -Users can earn rewards by staking NOCT  
--A portion of the trading fees goes to NOCT stakers  
+-The remainder of all collected fees goes to NOCT stakers  
 -An ERC721 is created and issued to a user after a swap limit order is created and the swap asset is deposited  
 -The ERC721 records all user swap limit order information  
 -After the user's swap limit order is executed, the ERC721 can be exchanged for the traded asset and any accumulated NOCT  
