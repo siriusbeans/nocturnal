@@ -5,7 +5,7 @@
 -User sets the swap limit(s) of the asset pair  
 -User specifies preferred gas limit(s)  
 -User deposits asset and receives an ERC721 in return  
--User is rewarded ERC20 NOCT tokens after trade is executed  
+-User is rewarded ERC20 NOCT tokens after swap limit order is executed  
 -User can monitor accumulated NOCT rewards while the assets are deposited  
 -User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early   
 -User's NOCT rewards are a function of total deposited assets (in USDC at time of deposit) and total time deposited  
