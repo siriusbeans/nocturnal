@@ -18,5 +18,6 @@
 -The ERC721 records all user swap limit order information  
 -After the user's swap limit order is executed the ERC721 can be exchanged for the traded asset and any accumulated NOCT  
 -The user's ERC721 can also be exchanged for the deposited assets prior to the swap limit order execution  
--If the ERC721 is exchanged for the deposited assests prior to the swap limit order execution, no accumulated NOCT is collected  
--The ERC721 is burned after it has been exchanged for a traded or deposited asset  
+-If the ERC721 is exchanged for the deposited assets prior to the swap limit order execution, no accumulated NOCT is collected  
+-The ERC721 is burned after it has been exchanged for the traded or deposited asset  
+-NOCT will be airdropped to developers and volunteers prior to mainnet release for testnet contributions
