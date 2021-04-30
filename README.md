@@ -16,7 +16,7 @@
 -A portion of the trading fees goes to NOCT stakers  
 -An ERC721 is created and issued to a user after a swap limit order is created and the swap asset is deposited  
 -The ERC721 records all user swap limit order information  
--After the user's swap limit order is executed the ERC721 can be exchanged for the traded asset and any accumulated NOCT  
+-After the user's swap limit order is executed, the ERC721 can be exchanged for the traded asset and any accumulated NOCT  
 -The user's ERC721 can also be exchanged for the deposited assets prior to the swap limit order execution  
 -If the ERC721 is exchanged for the deposited assets prior to the swap limit order execution, no accumulated NOCT is collected  
 -The ERC721 is burned after it has been exchanged for the traded or deposited asset  
