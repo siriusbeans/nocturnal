@@ -14,7 +14,7 @@
 -A portion of the fees is collected for Ethereum transaction gas costs (no premium)  
 -Users can earn rewards by staking NOCT  
 -The remainder of all collected fees goes to NOCT stakers  
--Users can stake their NOCT through nocturnal.finance UI, and receive ERC20 sNOCT tokens in return
+-Users can stake their NOCT through nocturnal.finance UI, and receive ERC20 sNOCT tokens in return  
 -An ERC721 is created and issued to a user after a swap limit order is created and the swap asset is deposited  
 -The ERC721 records all user swap limit order information  
 -After the user's swap limit order is executed, the ERC721 can be exchanged for the traded asset and any accumulated NOCT  
