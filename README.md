@@ -10,7 +10,7 @@
 -User can withdraw assets from contract at anytime, but will not receive NOCT rewards if assets are withdrawn  
 -User's NOCT rewards are a function of total deposited asset (in USD at time of deposit) and total time deposited  
 -Users can earn rewards by staking NOCT  
--Fees are collected from users upon each trade request and upon each early trade withdrawal  
+-Fees are collected from users upon each trade execution or upon each early trade withdrawal  
+-A portion of the trading fees is collected for Chainlink price feed data (no premium)  
+-A portion of the trading fees is collected for Ethereum transaction gas costs (no premium)  
 -A portion of the trading fees goes to NOCT stakers  
--A portion of the trading fees is collected for Chainlink price feed data  
--A portion of the trading fees is collected for Ethereum transaction gas costs
