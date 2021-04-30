@@ -7,7 +7,7 @@
 -User deposits asset  
 -User is rewarded NOCT tokens after trade is executed  
 -User can monitor accumulated NOCT rewards while assets are deposited  
--User can withdraw assets from contract at anytime, but will not receive NOCT rewards if assets are withdrawn
+-User can withdraw assets from contract at anytime, but will not receive NOCT rewards if assets are withdrawn  
 -User's NOCT rewards are a function of total deposited asset (in USD at time of deposit) and total time deposited  
 -Users can earn rewards by staking NOCT  
 -Fees are collected from users upon each trade request and each early trade withdrawal  
