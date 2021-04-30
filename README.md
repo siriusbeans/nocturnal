@@ -4,7 +4,7 @@
 -User specifies asset trading pair by contract addresses  
 -User sets swap limit of asset  
 -User specifies preferred gas limit  
--User deposits asset  
+-User deposits asset and receives ERC721 in exchange  
 -User is rewarded NOCT tokens after trade is executed  
 -User can monitor accumulated NOCT rewards while assets are deposited  
 -User can withdraw assets from contract at anytime, but will not receive NOCT rewards if assets are withdrawn early   
