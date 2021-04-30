@@ -1,6 +1,6 @@
 # nocturnal.finance - a simple UI for decentralized swap limit orders  
 
--Swaps are executed on either Uniswap or Sushiswap as specified by the user  
+-Swaps are executed on the Uniswap dex  
 -User specifies asset trading pair by contract addresses  
 -User sets the swap limit(s) of the asset pair  
 -User specifies preferred gas limit(s)  
