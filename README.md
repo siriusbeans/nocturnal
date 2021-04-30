@@ -1,7 +1,7 @@
 # nocturnal.finance - a simple interface for incentivized sell limit orders
 
 -Swaps are executed on either Uniswap or Sushiswap as specified by the user  
--User specifies asset by contract address  
+-User specifies asset trading pair by contract addresses
 -User sets sell stop limit of asset  
 -User specifies preferred gas limit  
 -User deposits asset  
