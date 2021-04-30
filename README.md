@@ -9,8 +9,8 @@
 -User can monitor accumulated NOCT rewards while the assets are deposited  
 -User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early   
 -User's NOCT rewards are a function of total deposited assets (in USDC at time of deposit) and total time deposited  
--User can also earn NOCT by executing any active swap limit orders (paying for Ethereum transaction gas cost)
--Contracts are written so that events are emitted on-chain whenever an active swap limit order is ready for execution (for bot deployment)
+-User can also earn NOCT by executing any active swap limit orders (paying for Ethereum transaction gas cost)  
+-Contracts are written so that events are emitted on-chain whenever an active swap limit order is ready for execution (for bot deployment)  
 -Fees are collected from users upon each asset deposit, each trade execution, and each early trade withdrawal  
 -A portion of the fees is collected for Chainlink price feed data (no premium)  
 -A portion of the fees is collected for Ethereum transaction gas costs (no premium)  
