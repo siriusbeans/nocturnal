@@ -4,13 +4,19 @@
 Swaps executed on Uniswap or Sushiswap as specified by user
 
 User specifies asset by contract address
+
 User sets sell stop limit of asset
+
 User specifies preferred gas limit
+
 User deposits asset
 
 User is rewarded NOCT tokens after trade is executed
+
 User can monitor accumulated NOCT rewards while assets are deposited
+
 User can withdraw assets from contract at anytime, but will not receive NOCT rewards
+
 User's NOCT rewards are a function of total deposited asset (in USD at time of deposit) and total time deposited
 
 Users can earn rewards by staking NOCT
