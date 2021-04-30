@@ -1,6 +1,4 @@
-# nocturnal.finance
-
-# a simple interface for setting decentralized sell limit orders
+# nocturnal.finance - a simple interface designed to incentivize the use of decentralized sell limit orders
 
 Swaps are executed on either Uniswap or Sushiswap as specified by the user
 
