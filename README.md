@@ -1,4 +1,4 @@
-# nocturnal.finance - a simple UI for decentralized sell limit orders  
+# nocturnal.finance - a simple UI for decentralized swap limit orders  
 
 -Swaps are executed on either Uniswap or Sushiswap as specified by the user  
 -User specifies asset trading pair by contract addresses  
