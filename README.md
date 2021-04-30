@@ -1,7 +1,8 @@
 # nocturnal.finance
-# a simple interface for setting sell limit orders while asleep
 
-Swaps executed on Uniswap or Sushiswap as specified by user
+# a simple interface for setting decentralized sell limit orders
+
+Swaps are executed on either Uniswap or Sushiswap as specified by the user
 
 User specifies asset by contract address
 
