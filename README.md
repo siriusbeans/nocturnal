@@ -3,8 +3,8 @@
 -Swaps are executed on either Uniswap or Sushiswap as specified by the user  
 -User specifies asset trading pair by contract addresses  
 -User sets the swap limit(s) of the asset pair  
--User specifies preferred gas limit  
--User deposits asset and receives ERC721 in exchange  
+-User specifies preferred gas limit(s) 
+-User deposits asset and receives an ERC721 in exchange  
 -User is rewarded ERC20 NOCT tokens after trade is executed  
 -User can monitor accumulated NOCT rewards while assets are deposited  
 -User can withdraw assets from contract at anytime, but will not receive NOCT rewards if assets are withdrawn early   
