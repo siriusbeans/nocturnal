@@ -2,14 +2,14 @@
 
 -Swaps are executed on the Uniswap dex  
 -User specifies asset trading pair by contract addresses  
--User sets the swap limit(s) of the asset pair  
--User specifies preferred gas limit(s) ("low", "average", "high" according to same algorithm as MetaMask)  
+-User sets the swap limit(s) of the asset pair   
 -User deposits asset and receives an ERC721 in return  
 -User is rewarded ERC20 NOCT tokens after swap limit order is executed  
 -User can monitor accumulated NOCT rewards while the assets are deposited on nocturnal.finance UI (calculated per block)  
 -User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early   
 -User's NOCT rewards are a function of total deposited assets (in USDC at time of deposit) and total time deposited  
 -User can also earn NOCT by executing any active swap limit orders (paying for Ethereum transaction gas cost)  
+-When a user executes an active swap limit order, they must use a "high" gas limit ("high" definition is TBD)  
 -Contracts are written so that events are emitted on-chain whenever an active swap limit order is ready for execution (for bot deployment)  
 -Fees are collected from users upon each asset deposit, each trade execution, and each early trade withdrawal  
 -A portion of the fees is collected for Chainlink price feed data costs  
