@@ -1,4 +1,4 @@
-# nocturnal.finance - a simple UI for incentivized swap limit orders  
+# nocturnal.finance - a simple UI for incentivized publically executed Uniswap limit orders
 
 -Swaps are executed on the Uniswap dex  
 -User specifies asset trading pair by contract addresses  
