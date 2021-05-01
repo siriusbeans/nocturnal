@@ -13,7 +13,7 @@
 -Contracts are written so that events are emitted on-chain whenever an active swap limit order is ready for execution (for bot deployment)  
 -Fees are collected from users upon each asset deposit, each active swap limit order execution, and each early asset deposit withdrawal  
 -A portion of the fees is collected for Chainlink price feed data costs  
--A portion of the fees is collected for Ethereum transaction gas costs  
+-A portion of the fees is collected for Ethereum transaction gas costs (for sending ERC721 to user)  
 -Users can earn rewards by staking NOCT  
 -The remainder of all collected fees goes to NOCT stakers (in the form of USDC)  
 -Users can stake their NOCT through nocturnal.finance UI, and receive ERC20 sNOCT tokens in return  
