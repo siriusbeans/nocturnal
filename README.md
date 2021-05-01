@@ -7,7 +7,7 @@
 -User is rewarded ERC20 NOCT tokens after swap limit order is executed  
 -User can monitor accumulated NOCT rewards while the assets are deposited on nocturnal.finance UI (calculated per block)  
 -User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early   
--User's NOCT rewards are a function of total deposited assets (in USDC at time of deposit), total time deposited, among other yet TBD variables  
+-User's NOCT rewards are a function of the value of total deposited assets, total time deposited, and other yet TBD variables  
 -User can also earn NOCT by executing any active swap limit orders (paying for Ethereum transaction gas cost)  
 -When a user executes an active swap limit order, they must use a "high" gas limit ("high" definition is TBD)  
 -Contracts are written so that events are emitted on-chain whenever an active swap limit order is ready for execution (for bot deployment)  
