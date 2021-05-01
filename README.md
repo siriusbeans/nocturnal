@@ -16,7 +16,7 @@
 -A portion of the fees is collected for Chainlink price feed data costs  
 -A portion of the fees is collected for Ethereum transaction gas costs (for sending ERC721 to user)  
 -Users can earn rewards by staking NOCT  
--The remainder of all collected fees goes to NOCT stakers (in the form of USDC)  
+-The remainder of all collected fees goes to NOCT stakers (in the form of ETH)  
 -Users can stake their NOCT through nocturnal.finance UI, and receive ERC20 sNOCT tokens in return  
 -An ERC721 is created and issued to a user after a swap limit order is created and the swap asset is deposited  
 -The ERC721 records all user swap limit order information  
