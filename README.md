@@ -11,7 +11,7 @@
 -User can also earn NOCT by executing any active swap limit orders (paying for Ethereum transaction gas cost)  
 -When a user executes an active swap limit order, they must use a "high" gas limit ("high" definition is TBD)  
 -Contracts are written so that events are emitted on-chain whenever an active swap limit order is ready for execution (for bot deployment)  
--Fees are collected from users upon each asset deposit, each trade execution, and each early trade withdrawal  
+-Fees are collected from users upon each asset deposit, each active swap limit order execution, and each early asset deposit withdrawal  
 -A portion of the fees is collected for Chainlink price feed data costs  
 -A portion of the fees is collected for Ethereum transaction gas costs  
 -Users can earn rewards by staking NOCT  
