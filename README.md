@@ -23,5 +23,5 @@
 -The user's ERC721 can also be exchanged for the deposited assets prior to the swap limit order execution  
 -If the ERC721 is exchanged for the deposited assets prior to the swap limit order execution, no accumulated NOCT is rewarded    
 -The ERC721 is burned after it has been exchanged for the traded or deposited asset  
--UI will draw inspiration from whiteheart.finance, biopset.com, and uniswap.org interfaces
--UI will include a realtime chart of selected assets, and user will be able to select limits with cursor on chart
+-UI will draw inspiration from whiteheart.finance, biopset.com, and uniswap.org interfaces  
+-UI will include a realtime chart of selected assets, and user will be able to select limits with cursor on chart  
