@@ -9,7 +9,7 @@
 -User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early   
 -User's NOCT rewards are a function of the value of total deposited assets, total time deposited, and other yet TBD variables  
 -User can also earn NOCT by executing any active swap limit orders (paying for Ethereum transaction gas cost)  
--The amount of NOCT rewarded to a user for executing an order is a function of the gas paid for the transaction  
+-The amount of NOCT rewarded to a user for executing a swap limit order is a function of the gas paid for the transaction  
 -When a user executes an active swap limit order, they must use a "high" gas limit ("high" definition is TBD)  
 -Contracts are written so that events are emitted on-chain whenever an active swap limit order is ready for execution (for bot deployment)  
 -Fees are collected from users upon each asset deposit, each active swap limit order execution, and each early asset deposit withdrawal  
