@@ -2,7 +2,7 @@
 
 -Swaps are executed on the Uniswap dex  
 -User specifies asset trading pair by contract addresses  
--User sets the swap limit(s) of the asset pair   
+-User sets the swap limit(s) of the asset pair (Uniswap Router -> amountoutmin)  
 -User deposits asset and receives an ERC721 in return  
 -User is rewarded ERC20 NOCT tokens after swap limit order is executed  
 -User can monitor accumulated NOCT rewards while the assets are deposited on nocturnal.finance UI (calculated per block)  
