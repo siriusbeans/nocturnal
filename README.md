@@ -1,27 +1,24 @@
 # nocturnal.finance - a simple UI for incentivized publically executed Uniswap limit orders
 
--Swaps are executed on the Uniswap dex  
--User specifies asset trading pair by contract addresses  
--User sets the swap limit(s) of the asset pair (Uniswap Router -> amountoutmin)  
--User deposits asset and receives an ERC721 in return  
--User is rewarded ERC20 NOCT tokens after swap limit order is executed  
--User can monitor accumulated NOCT rewards while the assets are deposited on nocturnal.finance UI (calculated per block)  
+-Swaps are executed on Uniswap  
+-Supported uniswap pairs is initially limited, but uniswap pair oracles are deployed continuously  
+-User sets the swap price limit(s) of the asset pair, and also swap slippage %  
+-User deposits asset to deposit pool contract and receives an ERC721 in return  
+-User is rewarded ERC20 NOCT tokens after swap limit order is executed and swapped asset is claimed   
 -User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early   
--User's NOCT rewards are a function of the value of total deposited assets, total time deposited, and other yet TBD variables  
--User can also earn NOCT by executing any active swap limit orders (paying for Ethereum transaction gas cost)  
--The amount of NOCT rewarded to a user for executing a swap limit order is a function of the gas paid for the transaction  
--When a user executes an active swap limit order, they must use a "high" gas limit ("high" definition is TBD)  
+-User's NOCT rewards are a function of the platform deposit rate and average gas price (gwei) at time of deposit  
+-User also earn NOCT when executing swap limit orders and when updating uniswap pair oracles  
+-Earned NOCT is a function of gas paid when earned for executing swap limit orders (incentivize fast swapping)  
+-When executing swap limit orders, a min gas price requirement is set and will equal the current Chainlink gas price feed (average-fast)  
 -Contracts are written so that events are emitted on-chain whenever an active swap limit order is ready for execution (for bot deployment)  
--Fees are collected from users upon each asset deposit, each active swap limit order execution, and each early asset deposit withdrawal  
--A portion of the fees is collected for Chainlink price feed data costs  
--A portion of the fees is collected for Ethereum transaction gas costs (for sending ERC721 to user)  
--Users can earn rewards by staking NOCT  
--The remainder of all collected fees goes to NOCT stakers (in the form of ETH)  
--Users can stake their NOCT through nocturnal.finance UI, and receive ERC20 sNOCT tokens in return  
--An ERC721 is created and issued to a user after a swap limit order is created and the swap asset is deposited  
--The ERC721 records all user swap limit order information  
--After the user's swap limit order is executed, the ERC721 can be exchanged for the traded asset and any accumulated NOCT  
+-Fees are collected from users upon each asset deposit and each early asset deposit withdrawal  
+-Fees are distributed to NOCT burners  
+-When a NOCT holder burns NOCT, they are given an ERC721 in return that represents that amount burned  
+-The ERC721 holder can claim their portion of collected platform fees that is equal to a percentage of the total burned NOCT  
+-Another ERC721 is created and issued to a user after their swap limit order is created and their swap assets are deposited  
+-The ERC721 records all user swap limit order information (swap pair address, pair token amount, pair token swap price target)  
+-After the user's swap limit order is executed, the ERC721 can be exchanged for the traded assets and the associated NOCT rewards  
 -The user's ERC721 can also be exchanged for the deposited assets prior to the swap limit order execution  
--If the ERC721 is exchanged for the deposited assets prior to the swap limit order execution, no accumulated NOCT is rewarded    
--The ERC721 is burned after it has been exchanged for the traded or deposited asset  
--UI will share similar styles and elements as whiteheart.finance, biopset.com, dextools.io, and uniswap.org UIs    
+-If the ERC721 is exchanged for the deposited assets prior to the swap limit order execution, no NOCT is rewarded     
+-The swap deposit ERC721 is burned after it has been exchanged for the traded or deposited asset  
+-UI will share similar styles and elements as whiteheart.finance, biopset.com, dextools.io, and uniswap.org UIs  
