@@ -3,7 +3,7 @@
 -Swaps are executed on Uniswap  
 -Supported uniswap pairs are limited, but additional pair oracles will be continuously deployed overtime  
 -User sets the swap price limit(s) of the asset pair, and also swap slippage %  
--User deposits asset to deposit pool contract and receives an ERC721 in return  
+-User deposits assets to deposit pool contract and receives an ERC721 in return  
 -User is rewarded ERC20 NOCT tokens after swap limit order is executed and swapped asset is claimed   
 -User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early   
 -User's NOCT rewards are a function of the platform deposit rate and average gas price (gwei) at time of deposit  
