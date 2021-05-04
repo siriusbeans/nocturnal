@@ -13,8 +13,8 @@
 -Contracts are written so that events are emitted on-chain whenever an active swap limit order is ready for execution (for bot deployment)  
 -Fees are collected from users upon each asset deposit and each early asset deposit withdrawal  
 -Fees are distributed to NOCT burners  
--When a NOCT holder burns NOCT, they earn a permanent stake in platform fees  
--The earned fees are distributed at every deposit/early withdrawal, and are equal to the % of total burned NOCT at the time  
+-When a NOCT holder burns NOCT, they earn a percentage of the accumulated platform fees at the time of burn  
+-The earned fees are equal to the % of their burned NOCT with respect to the total NOCT circulating supply  
 -Another ERC721 is created and issued to a user after their swap limit order is created and their swap assets are deposited  
 -The ERC721 records all user swap limit order information (swap pair address, pair token amount, pair token swap price target)  
 -After the user's swap limit order is executed, the ERC721 can be exchanged for the traded assets and the associated NOCT rewards  
