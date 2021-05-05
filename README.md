@@ -1,7 +1,7 @@
 # nocturnal.finance - a simple UI for incentivized publically executed Uniswap limit orders
 
--Swaps are executed on Uniswap  
--Supported uniswap pairs are limited, but additional pair oracles will be continuously deployed overtime  
+-All swaps are executed on Uniswap  
+-Supported uniswap pairs are limited initially, but additional pair oracles will be continuously deployed overtime  
 -User sets the swap price limit(s) of the asset pair, and also swap slippage %  
 -User deposits assets to deposit pool contract and receives an ERC721 in return  
 -User is rewarded ERC20 NOCT tokens after swap limit order is executed and swapped asset is claimed   
@@ -15,8 +15,8 @@
 -Fees are distributed to NOCT burners  
 -When a NOCT holder burns NOCT, they earn a percentage of the accumulated platform fees at the time of burn  
 -The earned fees are equal to the % of their burned NOCT with respect to the total NOCT circulating supply  
--Another ERC721 is created and issued to a user after their swap limit order is created and their swap assets are deposited  
--The ERC721 records all user swap limit order information (swap pair address, pair token amount, pair token swap price target)  
+-The ERC721 received after deposit is made records all user swap limit order information  
+-The information recorded by the ERC721 is the swap pair address, pair token amount, and pair token swap price target(s)   
 -After the user's swap limit order is executed, the ERC721 can be exchanged for the traded assets and the associated NOCT rewards  
 -The user's ERC721 can also be exchanged for the deposited assets prior to the swap limit order execution  
 -If the ERC721 is exchanged for the deposited assets prior to the swap limit order execution, no NOCT is rewarded  
