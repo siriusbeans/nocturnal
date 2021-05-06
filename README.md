@@ -5,10 +5,10 @@
 -User sets the swap price limit(s) of the asset pair, and also swap slippage %  
 -User deposits assets to deposit pool contract and receives an ERC721 in return  
 -User is rewarded ERC20 NOCT tokens after swap limit order is executed and swapped asset is claimed   
--User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early   
+-User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early  
 -User's NOCT rewards are a function of the platform deposit rate and average gas price (gwei) at time of deposit  
 -User also earn NOCT when executing swap limit orders and when updating uniswap pair oracles  
--Earned NOCT is a function of gas paid when earned for executing swap limit orders (incentivize fast swapping)  
+-Earned NOCT is a function of gas paid when executing swap limit orders (incentivize fast swapping)  
 -When executing swap limit orders, a min gas price requirement is set and will equal the current Chainlink gas price feed (average-fast)  
 -Contracts are written so that events are emitted on-chain whenever an active swap limit order is ready for execution (for bot deployment)  
 -Fees are collected from users upon each asset deposit and each early asset deposit withdrawal  
@@ -16,7 +16,7 @@
 -When a NOCT holder burns NOCT, they earn a percentage of the accumulated platform fees at the time of burn  
 -The earned fees are equal to the % of their burned NOCT with respect to the total NOCT circulating supply  
 -The ERC721 received after deposit is made records all user swap limit order information  
--The information recorded by the ERC721 is the swap pair address, pair token amount, and pair token swap price target(s)   
+-The information recorded by the ERC721 is the swap pair address, pair token amount, and pair token swap price target(s)  
 -After the user's swap limit order is executed, the ERC721 can be exchanged for the traded assets and the associated NOCT rewards  
 -The user's ERC721 can also be exchanged for the deposited assets prior to the swap limit order execution  
 -If the ERC721 is exchanged for the deposited assets prior to the swap limit order execution, no NOCT is rewarded  
