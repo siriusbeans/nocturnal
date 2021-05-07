@@ -1,4 +1,4 @@
-# nocturnal.finance - incentivized publically executed Uniswap limit orders
+# nocturnal.finance - incentivized publicly executed Uniswap limit orders
 
 -All swaps are executed on Uniswap  
 -Supported uniswap pairs are limited initially, but additional pair oracles will be continuously deployed overtime  
