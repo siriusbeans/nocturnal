@@ -2,7 +2,7 @@
 
 -All swaps are executed on Uniswap  
 -Supported uniswap pair pools are limited initially, but more are added over time  
--User sets the swap price limit(s) of the asset pair, and also swap slippage %  
+-User sets the swap price limit(s) of the asset pair (also slippage ?)  
 -User deposits assets to deposit pool contract and receives an ERC721 in return  
 -User is rewarded ERC20 NOCT tokens after swap limit order is executed and swapped asset is claimed   
 -User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early  
