@@ -7,7 +7,7 @@
 -User is rewarded ERC20 NOCT tokens after swap limit order is executed and swapped asset is claimed   
 -User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early  
 -User's NOCT rewards are a function of the platform deposit rate and average gas price (gwei) at time of deposit  
--User also earns NOCT when executing swap limit orders (settlement like BIOP) and when updating uniswap pair oracles (if updates are necessary)   
+-User also earns NOCT when executing swap limit orders (settlement like BIOP) and when updating uniswap pair oracles (if necessary)   
 -Earned NOCT is a function of gas paid when executing swap limit orders (incentivize fast swapping) and oracle updates  
 -When executing swap limit orders, a min gas price requirement is set and will equal the current Chainlink gas price feed (average-fast)  
 -Contracts are written so that events are emitted on-chain whenever an active swap limit order is ready for execution (for bot deployment)  
