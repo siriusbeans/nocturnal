@@ -22,7 +22,7 @@
 -The user's ERC721 can also be exchanged for the deposited assets prior to the swap limit order execution (without NOCT rewards)    
 -The swap deposit ERC721 is burned after it has been exchanged for the traded or deposited asset  
 
-# new ideas for consideration
+# ideas for consideration
 
 -allocate 50% of generated platform fees to NOCT burners  
 -allocate 50% of generated platform fees to periodic lottery  
@@ -30,6 +30,7 @@
 -entire lotto jackpot distributed to single NOCT holder address (utilize Chainlink VRF)  
 -incentives are designed to prevent NOCT supply from ballooning out of control due to no cap on total supply  
 -utilize truebit protocol for off chain jackpot winner contract execution  
+-cap the total supply, distribute tokens to team on deployment, and replace burn mechanisms with staking mechanisms (whiteheart)  
 
 # current concerns
 
