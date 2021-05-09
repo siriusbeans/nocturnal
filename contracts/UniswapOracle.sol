@@ -12,6 +12,9 @@ import {NocturnalFinanceInterface} from "./NocturnalFinanceInterface.sol";
 // create an interface for this contract
 // create the noct contract
 // create an interface for the noct contract
+// create chainlink gas price feed contract
+// create an interface for chainlink gas price feed contract
+// create a contract for ERC721
 
 contract uniswapOracle is Ownable {
 
