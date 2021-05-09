@@ -61,17 +61,17 @@ contract nocturnalFinance is Ownable {
         return oracleTitle[_oracleIndex];
     }
     
-    function getOracleToken0(uint256 _oracleIndex) external view onlyOwner returns (string) {
+    function getOracleToken0(uint256 _oracleIndex) external view onlyOwner returns (address) {
         require(_oracleIndex < oracleIndexCounter, "index out of range");
         return oracleToken0Address[_oracleIndex];
     }
     
-    function getOracleToken1(uint256 _oracleIndex) external view onlyOwner returns (string) {
+    function getOracleToken1(uint256 _oracleIndex) external view onlyOwner returns (address) {
         require(_oracleIndex < oracleIndexCounter, "index out of range");
         return oracleToken1Address[_oracleIndex];
     }
     
-    function getOraclePoolFee(uint256 _oracleIndex) external view onlyOwner returns (string) {
+    function getOraclePoolFee(uint256 _oracleIndex) external view onlyOwner returns (uint256) {
         require(_oracleIndex < oracleIndexCounter, "index out of range");
         return oraclePoolFee[_oracleIndex];
     }
