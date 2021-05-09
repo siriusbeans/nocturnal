@@ -13,7 +13,7 @@ import {NocturnalFinanceInterface} from "./NocturnalFinanceInterface.sol";
 // create the noct contract
 // create an interface for the noct contract
 
-contract uniswapOracle is Ownable {
+contract Oracle is Ownable {
 
     uint32 public twapDuration;
     address internal token0; 
