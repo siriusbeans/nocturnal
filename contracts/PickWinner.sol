@@ -72,7 +72,6 @@ contract PickWinner is VRFConsumerBase, Ownable {
         batchSize = 0;
         snapID = 0;
         reqId = 0;
-        
     }
     
     function getSnapBalance(address _addy, uint256 _snapID) public view returns (uint256) {
