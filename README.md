@@ -20,7 +20,7 @@
 # ideas for consideration
 
 - allocate % of generated platform fees to NOCT burners  
-- allocate % of generated platform fees to periodic lottery  
+- allocate % of generated platform fees to periodic lottery for NOCT holders  
 - lottery drawing is held after specified amount of fees generated on platform  
 - entire lotto jackpot distributed to single NOCT holder address (utilize Chainlink VRF)  
 - incentives are designed to prevent NOCT supply from ballooning out of control due to no cap on total supply  
