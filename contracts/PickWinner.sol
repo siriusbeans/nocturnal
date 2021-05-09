@@ -7,6 +7,7 @@ import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 
 // NEXT:
+// Reward Public function callers with NOCT (Rewards.sol)
 // Generate events whenever public functions need to be called to complete lottery process
 // Generate an event when the platform volume exceeds the lottery volume threshold
 // Create mapping that tracks winner addresses and whether or not they have claimed their jackpot
