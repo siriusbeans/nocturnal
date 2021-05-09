@@ -47,7 +47,7 @@ contract PickWinner is VRFConsumerBase, Ownable {
     mapping(address => uint256) internal maxWeightRangeIndex;
     //mapping(address => mapping(uint256 => uint256)) public snapshotWeight;
     
-    NocturnalInterface public nocturnalFinance;
+    NocturnalFinanceInterface public nocturnalFinance;
     
     constructor(address _nocturnalFinance) VRFConsumerBase(0xb3dCcb4Cf7a26f6cf6B120Cf5A73875B7BBc655B, 0x01BE23585060835E02B77ef475b0Cc51aA1e0709) public {
     	keyHash = 0x2ed0feb3e7fd2022120aa84fab1945545a9f2ffc9076fd6156fa96eaff4c1311; 
