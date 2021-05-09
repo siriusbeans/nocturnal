@@ -202,10 +202,12 @@ contract PickWinner is VRFConsumerBase, Ownable {
                 winnerFoundFlag = true;
                 // add winner address jackpot amount to appropriate mapping
                 // to allow the winner address to claim rewards (will be referenced in Rewards.sol)
-                resetFlags()
             }
         }
         findWinnerBatchCounter++;
+	if (winnerFoundFlag == true) {
+            resetFlags()
+	}
     }
     
     function resetFlags() internal {
