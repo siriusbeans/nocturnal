@@ -7,14 +7,11 @@ import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interface
 import {NocturnalFinanceInterface} from "./NocturnalFinanceInterface.sol";
 
 // NEXT:
-// determine if liquidity should be known prior to executing a trade (see Uniswap V3 whitepaper section 5.3)
+// determine if liquidity should be known prior to executing a trade
 // create a limit order contract that references this contract
 // create an interface for this contract
 // create the noct contract
 // create an interface for the noct contract
-// create chainlink gas price feed contract
-// create an interface for chainlink gas price feed contract
-// create a contract for ERC721
 
 contract uniswapOracle is Ownable {
 
@@ -32,10 +29,10 @@ contract uniswapOracle is Ownable {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
     
-    function setPool(uint _oracleIndex) external onlyOwner {
-        token0 = nocturnalFinance.oracleToken0Address[_oracleIndex];
-        token1 = nocturnalFinance.oracleToken1Address[_oracleIndex];
-        fee = nocturnalFinance.oraclePoolFee[_oracleIndex];
+    function setPool(uint _poolIndex) external onlyOwner {
+        token0 = nocturnalFinance.oracleToken0Address[_poolIndex];
+        token1 = nocturnalFinance.oracleToken1Address[_poolIndex];
+        fee = nocturnalFinance.oraclePoolFee[_poolIndex];
         address internal poolAddress = factory.getPool(token0, token1, fee); 
         pool = IUniswapV3Pool(poolAddress);
     }
