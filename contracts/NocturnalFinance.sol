@@ -3,76 +3,86 @@ pragma solidity 0.6.6;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
-contract nocturnalFinance is Ownable {
+contract NocturnalFinance is Ownable {
     
     address internal noctAddress;
     address internal oracleAddress;
-    uint256 internal oracleIndexCounter;
+    uint256 internal volumeThreshold;
+    uint256 internal poolIndexCounter;
     
-    mapping(uint256 => string) public oracleTitle;
-    mapping(uint256 => address) public oracleToken0Address;
-    mapping(uint256 => address) public oracleToken1Address;
-    mapping(uint256 => uint256) public oraclePoolFee;
+    mapping(uint256 => string) public poolTitle;
+    mapping(uint256 => address) public poolToken0Address;
+    mapping(uint256 => address) public poolToken1Address;
+    mapping(uint256 => uint256) public poolFee;
     
     constructor() public {
-        oracleIndexCount = 0;
+        poolIndexCounter = 0;
     }
     
-    function init(address _noctAddress, address _oracleAddress) external onlyOwner { 
+    function init(address _noctAddress, address _oracleAddress, address _pickWinnerAddress) external onlyOwner { 
         require(_noctAddress != address(0));
         require(_oracleAddress != address(0));
+        require(_pickWinnerAddress != address(0));
         noctAddress = _noctAddress;
         oracleAddress = _oracleAddress;
+        pickWinnerAddress = _pickWinnerAddress;
     }
     
-    function addOraclePair(string _oracleTitle, address _oracleToken0Address, address _oracleToken1Address, uint256 _oraclePoolFee, uint256 _oracleIndex, bool _overwrite) external onlyOwner {
-        bytes memory oracleTitle = bytes(_oracleTitle);
-        require(oracleTitle.length != 0, "empty oracle title");
-        require(_oracleToken0Address != address(0));
-        require(_oracleToken1Address != address(0));
+    // consider removing pool fee mapping
+    // ideally, all fee pools will be checked within oracle contract
+    // uniswap has stated additional fee pools may be added in future, as determined by DAO
+    function addPool(string _poolTitle, address _poolToken0Address, address _poolToken1Address, uint256 _poolFee, uint256 _poolIndex, bool _overwrite) external onlyOwner {
+        bytes memory poolTitle = bytes(_poolTitle);
+        require(poolTitle.length != 0, "empty pair title");
+        require(_poolToken0Address != address(0));
+        require(_poolToken1Address != address(0));
         // .1% expressed as hundredths of a bip (1e-6) is 10000
         // .5% expressed as hundredths of a bip (1e-6) is 5000
         //  1% expressed as hundredths of a bip (1e-6) is 1000
-        require((_oraclePoolFee == 10000) || (_oraclePoolFee == 5000) || (_oraclePoolFee == 1000), "invalid fee input");
-        if (oracleIndexCounter != 0) {
+        require((_poolFee == 10000) || (_poolFee == 5000) || (_poolFee == 1000), "invalid fee input");
+        if (poolIndexCounter != 0) {
             if (_overwrite == false) {
-                require(_oracleIndex == oracleIndexCount, "invalid oracle index input");
+                require(_poolIndex == poolIndexCount, "invalid pool index input");
             } else if (_overwrite == true) {
-                require(_oracleIndex < oracleIndexCount, "oracle index does not exist, cannot be overwritten");
+                require(_poolIndex < poolIndexCount, "pool index does not exist, cannot be overwritten");
             }
         }
 		
-    	oracleTitle[oracleIndexCounter] = _oracleTitle;
-    	oracleToken0Address[oracleIndexCounter] = _oracleToken0Address;
-    	oracleToken1Address[oracleIndexCounter] = _oracleToken1Address;
-    	oraclePoolFee[oracleIndexCounter] = _oraclePoolFee;
+    	poolTitle[poolIndexCounter] = _poolTitle;
+    	poolToken0Address[poolIndexCounter] = _poolToken0Address;
+    	poolToken1Address[poolIndexCounter] = _poolToken1Address;
+    	poolPoolFee[poolIndexCounter] = _poolFee;
     	
     	if (_overwrite == false) {
-    	    oracleIndexCounter = oracleIndexCounter++;
+    	    poolIndexCounter = poolIndexCounter++;
     	}
     }
     
-    function getOracleCount() external view onlyOwner returns (uint256) {
-        return oracleIndexCounter;
+    function setLotteryThreshold(uint256 _volumeThreshold) external onlyOwner {
+        volumeThreshold = _volumeThreshold ether;
     }
     
-    function getOracleTitle(uint256 _oracleIndex) external view onlyOwner returns (string) {
-        require(_oracleIndex < oracleIndexCounter, "index out of range");
-        return oracleTitle[_oracleIndex];
+    function getPoolCount() external view onlyOwner returns (uint256) {
+        return poolIndexCounter;
     }
     
-    function getOracleToken0(uint256 _oracleIndex) external view onlyOwner returns (address) {
-        require(_oracleIndex < oracleIndexCounter, "index out of range");
-        return oracleToken0Address[_oracleIndex];
+    function getPoolTitle(uint256 _poolIndex) external view onlyOwner returns (string) {
+        require(_poolIndex < poolIndexCounter, "index out of range");
+        return poolTitle[_poolIndex];
     }
     
-    function getOracleToken1(uint256 _oracleIndex) external view onlyOwner returns (address) {
-        require(_oracleIndex < oracleIndexCounter, "index out of range");
-        return oracleToken1Address[_oracleIndex];
+    function getPoolToken0(uint256 _poolIndex) external view onlyOwner returns (address) {
+        require(_poolIndex < poolIndexCounter, "index out of range");
+        return poolToken0Address[_poolIndex];
     }
     
-    function getOraclePoolFee(uint256 _oracleIndex) external view onlyOwner returns (uint256) {
-        require(_oracleIndex < oracleIndexCounter, "index out of range");
-        return oraclePoolFee[_oracleIndex];
+    function getPoolToken1(uint256 _poolIndex) external view onlyOwner returns (address) {
+        require(_poolIndex < poolIndexCounter, "index out of range");
+        return poolToken1Address[_poolIndex];
+    }
+    
+    function getPoolFee(uint256 _poolIndex) external view onlyOwner returns (uint256) {
+        require(_poolIndex < poolIndexCounter, "index out of range");
+        return poolFee[_poolIndex];
     }
 }
