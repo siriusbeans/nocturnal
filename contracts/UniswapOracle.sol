@@ -7,12 +7,11 @@ import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interface
 import {NocturnalFinanceInterface} from "./NocturnalFinanceInterface.sol";
 
 // NEXT:
-// determine if liquidity should be known prior to executing a trade
+// determine if liquidity should be known prior to executing a trade (see Uniswap V3 whitepaper section 5.3)
 // create a limit order contract that references this contract
 // create an interface for this contract
 // create the noct contract
 // create an interface for the noct contract
-
 
 contract uniswapOracle is Ownable {
 
