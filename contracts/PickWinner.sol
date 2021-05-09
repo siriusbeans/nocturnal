@@ -201,7 +201,8 @@ contract PickWinner is VRFConsumerBase, Ownable {
                 winner = NoctInterface(nocturnalFinance.noctAddress()).holders(i);
                 winnerFoundFlag = true;
                 // add winner address jackpot amount to appropriate mapping
-                // to allow the winner address to claim rewards (will be referenced in Rewards.sol)
+                // to allow the winner address to claim rewards (will be referenced in Rewards.sol) 
+		// add event firing winner address ?
             }
         }
         findWinnerBatchCounter++;
