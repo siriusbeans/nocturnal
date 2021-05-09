@@ -21,3 +21,18 @@
 -After the user's swap limit order is executed, the ERC721 can be exchanged for the traded assets and the associated NOCT rewards  
 -The user's ERC721 can also be exchanged for the deposited assets prior to the swap limit order execution (without NOCT rewards)    
 -The swap deposit ERC721 is burned after it has been exchanged for the traded or deposited asset  
+
+# new ideas for consideration
+
+-allocate 50% of generated platform fees to NOCT burners
+-allocate 50% of generated platform fees to periodic lottery
+-lottery drawing is held after X amount of value is traded on platform
+-entire lotto jackpot distributed to single NOCT holder address
+-incentives are designed to prevent NOCT supply from ballooning out of control due to no cap on total supply
+
+# current concerns
+
+-no cap on NOCT total supply
+-NOCT is minted in only 2 possible ways
+- 1) when trade is performed (NOCT rewarded to limit order creator and limit order caller)
+- 2) when oracle is updated (NOCT rewarded to oracle update caller)
