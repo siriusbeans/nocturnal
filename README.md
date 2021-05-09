@@ -27,7 +27,7 @@
 -allocate 50% of generated platform fees to NOCT burners  
 -allocate 50% of generated platform fees to periodic lottery  
 -lottery drawing is held after X amount of value is traded on platform  
--entire lotto jackpot distributed to single NOCT holder address  
+-entire lotto jackpot distributed to single NOCT holder address (utilize Chainlink VRF)  
 -incentives are designed to prevent NOCT supply from ballooning out of control due to no cap on total supply  
 -utilize truebit protocol for off chain jackpot winner contract execution  
 
@@ -37,4 +37,5 @@
 -NOCT is minted in only 2 possible ways  
 - 1) when trade is performed (NOCT rewarded to limit order creator and limit order caller)  
 - 2) when oracle is updated (NOCT rewarded to oracle update caller)  
+
 -can truebit protocol be used to call pickWinner contract?  
