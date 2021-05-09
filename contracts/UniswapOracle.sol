@@ -30,7 +30,7 @@ contract uniswapOracle is Ownable {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
     
-    function setPools(uint _oracleIndex) external onlyOwner {
+    function setPool(uint _oracleIndex) external onlyOwner {
         token0 = nocturnalFinance.oracleToken0Address[_oracleIndex];
         token1 = nocturnalFinance.oracleToken1Address[_oracleIndex];
         fee = nocturnalFinance.oraclePoolFee[_oracleIndex];
