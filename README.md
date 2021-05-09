@@ -7,15 +7,15 @@
 -User is rewarded ERC20 NOCT tokens after swap limit order is executed and swapped asset is claimed   
 -User can withdraw the asset in full from the contract at anytime, but will not receive NOCT rewards if the deposited assets are withdrawn early  
 -User's NOCT rewards are a function of the platform deposit rate and average gas price (gwei) at time of deposit  
--User also earn NOCT when executing swap limit orders and when updating uniswap pair oracles  
--Earned NOCT is a function of gas paid when executing swap limit orders (incentivize fast swapping)  
+-User also earns NOCT when executing swap limit orders (settlement like BIOP) and when updating uniswap pair oracles (if updates are necessary)   
+-Earned NOCT is a function of gas paid when executing swap limit orders (incentivize fast swapping) and oracle updates  
 -When executing swap limit orders, a min gas price requirement is set and will equal the current Chainlink gas price feed (average-fast)  
 -Contracts are written so that events are emitted on-chain whenever an active swap limit order is ready for execution (for bot deployment)  
 -Fees are collected from users upon each asset deposit and each early asset deposit withdrawal  
 -Fees are distributed to NOCT burners  
--When a NOCT holder burns NOCT, they forever earn a percentage of the accumulated platform fees  
+-When a NOCT holder burns NOCT, they forever earn a percentage of the accumulated platform fees (similar to whiteheart staking)  
 -The earned fees are equal to the % of their burned NOCT with respect to the total burned NOCT    
--Fees are distributed for later claiming to the NOCT burner addresses on every fee collecting event (real-time)  
+-Fees are distributed to the NOCT burner addresses on every fee collecting event (real-time like whiteheart)  
 -The ERC721 received after deposit records all user swap limit order information  
 -The information recorded by the ERC721 is the swap pair address, pair token amount, and pair token swap price target(s)  
 -After the user's swap limit order is executed, the ERC721 can be exchanged for the traded assets and the associated NOCT rewards  
