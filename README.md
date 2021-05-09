@@ -26,7 +26,7 @@
 
 -allocate % of generated platform fees to NOCT burners  
 -allocate % of generated platform fees to periodic lottery  
--lottery drawing is held after X amount of fees generated on platform  
+-lottery drawing is held after specified amount of fees generated on platform  
 -entire lotto jackpot distributed to single NOCT holder address (utilize Chainlink VRF)  
 -incentives are designed to prevent NOCT supply from ballooning out of control due to no cap on total supply  
 -utilize truebit protocol for off chain jackpot winner contract execution  
