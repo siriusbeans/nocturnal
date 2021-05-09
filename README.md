@@ -34,4 +34,4 @@
 - NOCT is minted in only 2 possible ways  
   1) when trade is performed (NOCT rewarded to limit order creator and limit order caller)  
   2) when oracle is updated (NOCT rewarded to oracle update caller)  
-- can truebit protocol be used to call pickWinner contract?  
+- can truebit protocol be used to compute pickWinner functions?  
