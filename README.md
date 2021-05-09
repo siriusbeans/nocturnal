@@ -26,7 +26,7 @@
 - incentives are designed to prevent NOCT supply from ballooning out of control due to no cap on total supply  
 - cap the total supply, distribute tokens to team on deployment, and replace burn mechanisms with staking mechanisms (whiteheart)  
 - allocate % of fees for chainlink token for VRF expenses and gas price feed expenses (if necessary)  
-- utilize truebit protocol to pick lottery winner from NOCT holders   
+- utilize truebit protocol to pick lottery winner from NOCT holders off-chain  
 
 # current concerns
 
