@@ -50,7 +50,7 @@ contract PickWinner is VRFConsumerBase, Ownable {
     NocturnalInterface public nocturnalFinance;
     
     constructor(address _nocturnalFinance) VRFConsumerBase(0xb3dCcb4Cf7a26f6cf6B120Cf5A73875B7BBc655B, 0x01BE23585060835E02B77ef475b0Cc51aA1e0709) public {
-    	  keyHash = 0x2ed0feb3e7fd2022120aa84fab1945545a9f2ffc9076fd6156fa96eaff4c1311; 
+    	keyHash = 0x2ed0feb3e7fd2022120aa84fab1945545a9f2ffc9076fd6156fa96eaff4c1311; 
         vrfCoordinator = 0xb3dCcb4Cf7a26f6cf6B120Cf5A73875B7BBc655B;
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
         randomNumberReceivedFlag = false;
@@ -77,8 +77,8 @@ contract PickWinner is VRFConsumerBase, Ownable {
     
     function getSnapBalance(address _addy, uint256 _snapID) public view returns (uint256) {
         require(_snapID <= snapID, "snapID too large");
-    	  uint256 snapBalance = NoctInterface(nocturnalFinance.noctAddress()).balanceOfAt(_addy, snapID);
-    	  return snapBalance;
+    	uint256 snapBalance = NoctInterface(nocturnalFinance.noctAddress()).balanceOfAt(_addy, snapID);
+    	return snapBalance;
     }
     
     //function getSnapWeight(address _addy, uint256 _snapID) public view returns (uint256) {
@@ -112,8 +112,8 @@ contract PickWinner is VRFConsumerBase, Ownable {
     }
     
     function getWeight(address _addy) public view returns (uint256) {
-    	  uint256 weight = addressWeight[_addy];
-    	  return weight;
+    	uint256 weight = addressWeight[_addy];
+    	return weight;
     }
 
     function startLottery() public {
@@ -135,30 +135,30 @@ contract PickWinner is VRFConsumerBase, Ownable {
         uint256 noctWeight = 0;
         addressWeightArrayIndexMin = buildArrayBatchCounter.mul(batchSize);
         if (batchRemainder != 0) {
-		        if (buildArrayBatchCounter < batchCount) {
-		            addressWeightArrayIndexMax = addressWeightArrayIndexMin.add(batchSize);
-		        } else {
-		            addressWeightArrayIndexMax = addressWeightArrayIndexMin.add(batchRemainder);
-		        }
+	    if (buildArrayBatchCounter < batchCount) {
+                addressWeightArrayIndexMax = addressWeightArrayIndexMin.add(batchSize);
+            } else {
+                addressWeightArrayIndexMax = addressWeightArrayIndexMin.add(batchRemainder);
+            }
         } else {
-		        addressWeightArrayIndexMax = addressWeightArrayIndexMin.add(batchSize);
+            addressWeightArrayIndexMax = addressWeightArrayIndexMin.add(batchSize);
         }
         for (uint256 i = addressWeightArrayIndexMin; i < addressWeightArrayIndexMax; i++) {
-		        noctBalance = noctInterface(nocturnalFinance.noctAddress()).balanceOfAt(NoctInterface(nocturnalFinance.noctAddress()).holders(i), snapID);
-		        noctWeight = noctBalance.mul(lottoResolution).div(noctSupply);
-		        if (noctWeight > 0) {
-		            minWeightRangeIndex[NoctInterface(nocturnalFinance.noctAddress()).holders(i)] = sumOfWeights;
-		            sumOfWeights = sumOfWeights.add(noctWeight);
-		            maxWeightRangeIndex[NoctInterface(nocturnalFinance.noctAddress()).holders(i)] = sumOfWeights;
-		            addressWeight[NoctInterface(nocturnalFinance.noctAddress()).holders(i)] = noctWeight;
-		        }
-		    }
-		    buildArrayBatchCounter++;
-		    if ((batchRemainder != 0) && (buildArrayBatchCounter > batchCount)) {
-		        weightsAssignedFlag = true;
-		    } else if ((batchRemainder == 0) && (buildArrayBatchCounter == batchCount)) {
+            noctBalance = noctInterface(nocturnalFinance.noctAddress()).balanceOfAt(NoctInterface(nocturnalFinance.noctAddress()).holders(i), snapID);
+            noctWeight = noctBalance.mul(lottoResolution).div(noctSupply);
+            if (noctWeight > 0) {
+                minWeightRangeIndex[NoctInterface(nocturnalFinance.noctAddress()).holders(i)] = sumOfWeights;
+                sumOfWeights = sumOfWeights.add(noctWeight);
+                maxWeightRangeIndex[NoctInterface(nocturnalFinance.noctAddress()).holders(i)] = sumOfWeights;
+                addressWeight[NoctInterface(nocturnalFinance.noctAddress()).holders(i)] = noctWeight;
+            }
+        }
+        buildArrayBatchCounter++;
+        if ((batchRemainder != 0) && (buildArrayBatchCounter > batchCount)) {
             weightsAssignedFlag = true;
-		    }        
+        } else if ((batchRemainder == 0) && (buildArrayBatchCounter == batchCount)) {
+            weightsAssignedFlag = true;
+        }        
     }   
     
     function getRandomNumber() public {
