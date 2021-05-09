@@ -1,7 +1,7 @@
 # nocturnal.finance
 
 -All swaps are executed on Uniswap  
--Supported uniswap pairs are limited initially, but additional pair oracles will be continuously deployed overtime  
+-Supported uniswap pair pools are limited initially, but more are added over time
 -User sets the swap price limit(s) of the asset pair, and also swap slippage %  
 -User deposits assets to deposit pool contract and receives an ERC721 in return  
 -User is rewarded ERC20 NOCT tokens after swap limit order is executed and swapped asset is claimed   
