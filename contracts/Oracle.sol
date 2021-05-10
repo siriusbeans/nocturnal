@@ -4,8 +4,6 @@ pragma solidity 0.6.6;
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Pool.sol";
 import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Factory.sol";
-import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
-import {Pools} from "./Interfaces/PoolsInterface.sol";
 
 // NEXT:
 // determine if liquidity should be known prior to executing a trade
@@ -17,33 +15,20 @@ import {Pools} from "./Interfaces/PoolsInterface.sol";
 contract uniswapOracle is Ownable {
 
     uint32 public twapDuration;
-    address internal token0; 
-    address internal token1;
-    uint256 internal fee;
-
-    IUniswapV3Factory public factory;
-    IUniswapV3Pool public pool;
-    NocturnalFinanceInterface public nocturnalFinance;
     
     constructor(address _nocturnalFinance) public {
         twapDuration = 0;
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
-    
-    function setPool(uint _poolIndex) external onlyOwner {
-        token0 = PoolsInterface(nocturnalFinance.poolsAddress()).poolToken0Address[_poolIndex];
-        token1 = PoolsInterface(nocturnalFinance.poolsAddress()).poolToken1Address[_poolIndex];
-        fee = PoolsInterface(nocturnalFinance.poolsAddress()).poolFee[_poolIndex];
-        address internal poolAddress = factory.getPool(token0, token1, fee); 
-        pool = IUniswapV3Pool(poolAddress);
-    }
-    
+
     function setTwapDuration(uint256 _duration) external onlyOwner {
         require(_duration <= 300, "TWAP duration must be less than 300 sec";
         twapDuration = _duration;
     }
     
-    function getTwap() external view onlyOwner returns (int24) {
+    function getTwap(address _pool) external view onlyOwner returns (int24) {
+        IUniswapV3Pool public pool;
+        pool = IUniswapV3Pool(_pool);
         uint32 _twapDuration = twapDuration;
         if (_twapDuration == 0) {
             return getCurrentPrice();
@@ -57,11 +42,15 @@ contract uniswapOracle is Ownable {
         return int24((tickCumulatives[1] - tickCumulatives[0]) / _twapDuration);
     }
     
-    function getCurrentPrice() internal view returns (int24 cPrice) {
+    function getCurrentPrice(address _pool) internal view returns (int24 cPrice) {
+        IUniswapV3Pool public pool;
+        pool = IUniswapV3Pool(_pool);
         (, cPrice, , , , , ) = pool.slot0();
     }
     
-    function getLiquidity() external view onlyOwner returns (int128 cLiquidity) {
+    function getLiquidity(address _pool) external view onlyOwner returns (int128 cLiquidity) {
+        IUniswapV3Pool public pool;
+        pool = IUniswapV3Pool(_pool);
         cLiquidity = pool.liquidity();
     }
 }
