@@ -34,7 +34,7 @@ contract Pools is Ownable {
             } else if (_overwrite == true) {
                 require(_poolIndex < poolIndexCount, "pool index does not exist, cannot be overwritten");
             }
-		    }
+        }
 		
         poolTitle[poolIndexCounter] = _poolTitle;
         poolToken0Address[poolIndexCounter] = _poolToken0Address;
