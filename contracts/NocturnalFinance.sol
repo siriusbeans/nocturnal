@@ -28,13 +28,13 @@ contract NocturnalFinance is Ownable {
             address _poolsAddress,
             address _gasPriceAddress
             ) external onlyOwner { 
-		require(_noctAddress != address(0));
-		require(_oracleAddress != address(0));
-		require(_pickWinnerAddress != address(0));
-		require(_rewardsAddress != address(0));
-		require(_limitOrdersAddress != address(0));
-		require(_poolsAddress != address(0));
-		require(_gasPriceAddress != address(0));
+        require(_noctAddress != address(0));
+        require(_oracleAddress != address(0));
+        require(_pickWinnerAddress != address(0));
+        require(_rewardsAddress != address(0));
+        require(_limitOrdersAddress != address(0));
+        require(_poolsAddress != address(0));
+        require(_gasPriceAddress != address(0));
         noctAddress = _noctAddress;
         oracleAddress = _oracleAddress;
         pickWinnerAddress = _pickWinnerAddress;
