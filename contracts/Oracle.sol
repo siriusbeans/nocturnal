@@ -16,9 +16,8 @@ contract uniswapOracle is Ownable {
 
     uint32 public twapDuration;
     
-    constructor(address _nocturnalFinance) public {
+    constructor() public {
         twapDuration = 0;
-        nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
 
     function setTwapDuration(uint256 _duration) external onlyOwner {
