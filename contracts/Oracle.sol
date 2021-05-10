@@ -4,7 +4,8 @@ pragma solidity 0.6.6;
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Pool.sol";
 import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Factory.sol";
-import {NocturnalFinanceInterface} from "./NocturnalFinanceInterface.sol";
+import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
+import {Pools} from "./Interfaces/PoolsInterface.sol";
 
 // NEXT:
 // determine if liquidity should be known prior to executing a trade
@@ -13,7 +14,7 @@ import {NocturnalFinanceInterface} from "./NocturnalFinanceInterface.sol";
 // create the noct contract
 // create an interface for the noct contract
 
-contract Oracle is Ownable {
+contract uniswapOracle is Ownable {
 
     uint32 public twapDuration;
     address internal token0; 
@@ -30,9 +31,9 @@ contract Oracle is Ownable {
     }
     
     function setPool(uint _poolIndex) external onlyOwner {
-        token0 = nocturnalFinance.oracleToken0Address[_poolIndex];
-        token1 = nocturnalFinance.oracleToken1Address[_poolIndex];
-        fee = nocturnalFinance.oraclePoolFee[_poolIndex];
+        token0 = PoolsInterface(nocturnalFinance.poolsAddress()).poolToken0Address[_poolIndex];
+        token1 = PoolsInterface(nocturnalFinance.poolsAddress()).poolToken1Address[_poolIndex];
+        fee = PoolsInterface(nocturnalFinance.poolsAddress()).poolFee[_poolIndex];
         address internal poolAddress = factory.getPool(token0, token1, fee); 
         pool = IUniswapV3Pool(poolAddress);
     }
