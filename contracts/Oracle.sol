@@ -15,6 +15,7 @@ import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interface
 contract uniswapOracle is Ownable {
 
     uint32 public twapDuration;
+    IUniswapV3Pool public pool;
     
     constructor() public {
         twapDuration = 0;
@@ -26,7 +27,6 @@ contract uniswapOracle is Ownable {
     }
     
     function getTwap(address _pool) external view onlyOwner returns (int24) {
-        IUniswapV3Pool public pool;
         pool = IUniswapV3Pool(_pool);
         uint32 _twapDuration = twapDuration;
         if (_twapDuration == 0) {
@@ -42,13 +42,11 @@ contract uniswapOracle is Ownable {
     }
     
     function getCurrentPrice(address _pool) internal view returns (int24 cPrice) {
-        IUniswapV3Pool public pool;
         pool = IUniswapV3Pool(_pool);
         (, cPrice, , , , , ) = pool.slot0();
     }
     
     function getLiquidity(address _pool) external view onlyOwner returns (int128 cLiquidity) {
-        IUniswapV3Pool public pool;
         pool = IUniswapV3Pool(_pool);
         cLiquidity = pool.liquidity();
     }
