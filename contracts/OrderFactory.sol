@@ -59,7 +59,7 @@ contract LimitOrders is ERC721, Ownable {
         return(orderID);
     }
     
-    function closeLimitOrder() public {
-    
+    function settleLimitOrder(uint256 _orderID, ) public {
+        
     }
 }
