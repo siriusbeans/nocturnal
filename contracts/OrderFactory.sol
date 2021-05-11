@@ -10,12 +10,8 @@ import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 import {OracleInterface} from "./Interfaces/OracleInterface.sol";
 
 // NEXT:
-// this must be written so that a single wallet can set multiple limit orders simultaneously
-// that is with the same token pair, or various token pairs
-// how will the limit orders be tracked?  mappings?  
-// how can multiple orders be stored in a single address mapping?
-// mapping to track volume ?  
-// need volume tracked within contracts for lotto start require statement
+// track nocturnal trading volume within closeOrder() 
+//
 
 contract LimitOrders is ERC721, Ownable {
     using SafeMath for uint256;
