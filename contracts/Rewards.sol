@@ -1,21 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.6.12;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.1.0/contracts/math/SafeMath.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 import {OrderFactoryInterface} from "./Interfaces/OrderFactoryInterface.sol";
-import {PickWinnerInterface} from "./Interfaces/PickWinnerInterface.sol";
 
 // NEXT:
 // Create rewardCalc() functions for:
 //  1) Order Creator
-//  2) Order Closer
-//  3) Lottery Function Caller
+//  2) Order Settler
 
-contract Rewards is Ownable {
+contract Rewards {
     using SafeMath for uint256;
+    using Counters for Counters.Counter;
+    
+    uint256 public pendingRewards;
+    uint256 public totalRewards;
+    Counter.counters public pendingRewards;
+    Counter.counters public totalRewards;
     
     mapping(address => uint256) public rewards;
     
@@ -33,7 +37,7 @@ contract Rewards is Ownable {
         
     }
     
-    function checkRewards() public view return (uint256) {
+    function checkRewards() public view returns (uint256) {
         address claimAddress = msg.sender;
         uint256 addressRewards = rewards[claimAddress];
         return(addressRewards);
@@ -46,19 +50,11 @@ contract Rewards is Ownable {
         return(rewards);
     }
     
-    function calculateOrderCloserRewards() public returns (uint256) {
+    function calculateOrderSettlerRewards() public returns (uint256) {
         require(msg.sender == nocturnalFinance.orderFactoryAddress());
         uint256 rewards;
         // compute rewards based on cirulating NOCT supply, total NOCT supply, and ????
-        // should the NOCT circ. and total supply at time of order creation be considered here?
-        // maybe these should be additional attributes added to the ERC721 Nocturnal Order...
-        return(rewards);
-    }
-    
-    function calculateLotteryRewards() public returns (uint256) {
-        require(msg.sender == nocturnalFinance.orderFactoryAddress());
-        uint256 rewards;
-        // compute rewards based on circulating NOCT supply, total NOCT supply, and ????
+        // **should the total supply at the time the order was created be considered here?**
         return(rewards);
     }
 }
