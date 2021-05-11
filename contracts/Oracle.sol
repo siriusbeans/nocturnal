@@ -1,49 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.6.6;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Pool.sol";
+import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 
-// NEXT:
-// Is the current price a reliable enough price feed?
-// No need for TWAP?
+contract uniswapOracle {
 
-contract uniswapOracle is Ownable {
-
-    uint32 public twapDuration;
     IUniswapV3Pool public pool;
     
     constructor() public {
-        twapDuration = 0;
     }
-
-    function setTwapDuration(uint256 _duration) external onlyOwner {
-        require(_duration <= 300, "TWAP duration must be less than 300 sec";
-        twapDuration = _duration;
-    }
-    
-    function getTwap(address _pool) external view onlyOwner returns (int24) {
-        pool = IUniswapV3Pool(_pool);
-        uint32 _twapDuration = twapDuration;
-        if (_twapDuration == 0) {
-            return getCurrentPrice();
-        }
-        
-        uint32[] memory secondsAgo = new uint32[](2);
-        secondsAgo[0] = _twapDuration;
-        secondsAgo[1] = 0;
-
-        (int56[] memory tickCumulatives, ) = pool.observe(secondsAgo);
-        return int24((tickCumulatives[1] - tickCumulatives[0]) / _twapDuration);
-    }
-    
-    function getCurrentPrice(address _pool) internal view returns (int24 cPrice) {
+   
+    function getCurrentPrice(address _pool) external view returns (int24 cPrice) {
         pool = IUniswapV3Pool(_pool);
         (, cPrice, , , , , ) = pool.slot0();
-    }
-    
-    function getLiquidity(address _pool) external view onlyOwner returns (int128 cLiquidity) {
-        pool = IUniswapV3Pool(_pool);
-        cLiquidity = pool.liquidity();
     }
 }
