@@ -145,7 +145,7 @@ contract LimitOrders is ERC721 {
         return swapToTokenAddress[_address];
     }
     
-    function getOrderLimitPrice(address _orderAddress) public view returns (address) {
+    function getOrderLimitPrice(address _orderAddress) public view returns (uint256) {
         return swapToTokenLimitPrice[_address];
     }
     
@@ -157,7 +157,15 @@ contract LimitOrders is ERC721 {
         return swapSlippage[_address];
     }
     
-    function getOrderSettlementFee(uint256 _orderAddress) public View returns (uint256) {
+    function getOrderSettlementFee(uint256 _orderAddress) public view returns (uint256) {
         return swapSettlementFee[_address];
+    }
+    
+    function getOrderCreatorRewards(uint256 _orderAddress) public view returns (uint256) {
+        return swapCreatorRewards[_address];
+    }
+    
+    function getOrderSettlerRewards(uint256 _orderAddress) public view returns (uint256) {
+        return swapSettlerRewards[_address];
     }
 }
