@@ -5,8 +5,7 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.1.0/contracts/math/SafeMath.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
-import {GasPriceFeed} from "./Interfaces/GasPriceFeedInterface.sol";
-import {LimitOrders} from "./Interfaces/LimitOrders.sol";
+import {OrderFactory} from "./Interfaces/OrderFactory.sol";
 import {PickWinner} from "./Interfaces/PickWinner.sol";
 
 // NEXT:
