@@ -6,6 +6,7 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 import {OracleInterface} from "./Interfaces/OracleInterface.sol";
+import {RewardsInterface} from "./Interfaces/RewardsInterface.sol";
 
 contract LimitOrders is ERC721 {
     using SafeMath for uint256;
@@ -45,7 +46,9 @@ contract LimitOrders is ERC721 {
             uint256 _swapLimitPrice,
             bool _swapAbove,
             uint256 _swapSlippage, 
-            uint256 _swapSettlementFee) public {
+            uint256 _swapSettlementFee, 
+            uint256 _swapCreatorRewards,
+            uint256 _swapSettlerRewards) public {
         
         ERC721 nocturnalOrder = new ERC721 ("Nocturnal Order", "oNOCT"); 
         orderCounter.increment();
@@ -62,16 +65,18 @@ contract LimitOrders is ERC721 {
         swapAbove[orderAddress] = _swapAbove[orderID];
         swapSlippage[orderAddress] = _swapSlippage;
         swapSettlementFee[orderAddress] = _swapSettlementFee;
+        swapCreatorRewards[orderAddress] = _swapCreatorRewards;
+        swapSettlerRewards[orderAddress] = _swapSettlerRewards;
         
         _mint(msg.sender, orderID);
         
         // send "swap from" tokens to the ERC721 address
-        // deduct nocturnal fee % from deposited tokens and send to nocturnal rewards contract
-        // calculate rewards for order creator
-        // calculate rewards for order settler
+        // deduct nocturnal fee % from deposited tokens, swap for ETH, and send to staker addresses
+        // calculate NOCT rewards for order creator
+        // calculate NOCT rewards for order settler
         // add pending calculated rewards to pending rewards accumulator map
         
-        emit orderCreated(orderID, orderAddress, _swapFromTokenAddress, _swapFromTokenBalance, _swapToTokenAddress, _swapSettlementFee);
+        emit orderCreated(orderID, orderAddress, _swapFromTokenAddress, _swapFromTokenBalance, _swapToTokenAddress, _swapSettlementFee, _swapCreatorRewards, _swapSettlerRewards);
     }
     
     function settleLimitOrder(address _address) public {
@@ -98,14 +103,14 @@ contract LimitOrders is ERC721 {
         // perform the swap
         // deduct settlement fee
         // obtain amount of token received in swap (for event)
-        // send settlement fee to closer
-        // track volume
-        // calculate and distribute NOCT rewards to closer and creator
+        // uint256 toTokenBalance = 
+        // send settlement fee (in ETH) to settler
+        // distribute NOCT rewards to closer and creator
         // deduct NOCT pending rewards from NOCT pending rewards accumulator map
         // update NOCT circulating supply map accordingly
         // burn ERC721
         
-        event orderSettled(_orderID, orderAddress, address toTokenAddress, uint256 _toTokenBalance, address fromTokenAddress, uint256 settlementFee, uint256 creator);
+        emit orderSettled(orderID, orderAddress, toTokenAddress, toTokenBalance, fromTokenAddress, settlementFee, creatorRewards, settlerRewards);
     }
     
     function closeLimitOrder(address _address) public {
@@ -117,7 +122,7 @@ contract LimitOrders is ERC721 {
         // deduct pending rewards from pending rewards accumulator map
         // burn ERC721
         
-        event orderClosed(uint256 tokenID, address _orderAddress);
+        emit orderClosed(orderID, _address);
     }
 
     function getOrderID(address _orderAddress) public view returns (uint256) {
