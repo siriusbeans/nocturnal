@@ -12,6 +12,8 @@ import {OracleInterface} from "./Interfaces/OracleInterface.sol";
 // NEXT:
 // track nocturnal trading volume within closeOrder() 
 //
+//  ALSO: a Nocturnal Order owner needs to have the ability to close the limit order early
+//        there will be a penalty for doing so - no NOCT rewards
 
 contract LimitOrders is ERC721, Ownable {
     using SafeMath for uint256;
