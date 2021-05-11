@@ -50,6 +50,8 @@ contract Rewards is Ownable {
         require(msg.sender == nocturnalFinance.orderFactoryAddress());
         uint256 rewards;
         // compute rewards based on cirulating NOCT supply, total NOCT supply, and ????
+        // should the NOCT circ. and total supply at time of order creation be considered here?
+        // maybe these should be additional attributes added to the ERC721 Nocturnal Order...
         return(rewards);
     }
     
