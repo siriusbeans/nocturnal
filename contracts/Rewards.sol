@@ -10,30 +10,29 @@ import {LimitOrders} from "./Interfaces/LimitOrders.sol";
 import {PickWinner} from "./Interfaces/PickWinner.sol";
 
 // NEXT:
-// this contract will handle the generation of rewards
-// NOCT rewards will be minted after the following events:
-// public function calls for lottery winner selection
-// public function call for limit order execution
-// public function call for 
+// this contract will track and transfer rewards
+// all NOCT will be held in this contract (after team & testnet allocation removed)
+// all platform generated ETH will be held in this contract
 
 contract Rewards is Ownable {
     using SafeMath for uint256;
     
+    mapping(address => uint256) public rewards;
+    
     constructor() public {
     }
     
-    function mintLimitOrderExecutionRewards() external {
-    //require(msg.sender == )
+    function claimRewards() public {
+        address claimAddress = msg.sender;
+        uint256 addressRewards = rewards[claimAddress];
+        
+        // transfer addressRewards to claimAddress
+        
     }
     
-    function mintSwappedTokenWithdrawalRewards() external {
-    //require(msg.sender == )
-    }
-    
-    function mintLotteryFunctionRewards() external {
-    //require(msg.sender == )
-    }
-    
-    function mintOracleUpdateRewards() external {
-    //require(msg.sender == )
-    }
+    function checkRewards() public view return (uint256) {
+        address claimAddress = msg.sender;
+        uint256 addressRewards = rewards[claimAddress];
+        return(addressRewards);
+    } 
+}
