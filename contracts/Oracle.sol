@@ -5,11 +5,8 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Pool.sol";
 
 // NEXT:
-// determine if liquidity should be known prior to executing a trade
-// create a limit order contract that references this contract
-// create an interface for this contract
-// create the noct contract
-// create an interface for the noct contract
+// Is the current price a reliable enough price feed?
+// No need for TWAP?
 
 contract uniswapOracle is Ownable {
 
