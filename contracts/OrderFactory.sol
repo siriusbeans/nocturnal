@@ -90,6 +90,7 @@ contract LimitOrders is ERC721, Ownable {
         // perform the swap
         // deduct settlement fee
         // send settlement fee to closer
+        // track total trade volume
         // calculate and distribute NOCT rewards to closer and creator
         // emit orderClosed event with address
         // burn ERC721 
