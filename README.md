@@ -3,8 +3,7 @@
 
 Todo:  
 
- 1)  Add ability to check address weights and balances per lottery snapshot (PickWinner.sol)
- 2)  Add token transfer code to createOrder() function (OrderFactory.sol)
- 3)  Add swap code to closeOrder() function (OrderFactory.sol)
- 4)  Start reward distribution code (Rewards.sol)
- 5)  Start staking code (NoctStaking.sol)
+ 1)  Add token transfer code to createOrder() function (OrderFactory.sol)
+ 2)  Add swap code to closeOrder() function (OrderFactory.sol)
+ 3)  Start reward distribution code (Rewards.sol)
+ 4)  Start staking code (NoctStaking.sol)
