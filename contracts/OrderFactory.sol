@@ -27,7 +27,6 @@ contract LimitOrders is ERC721 {
     mapping(address => uint256) swapCreatorRewards;
     mapping(address => uint256) swapSettlerRewards;
     
-    // may only include order Address in the events...
     event orderCreated(uint256 _orderID, address _orderAddress, address _fromTokenAddress, uint256 _fromTokenBalance, address _toTokenAddress, uint256 _settlementFee, uint256 _creatorRewards, uint256 _settlerRewards);
     event orderSettled(uint256 _orderID, address _orderAddress, address _toTokenAddress, uint256 _toTokenBalance, address _fromTokenAddress, uint256 _settlementFee, uint256 _creatorRewards, uint256 _settlerRewards);
     event orderClosed(uint256 _orderID, address _orderAddress);
@@ -73,13 +72,12 @@ contract LimitOrders is ERC721 {
         
         
         
-        // send "swap from" tokens to the ERC721 address
+        // the to be traded deposited token's value in ETH must be known
+        // so if pool token0 / token1 is not WETH, logic must recognize this, and somehow obtain deposited token value in ETH
         
         // deduct nocturnal fee % from deposited tokens, swap for ETH, and send to staker addresses
         
-        // deposited token to be traded will need to be converted to ETH value
-        // so if pool token0 / token1 is not WETH, logic must recognize this, and somehow convert deposited token to ETH
-        
+        // send "swap from" tokens to the ERC721 address
         
         
         
