@@ -230,40 +230,43 @@ contract LimitOrders is ERC721 {
     }
     
     function modifyOrderLimitPrice(address _orderAddress, uint256 _newLimitPrice) public returns (uint256) {
-        // deduct a modificaiton fee
+        // deduct a modification fee in ETH
+        // send to Rewards.sol
         uint256 orderID = swapOrderID[_orderAddress];
         require(ERC721.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
         swapLimitPrice[_orderAddress] = _newLimitPrice;
         
-        uint256 settlementFee = swapSettlementFee[_address];
-        uint256 creatorRewards = swapCreatorRewards[_address];
-        uint256 settlerRewards = swapSettlerRewards[_address];
+        uint256 settlementFee = swapSettlementFee[_orderAddress];
+        uint256 creatorRewards = swapCreatorRewards[_orderAddress];
+        uint256 settlerRewards = swapSettlerRewards[_orderAddress];
         
         emit orderModified(orderID, _orderAddress, settlementFee, creatorRewards, settlerRewards);
     }
     
     function modifyOrderSwapSlippage(address _orderAddress, uint256 _newSwapSlippage) public returns (uint256) {
-        // deduct a modification fee
+        // deduct a modification fee in ETH
+        // send to Rewards.sol
         uint256 orderID = swapOrderID[_orderAddress];
         require(ERC721.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
         swapSlippage[_orderAddress] = _newSwapSlippage;
         
-        uint256 settlementFee = swapSettlementFee[_address];
-        uint256 creatorRewards = swapCreatorRewards[_address];
-        uint256 settlerRewards = swapSettlerRewards[_address];
+        uint256 settlementFee = swapSettlementFee[_orderAddress];
+        uint256 creatorRewards = swapCreatorRewards[_orderAddress];
+        uint256 settlerRewards = swapSettlerRewards[_orderAddress];
         
         emit orderModified(orderID, _orderAddress, settlementFee, creatorRewards, settlerRewards);      
     }
     
     function modifyOrderSettlementFee(address _orderAddress, uint256 _newSettlementFee) public returns (uint256) {
-        // deduct a modification fee
+        // deduct a modification fee in ETH
+        // send to Rewards.sol
         uint256 orderID = swapOrderID[_orderAddress];
         require(ERC721.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
         swapSettlementFee[_orderAddress] = _newSettlementFee;
         
-        uint256 settlementFee = swapSettlementFee[_address];
-        uint256 creatorRewards = swapCreatorRewards[_address];
-        uint256 settlerRewards = swapSettlerRewards[_address];
+        uint256 settlementFee = swapSettlementFee[_orderAddress];
+        uint256 creatorRewards = swapCreatorRewards[_orderAddress];
+        uint256 settlerRewards = swapSettlerRewards[_orderAddress];
         
         emit orderModified(orderID, _orderAddress, _newSettlementFee, creatorRewards, settlerRewards);      
     }
