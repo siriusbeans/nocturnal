@@ -27,7 +27,8 @@ contract LimitOrders is ERC721 {
     mapping(address => uint256) swapCreatorRewards;
     mapping(address => uint256) swapSettlerRewards;
     
-    // may only include order Address in the events...
+    // may only include order Address in the events
+    // or may include all order attributes for analytics
     event orderCreated(uint256 _orderID, address _orderAddress, uint256 _settlementFee, uint256 _creatorRewards, uint256 _settlerRewards);
     event orderSettled(uint256 _orderID, address _orderAddress, uint256 _settlementFee, uint256 _creatorRewards, uint256 _settlerRewards);
     event orderClosed(uint256 _orderID, address _orderAddress);
