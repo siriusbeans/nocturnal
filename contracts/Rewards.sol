@@ -47,15 +47,14 @@ contract Rewards {
     function calculateOrderCreatorRewards(uint256 _swapFromTokenBalance, uint256 _swapSettlementFee) public returns (uint256) {
         require(msg.sender == nocturnalFinance.orderFactoryAddress());
         uint256 rewards;
-        // compute rewards based on swapFromTokenBalance, circulating NOCT supply, total NOCT supply, and swapSettlementFee
+        // compute rewards based on swapFromTokenBalance value in ETH, current pendingRewards, and current totalRewards
         return(rewards);
     }
     
     function calculateOrderSettlerRewards() public returns (uint256) {
         require(msg.sender == nocturnalFinance.orderFactoryAddress());
         uint256 rewards;
-        // compute rewards based on cirulating NOCT supply, total NOCT supply, and ????
-        // **should the total supply at the time the order was created be considered here?**
+        // compute rewards based on current pendingRewards and current totalRewards
         return(rewards);
     }
 }
