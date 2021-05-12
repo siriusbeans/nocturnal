@@ -44,17 +44,16 @@ contract Rewards {
         return(addressRewards);
     } 
     
-    function calculateOrderCreatorRewards(uint256 _swapFromTokenBalance, uint256 _swapSettlementFee) public returns (uint256) {
+    function calculateOrderRewards(uint256 _swapFromTokenBalance) public returns (uint256, uint256) {
         require(msg.sender == nocturnalFinance.orderFactoryAddress());
-        uint256 rewards;
+        uint256 orderCreatorRewards;
+        uint256 orderSettlerRewards;
+        uint256 orderRewards;
         // compute rewards based on swapFromTokenBalance value in ETH, current pendingRewards, and current totalRewards
-        return(rewards);
-    }
-    
-    function calculateOrderSettlerRewards() public returns (uint256) {
-        require(msg.sender == nocturnalFinance.orderFactoryAddress());
-        uint256 rewards;
-        // compute rewards based on current pendingRewards and current totalRewards
-        return(rewards);
+        
+        // Condition:  As totalRewards + pendingRewards + orderRewards approaches totalSupply, orderRewards must
+        //             get smaller, such that totalRewards + pendingRewards + orderRewards never is equal to totalSupply
+        
+        return(orderCreatorRewards, orderSettlerRewards);
     }
 }
