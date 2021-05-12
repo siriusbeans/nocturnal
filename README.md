@@ -5,10 +5,9 @@ Todo:
 
  1)  See OrderFactory.sol
  2)  Create calculation functions for settlers and creators (Rewards.sol)
- 4)  Start staking code (NoctStaking.sol)
- 5)  Front-end development
- 6)  Bot settlement support development
- 7)  Consider gitbooks documents 
- 8)  Consider publishing medium articles
- 9)  Consider creating a TG Channel (during or after testnet launch)
- 10)  Consider creating a Discord Server (during or after testnet launch)
+ 3)  Front-end development
+ 4)  Bot settlement support development
+ 5)  Consider gitbooks documents 
+ 6)  Consider publishing medium articles
+ 7)  Consider creating a TG Channel (during or after testnet launch)
+ 8)  Consider creating a Discord Server (during or after testnet launch)
