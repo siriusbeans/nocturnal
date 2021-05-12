@@ -1,7 +1,6 @@
-// SPDX-License-Identifier: MIT
-pragma solidity 0.6.6;
+pragma solidity ^0.6.6;
 
-interface OrerFactoryInterface {
+interface RewardsInterface {
     function claimRewards() external returns ();
     function checkRewards() external view returns (uint256);
     function calculateOrderRewards(uint256) external view returns (uint256, uint256);
