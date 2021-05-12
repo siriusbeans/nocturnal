@@ -77,6 +77,9 @@ contract LimitOrders is ERC721 {
         
         // deduct nocturnal fee % from deposited tokens, swap for ETH, and send to staker addresses
         
+        // deposited token to be traded will need to be converted to ETH value
+        // so if pool token0 / token1 is not WETH, logic must recognize this, and somehow convert deposited token to ETH
+        
         
         
         
