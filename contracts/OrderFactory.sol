@@ -2,6 +2,7 @@ pragma solidity ^0.6.6;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol";
+import "";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 import {OracleInterface} from "./Interfaces/OracleInterface.sol";
@@ -56,7 +57,6 @@ contract OrderFactory is ERC721 {
         address orderAddress = address(nocturnalOrder);
         
         swapOrderID[orderAddress] = orderID
-        
         swapPoolAddress[orderAddress] = _swapPoolAddress;
         swapFromTokenAddress[orderAddress] = _swapFromTokenAddress;
         swapToTokenAddress[orderAddress] = _swapToTokenAddress;
@@ -66,10 +66,13 @@ contract OrderFactory is ERC721 {
         swapSlippage[orderAddress] = _swapSlippage;
         swapSettlementFee[orderAddress] = _swapSettlementFee;
         
-        swapSettlerRewards[orderAddress] = _swapSettlerRewards;
+        // calculate NOCT rewards for order creator and settler
+        uint256 (creatorRewards, settlerRewards) = RewardsInterface(nocturnalFinance.rewardsAddress()).calculateOrderRewards();
+        swapCreatorRewards[orderAddress] = creatorRewards;
+        swapSettlerRewards[orderAddress] = settlerRewards;
+
         
         _mint(msg.sender, orderID);
-        
         
         
         
@@ -78,17 +81,11 @@ contract OrderFactory is ERC721 {
         // deduct nocturnal fee % from deposited tokens, swap for ETH, and send to staker addresses
         
         // deposited token to be traded will need to be converted to ETH value
+        
         // so if pool token0 / token1 is not WETH, logic must recognize this, and somehow convert deposited token to ETH
-        
-        
-        
-        
-        
-        // calculate NOCT rewards for order creator and settler
-        uint256 (creatorRewards, settlerRewards) = RewardsInterface(nocturnalFinance.rewardsAddress()).calculateOrderRewards();
-        swapCreatorRewards[orderAddress] = creatorRewards;
-        swapSettlerRewards[orderAddress] = settlerRewards;
-       
+
+
+
         // add pending calculated rewards to pending rewards accumulator map
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
         RewardsInterface(nocturnalFinance.rewardsAddress()).pendingRewards().increment(pendingRewards);  //
@@ -99,7 +96,6 @@ contract OrderFactory is ERC721 {
     }
     
     function settleLimitOrder(address _address) public {
-        // compare order attributes and price oracle result and require limit is met
         bool above = swapAbove[_address];
         uint256 limitPrice = swapLimitPrice[_address];
         uint256 currentPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_address);
@@ -124,9 +120,13 @@ contract OrderFactory is ERC721 {
         
         
         // perform the swap after deducting settlement fee in ETH
+        
         // obtain amount of token received in swap (for event)
-        // uint256 toTokenBalance = 
+        
+        // uint256 toTokenBalance =
+         
         // send settlement fee (in ETH) to settler
+        
         // distribute NOCT rewards to closer and creator
         
         
@@ -163,7 +163,6 @@ contract OrderFactory is ERC721 {
         
         
         // transfer order asset to msg.sender address
-        // an early withdraw penalty will be charged  ????
         
         
         
@@ -230,8 +229,6 @@ contract OrderFactory is ERC721 {
     }
     
     function modifyOrderSwapSlippage(address _orderAddress, uint256 _newSwapSlippage) public returns (uint256) {
-        // deduct a modification fee in ETH
-        // send to NoctStaking.sol
         uint256 orderID = swapOrderID[_orderAddress];
         require(ERC721.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
         swapSlippage[_orderAddress] = _newSwapSlippage;
@@ -244,8 +241,6 @@ contract OrderFactory is ERC721 {
     }
     
     function modifyOrderSettlementFee(address _orderAddress, uint256 _newSettlementFee) public returns (uint256) {
-        // deduct a modification fee in ETH
-        // send to NoctStaking.sol
         uint256 orderID = swapOrderID[_orderAddress];
         require(ERC721.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
         swapSettlementFee[_orderAddress] = _newSettlementFee;
