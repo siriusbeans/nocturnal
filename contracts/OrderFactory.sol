@@ -62,7 +62,7 @@ contract LimitOrders is ERC721 {
         swapToTokenAddress[orderAddress] = _swapToTokenAddress;
         swapFromTokenBalance[orderAddress] = _swapFromTokenBalance;
         swapLimitPrice[orderAddress] = _swapLimitPrice;
-        swapAbove[orderAddress] = _swapAbove[orderID];
+        swapAbove[orderAddress] = _swapAbove;
         swapSlippage[orderAddress] = _swapSlippage;
         swapSettlementFee[orderAddress] = _swapSettlementFee;
         
@@ -153,7 +153,7 @@ contract LimitOrders is ERC721 {
     
     function closeLimitOrder(address _address) public {
         uint256 orderID = swapOrderID[_address];
-        require(ERC721.ownerOf(tokenId) == msg.sender, "only order owner can close an order early");
+        require(ERC721.ownerOf(orderID) == msg.sender, "only order owner can close an order early");
         
         uint256 creatorRewards = swapCreatorRewards[_address];
         uint256 settlerRewards = swapSettlerRewards[_address];
@@ -212,19 +212,37 @@ contract LimitOrders is ERC721 {
         return swapAbove[_address];
     }
     
-    function getOrderSwapSlippage(uint256 _orderAddress) public view returns (uint256) {
+    function getOrderSwapSlippage(address _orderAddress) public view returns (uint256) {
         return swapSlippage[_address];
     }
     
-    function getOrderSettlementFee(uint256 _orderAddress) public view returns (uint256) {
+    function getOrderSettlementFee(address _orderAddress) public view returns (uint256) {
         return swapSettlementFee[_address];
     }
     
-    function getOrderCreatorRewards(uint256 _orderAddress) public view returns (uint256) {
+    function getOrderCreatorRewards(address _orderAddress) public view returns (uint256) {
         return swapCreatorRewards[_address];
     }
     
-    function getOrderSettlerRewards(uint256 _orderAddress) public view returns (uint256) {
+    function getOrderSettlerRewards(address _orderAddress) public view returns (uint256) {
         return swapSettlerRewards[_address];
+    }
+    
+    function modifyOrderLimitPrice(address _orderAddress, uint256 _newLimitPrice) public returns (uint256) {
+        uint256 orderID = swapOrderID[_orderAddress];
+        require(ERC721.ownerOf(orderID) == msg.sender, "only order owner can modify an existing order");
+        swapLimitPrice[_orderAddress] = _newLimitPrice;
+    }
+    
+    function modifyOrderSwapSlippage(address _orderAddress, uint256 _newSwapSlippage) public returns (uint256) {
+        uint256 orderID = swapOrderID[_orderAddress];
+        require(ERC721.ownerOf(orderID) == msg.sender, "only order owner can modify an existing order");
+        swapSlippage[_orderAddress] = _newSwapSlippage;
+    }
+    
+    function modifyOrderSettlementFee(address _orderAddress, uint256 _newSettlementFee) public returns (uint256) {
+        uint256 orderID = swapOrderID[_orderAddress];
+        require(ERC721.ownerOf(orderID) == msg.sender, "only order owner can modify an existing order");
+        swapSettlementFee[_orderAddress] = _newSettlementFee;
     }
 }
