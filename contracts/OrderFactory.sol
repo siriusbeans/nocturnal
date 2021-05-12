@@ -101,24 +101,25 @@ contract LimitOrders is ERC721 {
     
     function settleLimitOrder(address _address) public {
         // compare order attributes and price oracle result and require limit is met
-        uint256 orderID = swapOrderID[_address];
-        address poolAddress = swapPoolAddress[_address];
-        address fromTokenAddress = swapFromTokenAddress[_address];
-        address toTokenAddress = swapToTokenAddress[_address];
-        uint256 fromTokenBalance = swapFromTokenBalance[_address];
-        uint256 limitPrice = swapLimitPrice[_address];
         bool above = swapAbove[_address];
-        uint256 slippage = swapSlippage[_address];
-        uint256 settlementFee = swapSettlementFee[_address];
-        uint256 creatorRewards = swapCreatorRewards[_address];
-        uint256 settlerRewards = swapSettlerRewards[_address];
-        uint256 currentPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(poolAddress);
-        
+        uint256 limitPrice = swapLimitPrice[_address];
+        uint256 currentPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_address);
         if (swapAbove == true) {
             require(currentPrice >= limitPrice, "limit not met");
         } else if (swapAbove == false) {
             require(currentPrice <= limitPrice, "limit not met");
         }
+        
+        uint256 orderID = swapOrderID[_address];
+        address poolAddress = swapPoolAddress[_address];
+        address fromTokenAddress = swapFromTokenAddress[_address];
+        address toTokenAddress = swapToTokenAddress[_address];
+        uint256 fromTokenBalance = swapFromTokenBalance[_address];
+        uint256 slippage = swapSlippage[_address];
+        uint256 settlementFee = swapSettlementFee[_address];
+        uint256 creatorRewards = swapCreatorRewards[_address];
+        uint256 settlerRewards = swapSettlerRewards[_address];
+        
         
         
         
