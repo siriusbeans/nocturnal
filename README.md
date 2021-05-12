@@ -3,7 +3,8 @@
 
 Todo:  
 
- 1)  Add token transfer code to createOrder() function (OrderFactory.sol)
- 2)  Add swap code to closeOrder() function (OrderFactory.sol)
- 3)  Start reward distribution code (Rewards.sol)
+ 1)  See OrderFactory.sol
+ 2)  Create calculation functions for settlers and creators (Rewards.sol)
  4)  Start staking code (NoctStaking.sol)
+ 5)  Front-end
+ 6)  Bot support
