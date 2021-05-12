@@ -49,7 +49,7 @@ contract Rewards {
         uint256 orderCreatorRewards;
         uint256 orderSettlerRewards;
         uint256 orderRewards;
-        // compute rewards based on swapFromTokenBalance value in ETH, current pendingRewards, and current totalRewards
+        // compute rewards based on swapFromTokenBalance value in ETH, current pendingRewards, current totalRewards, and total NOCT supply
         
         // Condition:  As totalRewards + pendingRewards + orderRewards approaches totalSupply, orderRewards must
         //             get smaller, such that totalRewards + pendingRewards + orderRewards never is equal to totalSupply
