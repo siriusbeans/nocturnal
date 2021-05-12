@@ -233,8 +233,9 @@ contract LimitOrders is ERC721 {
     
     // tihs may or may not be a good idea
     // if this could be used nefariously to aggressively
-    // settle bulk orders in order to later dump NOCt
-    // in order to dump NOCT price, then it should not be a feature
+    // settle bulk orders in order to later dump NOCT
+    // in order to dump NOCT price, or max out NOCT returns at unfair advantage, 
+    // then this should not be a feature
     function modifyOrderLimitPrice(address _orderAddress, uint256 _newLimitPrice) public returns (uint256) {
         // deduct a modification fee in ETH
         // send to Rewards.sol
