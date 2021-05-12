@@ -237,6 +237,7 @@ contract LimitOrders is ERC721 {
     // in order to dump NOCT price, or max out NOCT returns at unfair advantage, 
     // then this should not be a feature
     function modifyOrderLimitPrice(address _orderAddress, uint256 _newLimitPrice) public returns (uint256) {
+        // perhaps add steep fee here to prevent the above scenario
         // deduct a modification fee in ETH
         // send to Rewards.sol
         uint256 orderID = swapOrderID[_orderAddress];
@@ -254,6 +255,7 @@ contract LimitOrders is ERC721 {
     // maybe add attribute to erc721 that counts unsuccessful settlements due to slippage
     // owner oberves order was not settled, sees counter incrememnted, adjusts slippage accordingly
     function modifyOrderSwapSlippage(address _orderAddress, uint256 _newSwapSlippage) public returns (uint256) {
+        // perhaps this should not cost the owner a fee to change...
         // deduct a modification fee in ETH
         // send to Rewards.sol
         uint256 orderID = swapOrderID[_orderAddress];
@@ -269,6 +271,7 @@ contract LimitOrders is ERC721 {
     
     // this should be modifiable imo
     function modifyOrderSettlementFee(address _orderAddress, uint256 _newSettlementFee) public returns (uint256) {
+        // perhaps this should not cost the owner a fee to change...
         // deduct a modification fee in ETH
         // send to Rewards.sol
         uint256 orderID = swapOrderID[_orderAddress];
