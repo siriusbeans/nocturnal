@@ -8,3 +8,7 @@ Todo:
  4)  Start staking code (NoctStaking.sol)
  5)  Front-end
  6)  Bot support
+ 7)  Consider gitbooks documents 
+ 8)  Consider publishing medium articles
+ 9)  Consider creating a TG Channel
+ 10)  Consider creating a Discord Server
