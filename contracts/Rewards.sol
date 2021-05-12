@@ -21,7 +21,8 @@ contract Rewards {
     Counter.counters public pendingRewards;
     Counter.counters public totalRewards;
     
-    mapping(address => uint256) public rewards;
+    mapping(address => uint256) public claimedRewards;
+    mapping(address => uint256) public unclaimedRewards;
     
     NocturnalFinanceInterface public nocturnalFinance;
     
