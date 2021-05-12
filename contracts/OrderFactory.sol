@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: MIT
-pragma solidity 0.6.12;
+pragma solidity ^0.6.6;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol";
@@ -8,7 +7,7 @@ import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 import {OracleInterface} from "./Interfaces/OracleInterface.sol";
 import {RewardsInterface} from "./Interfaces/RewardsInterface.sol";
 
-contract LimitOrders is ERC721 {
+contract OrderFactory is ERC721 {
     using SafeMath for uint256;
     using Counters for Counters.Counter;
     
@@ -27,8 +26,7 @@ contract LimitOrders is ERC721 {
     mapping(address => uint256) swapCreatorRewards;
     mapping(address => uint256) swapSettlerRewards;
     
-    // may only include order Address in the events
-    // or may include all order attributes for analytics
+    // may only include order Address in the events...
     event orderCreated(uint256 _orderID, address _orderAddress, uint256 _settlementFee, uint256 _creatorRewards, uint256 _settlerRewards);
     event orderSettled(uint256 _orderID, address _orderAddress, uint256 _settlementFee, uint256 _creatorRewards, uint256 _settlerRewards);
     event orderClosed(uint256 _orderID, address _orderAddress);
@@ -231,33 +229,9 @@ contract LimitOrders is ERC721 {
         return swapSettlerRewards[_address];
     }
     
-    // tihs may or may not be a good idea
-    // if this could be used nefariously to aggressively
-    // settle bulk orders in order to later dump NOCT
-    // in order to dump NOCT price, or max out NOCT returns at unfair advantage, 
-    // then this should not be a feature
-    function modifyOrderLimitPrice(address _orderAddress, uint256 _newLimitPrice) public returns (uint256) {
-        // perhaps add steep fee here to prevent the above scenario
-        // deduct a modification fee in ETH
-        // send to Rewards.sol
-        uint256 orderID = swapOrderID[_orderAddress];
-        require(ERC721.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
-        swapLimitPrice[_orderAddress] = _newLimitPrice;
-        
-        uint256 settlementFee = swapSettlementFee[_orderAddress];
-        uint256 creatorRewards = swapCreatorRewards[_orderAddress];
-        uint256 settlerRewards = swapSettlerRewards[_orderAddress];
-        
-        emit orderModified(orderID, _orderAddress, settlementFee, creatorRewards, settlerRewards);
-    }
-    
-    // this should be modifiable 
-    // maybe add attribute to erc721 that counts unsuccessful settlements due to slippage
-    // owner oberves order was not settled, sees counter incrememnted, adjusts slippage accordingly
     function modifyOrderSwapSlippage(address _orderAddress, uint256 _newSwapSlippage) public returns (uint256) {
-        // perhaps this should not cost the owner a fee to change...
         // deduct a modification fee in ETH
-        // send to Rewards.sol
+        // send to NoctStaking.sol
         uint256 orderID = swapOrderID[_orderAddress];
         require(ERC721.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
         swapSlippage[_orderAddress] = _newSwapSlippage;
@@ -269,11 +243,9 @@ contract LimitOrders is ERC721 {
         emit orderModified(orderID, _orderAddress, settlementFee, creatorRewards, settlerRewards);      
     }
     
-    // this should be modifiable imo
     function modifyOrderSettlementFee(address _orderAddress, uint256 _newSettlementFee) public returns (uint256) {
-        // perhaps this should not cost the owner a fee to change...
         // deduct a modification fee in ETH
-        // send to Rewards.sol
+        // send to NoctStaking.sol
         uint256 orderID = swapOrderID[_orderAddress];
         require(ERC721.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
         swapSettlementFee[_orderAddress] = _newSettlementFee;
