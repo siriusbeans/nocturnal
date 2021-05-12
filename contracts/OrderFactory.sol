@@ -31,6 +31,8 @@ contract LimitOrders is ERC721 {
     event orderCreated(uint256 _orderID, address _orderAddress, address _fromTokenAddress, uint256 _fromTokenBalance, address _toTokenAddress, uint256 _settlementFee, uint256 _creatorRewards, uint256 _settlerRewards);
     event orderSettled(uint256 _orderID, address _orderAddress, address _toTokenAddress, uint256 _toTokenBalance, address _fromTokenAddress, uint256 _settlementFee, uint256 _creatorRewards, uint256 _settlerRewards);
     event orderClosed(uint256 _orderID, address _orderAddress);
+    event rewardsPending(uint256 _pendingRewards);
+    event rewardsTotal(uint256 _totalRewards);
     
     NocturnalFinanceInterface public nocturnalFinance;
     
@@ -46,9 +48,7 @@ contract LimitOrders is ERC721 {
             uint256 _swapLimitPrice,
             bool _swapAbove,
             uint256 _swapSlippage, 
-            uint256 _swapSettlementFee, 
-            uint256 _swapCreatorRewards,
-            uint256 _swapSettlerRewards) public {
+            uint256 _swapSettlementFee) public {
         
         ERC721 nocturnalOrder = new ERC721 ("Nocturnal Order", "oNOCT"); 
         orderCounter.increment();
@@ -65,18 +65,37 @@ contract LimitOrders is ERC721 {
         swapAbove[orderAddress] = _swapAbove[orderID];
         swapSlippage[orderAddress] = _swapSlippage;
         swapSettlementFee[orderAddress] = _swapSettlementFee;
-        swapCreatorRewards[orderAddress] = _swapCreatorRewards;
+        
         swapSettlerRewards[orderAddress] = _swapSettlerRewards;
         
         _mint(msg.sender, orderID);
         
-        // send "swap from" tokens to the ERC721 address
-        // deduct nocturnal fee % from deposited tokens, swap for ETH, and send to staker addresses
-        // calculate NOCT rewards for order creator
-        // calculate NOCT rewards for order settler
-        // add pending calculated rewards to pending rewards accumulator map
         
-        emit orderCreated(orderID, orderAddress, _swapFromTokenAddress, _swapFromTokenBalance, _swapToTokenAddress, _swapSettlementFee, _swapCreatorRewards, _swapSettlerRewards);
+        
+        
+        // send "swap from" tokens to the ERC721 address
+        
+        // deduct nocturnal fee % from deposited tokens, swap for ETH, and send to staker addresses
+        
+        
+        
+        
+        
+        // calculate NOCT rewards for order creator
+        uint256 creatorRewards = RewardsInterface(nocturnalFinance.rewardsAddress()).calculateOrderCreatorRewards();
+        swapCreatorRewards[orderAddress] = creatorRewards;
+        
+        // calculate NOCT rewards for order settler
+        uint256 settlerRewards = RewardsInterface(nocturnalFinance.rewardsAddress()).calculateOrderSettlerRewards();
+        swapSettlerRewards[orderAddress] = settlerRewards;
+        
+        // add pending calculated rewards to pending rewards accumulator map
+        uint256 pendingRewards = creatorRewards.add(settlerRewards);
+        RewardsInterface(nocturnalFinance.rewardsAddress()).pendingRewards().increment(pendingRewards);  //
+        
+        emit orderCreated(orderID, orderAddress, _swapFromTokenAddress, _swapFromTokenBalance, _swapToTokenAddress, _swapSettlementFee, creatorRewards, settlerRewards);
+        emit rewardsPending(pendingRewards);
+        emit rewardsTotal(totalRewards);
     }
     
     function settleLimitOrder(address _address) public {
@@ -100,29 +119,69 @@ contract LimitOrders is ERC721 {
             require(currentPrice <= limitPrice, "limit not met");
         }
         
-        // perform the swap
-        // deduct settlement fee
+        
+        
+        
+        // perform the swap after deducting settlement fee in ETH
         // obtain amount of token received in swap (for event)
         // uint256 toTokenBalance = 
         // send settlement fee (in ETH) to settler
         // distribute NOCT rewards to closer and creator
+        
+        
+        
+        
+        
         // deduct NOCT pending rewards from NOCT pending rewards accumulator map
+        uint256 pendingRewards = creatorRewards.add(settlerRewards);
+        RewardsInterface(nocturnalFinance.rewardsAddress()).pendingRewards().decrement(pendingRewards); 
+        
         // update NOCT circulating supply map accordingly
+        RewardsInterface(nocturnalFinance.rewardsAddress()).totalRewards().increment(pendingRewards);
+        
+        
+        
         // burn ERC721
         
+        
+        
+        
         emit orderSettled(orderID, orderAddress, toTokenAddress, toTokenBalance, fromTokenAddress, settlementFee, creatorRewards, settlerRewards);
+        emit rewardsPending(pendingRewards);
+        emit rewardsTotal(totalRewards);
     }
     
     function closeLimitOrder(address _address) public {
         uint256 orderID = swapOrderID[_address];
         require(ERC721.ownerOf(tokenId) == msg.sender, "only order owner can close an order early");
         
+        uint256 creatorRewards = swapCreatorRewards[_address];
+        uint256 settlerRewards = swapSettlerRewards[_address];
+        
+        
+        
+        
         // transfer order asset to msg.sender address
         // an early withdraw penalty will be charged  ????
+        
+        
+        
+        
         // deduct pending rewards from pending rewards accumulator map
+        uint256 creatorRewards = swapCreatorRewards[_address];
+        uint256 settlerRewards = swapSettlerRewards[_address];
+        uint256 pendingRewards = creatorRewards.add(settlerRewards);
+        RewardsInterface(nocturnalFinance.rewardsAddress()).pendingRewards().decrement(pendingRewards); 
+        
+        
+        
         // burn ERC721
         
+        
+        
         emit orderClosed(orderID, _address);
+        emit rewardsPending(pendingRewards);
+        emit rewardsTotal(totalRewards);
     }
 
     function getOrderID(address _orderAddress) public view returns (uint256) {
