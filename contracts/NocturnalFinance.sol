@@ -4,12 +4,13 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 
 contract NocturnalFinance is Ownable {
     
-    address internal oracleAddress;
-    address internal rewardsAddress;
-    address internal orderFactoryAddress;
-    address internal feeRateAdress;
-    address internal noctAddress;
-    address internal sNoctAddress;
+    address public oracleAddress;
+    address public rewardsAddress;
+    address public orderFactoryAddress;
+    address public feeRateAdress;
+    address public noctAddress;
+    address public sNoctAddress;
+    uint256 public depositRate;
     
     constructor() public {
     }
@@ -39,4 +40,7 @@ contract NocturnalFinance is Ownable {
         sNoctAddress = _sNoctAddress;
     }
     
+    function setDepositRate(uint256 _dRate) external onlyOwner {
+        depositRate = _dRate;
+    }
 }
