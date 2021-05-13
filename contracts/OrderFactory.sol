@@ -112,8 +112,8 @@ contract OrderFactory is ERC721 {
             // _swapFromTokenAddress's WETH pool address is unknown
         }
       
-      
-                            
+                             
+        
         // send remaining "swap from" tokens to the ERC721 address
         ERC20 token = ERC20(_swapFromTokenAddress);
         // must ensure the below operation occurs, always
@@ -161,12 +161,12 @@ contract OrderFactory is ERC721 {
 
 
         if ((_swapFromTokenAddress == WETH) {
-            // send gratuity WETH to NoctStaking.sol
+            // swap gratuity _swapToTokenAddess into WETH, convert to ETH, and send it to settler
         } else if (_swapToTokenAddress == WETH) {
-            // swap gratuity _swapFromTokenAddess into WETH and send it to NoctStaking.sol
+            // convert gratuity WETH to ETH and send to settler
         } else {
-            // swap gratuity _swapFromTokenAddress into WETH and send it to NoctStaking.sol
-            // _swapFromTokenAddress's WETH pool address is unknown
+            // swap gratuity _swapToTokenAddess into WETH, convert to ETH, and send ti to settler
+            // _swapToTokenAddess's WETH pool address is unknown
         }
         
        
