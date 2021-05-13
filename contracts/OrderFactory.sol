@@ -161,16 +161,14 @@ contract OrderFactory is ERC721 {
             // _swapToTokenAddess's WETH pool address is unknown
         }
         
-       
-        
-        // send settlementGratuity to settler
-        ERC20 token = ERC20(WETH);
-        require(token.transfer(msg.sender, ), "gratuity transfer failed")
+
         
         // distribute NOCT rewards to settler and creator
-        ERC20 token = ERC20(tA);
-        require(token.balanceOf(msg.sender) >= amount, "insufficent NOCT balance");
-        require(token.transferFrom(msg.sender, address(this), amount), "staking failed");
+        ERC20 token = ERC20(nocturnalFinance.noctAddress());
+        require(token.transferFrom(nocturnalFinance.noctAddress(), msg.sender, settlerRewards), "settler noct transfer failed");
+        require(token.transferFrom(nocturnalFinance.noctAddress(), ERC721.ownerOf(orderID), creatorRewards), "creator noct transfer failed");
+        
+        
         
         // deduct NOCT pending rewards from NOCT pending rewards accumulator map
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
