@@ -125,7 +125,7 @@ contract OrderFactory is ERC721 {
          
         // send settlementGratuity to settler
         
-        // distribute NOCT rewards to closer and creator
+        // distribute NOCT rewards to settler and creator
         
         
         
