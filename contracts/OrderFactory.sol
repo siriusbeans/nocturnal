@@ -22,17 +22,17 @@ contract OrderFactory is ERC721 {
     mapping(address => uint256) swapToTokenLimitPrice;
     mapping(address => bool) swapAbove;
     mapping(address => uint256) swapSlippage;
-    mapping(address => uint256) swapSettlementFee;
+    mapping(address => uint256) swapSettlementGratuity;
     mapping(address => uint256) swapCreatorRewards;
     mapping(address => uint256) swapSettlerRewards;
     
     // may only include order Address in the events...
-    event orderCreated(uint256 _orderID, address _orderAddress, uint256 _settlementFee, uint256 _creatorRewards, uint256 _settlerRewards);
-    event orderSettled(uint256 _orderID, address _orderAddress, uint256 _settlementFee, uint256 _creatorRewards, uint256 _settlerRewards);
+    event orderCreated(uint256 _orderID, address _orderAddress, uint256 _settlementGratuity, uint256 _creatorRewards, uint256 _settlerRewards);
+    event orderSettled(uint256 _orderID, address _orderAddress, uint256 _settlementGratuity, uint256 _creatorRewards, uint256 _settlerRewards);
     event orderClosed(uint256 _orderID, address _orderAddress);
     event rewardsPending(uint256 _pendingRewards);
     event rewardsTotal(uint256 _totalRewards);
-    event orderModified(uint256 _orderID, address _orderAddress, uint256 _settlementFee, uint256 _creatorRewards, uint256 _settlerRewards);
+    event orderModified(uint256 _orderID, address _orderAddress, uint256 _settlementGratuity, uint256 _creatorRewards, uint256 _settlerRewards);
     
     NocturnalFinanceInterface public nocturnalFinance;
     
@@ -48,8 +48,8 @@ contract OrderFactory is ERC721 {
             uint256 _swapLimitPrice,
             bool _swapAbove,
             uint256 _swapSlippage, 
-            uint256 _swapSettlementFee) public {
-        
+            uint256 _swapSettlementGratuity) public {
+        require(_swapSettlementGratuity 
         ERC721 nocturnalOrder = new ERC721 ("Nocturnal Order", "oNOCT"); 
         orderCounter.increment();
         uint256 orderID = orderCounter.current();
@@ -63,7 +63,7 @@ contract OrderFactory is ERC721 {
         swapLimitPrice[orderAddress] = _swapLimitPrice;
         swapAbove[orderAddress] = _swapAbove;
         swapSlippage[orderAddress] = _swapSlippage;
-        swapSettlementFee[orderAddress] = _swapSettlementFee;
+        swapSettlementGratuity[orderAddress] = _swapSettlementGratuity;
         
         // calculate NOCT rewards for order creator and settler
         uint256 (creatorRewards, settlerRewards) = RewardsInterface(nocturnalFinance.rewardsAddress()).calculateOrderRewards();
@@ -81,12 +81,13 @@ contract OrderFactory is ERC721 {
         // send "swap from" tokens to the ERC721 address
         
         
+        
 
         // add pending calculated rewards to pending rewards accumulator map
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
         RewardsInterface(nocturnalFinance.rewardsAddress()).pendingRewards().increment(pendingRewards);  //
         
-        emit orderCreated(orderID, orderAddress, _swapSettlementFee, creatorRewards, settlerRewards);
+        emit orderCreated(orderID, orderAddress, _swapSettlementGratuity, creatorRewards, settlerRewards);
         emit rewardsPending(pendingRewards);
         emit rewardsTotal(totalRewards);
     }
@@ -107,7 +108,7 @@ contract OrderFactory is ERC721 {
         address toTokenAddress = swapToTokenAddress[_address];
         uint256 fromTokenBalance = swapFromTokenBalance[_address];
         uint256 slippage = swapSlippage[_address];
-        uint256 settlementFee = swapSettlementFee[_address];
+        uint256 settlementGratuity = swapSettlementGratuity[_address];
         uint256 creatorRewards = swapCreatorRewards[_address];
         uint256 settlerRewards = swapSettlerRewards[_address];
         
@@ -120,9 +121,9 @@ contract OrderFactory is ERC721 {
         
         // uint256 toTokenBalance =
          
-        // deduct settlementFee percentage from toTokenBalance and swap to ETH
+        // deduct settlementGratuity percentage from toTokenBalance and swap to ETH
          
-        // send settlementFee to settler
+        // send settlementGratuity to settler
         
         // distribute NOCT rewards to closer and creator
         
@@ -144,7 +145,7 @@ contract OrderFactory is ERC721 {
         
         
         
-        emit orderSettled(orderID, orderAddress, settlementFee, creatorRewards, settlerRewards);
+        emit orderSettled(orderID, orderAddress, settlementGratuity, creatorRewards, settlerRewards);
         emit rewardsPending(pendingRewards);
         emit rewardsTotal(totalRewards);
     }
@@ -212,8 +213,8 @@ contract OrderFactory is ERC721 {
         return swapSlippage[_address];
     }
     
-    function getOrderSettlementFee(address _orderAddress) public view returns (uint256) {
-        return swapSettlementFee[_address];
+    function getOrderSettlementGratuity(address _orderAddress) public view returns (uint256) {
+        return swapSettlementGratuity[_address];
     }
     
     function getOrderCreatorRewards(address _orderAddress) public view returns (uint256) {
@@ -229,22 +230,22 @@ contract OrderFactory is ERC721 {
         require(ERC721.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
         swapSlippage[_orderAddress] = _newSwapSlippage;
         
-        uint256 settlementFee = swapSettlementFee[_orderAddress];
+        uint256 settlementGratuity = swapSettlementGratuity[_orderAddress];
         uint256 creatorRewards = swapCreatorRewards[_orderAddress];
         uint256 settlerRewards = swapSettlerRewards[_orderAddress];
         
-        emit orderModified(orderID, _orderAddress, settlementFee, creatorRewards, settlerRewards);      
+        emit orderModified(orderID, _orderAddress, settlementGratuity, creatorRewards, settlerRewards);      
     }
     
-    function modifyOrderSettlementFee(address _orderAddress, uint256 _newSettlementFee) public returns (uint256) {
+    function modifyOrderSettlementGratuity(address _orderAddress, uint256 _newSettlementGratuity) public returns (uint256) {
         uint256 orderID = swapOrderID[_orderAddress];
         require(ERC721.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
-        swapSettlementFee[_orderAddress] = _newSettlementFee;
+        swapSettlementGratuity[_orderAddress] = _newSettlementGratuity;
         
-        uint256 settlementFee = swapSettlementFee[_orderAddress];
+        uint256 settlementGratuity = swapSettlementGratuity[_orderAddress];
         uint256 creatorRewards = swapCreatorRewards[_orderAddress];
         uint256 settlerRewards = swapSettlerRewards[_orderAddress];
         
-        emit orderModified(orderID, _orderAddress, _newSettlementFee, creatorRewards, settlerRewards);      
+        emit orderModified(orderID, _orderAddress, _newSettlementGratuity, creatorRewards, settlerRewards);      
     }
 }
