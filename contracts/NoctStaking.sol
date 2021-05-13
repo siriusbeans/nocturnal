@@ -2,6 +2,7 @@ pragma solidity ^0.6.6;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.0/contracts/token/ERC20/ERC20.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeMath.sol";
+import "https://github.com/Uniswap/uniswap-v3-periphery/blob/main/contracts/interfaces/IPeripheryPayments.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 
 contract NoctStaking {
@@ -13,6 +14,7 @@ contract NoctStaking {
     mapping(address => uint256) public staked;
     
     NocturnalFinanceInterface public nocturnalFinance;
+    IPeripheryPayments public payment;
 
     constructor (address _nocturnalFinance) public {
       nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
@@ -59,6 +61,7 @@ contract NoctStaking {
     }
 
     function claimETHRewards() public {
+        // use unwrapWETH9() and transfer to staker
         require(lrc[msg.sender] <= trg, "no rewards available");
         
         uint256 toSend = pendingETHRewards(msg.sender);
