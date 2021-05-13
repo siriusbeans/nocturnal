@@ -93,39 +93,43 @@ contract OrderFactory is ERC721 {
 
         _mint(msg.sender, orderID);
         
+        //================================//
+        //================================//
         
-        
-        
-        // deduct nocturnal fee % from "swap from" tokens, swap for ETH, and send to staker addresses:
+        // DEDUCT PLATFORM FEE FROM DEPOSIT
+        // CONVERT TO ETH AND SEND TO STAKING CONTRACT
+        // THEN SEND WHAT IS LEFT OF TOKEN TO ERC721
         
         // calculate FeeCalc rate value of fromTokenBalance
         uint256 dRateBasisPoints = nocturnalFinance.depositRate();
         uint256 dFee = _swapFromTokenBalance.mul(dRateBasisPoints).div(bPDivisor);
         
-  
-        // use swaprouter.exactInputSingle() to obtain WETH
-        //uint256 depositFee = swapRouter.exactInputSingle(
-        //                         ISwapRouter.ExactInputSingleParams({
-        //                             tokenIn: _tokenIn,
-        //                             tokenOut: _tokenOut,
-        //                             fee: _fee,
-        //                             recipient: _recipient,
-        //                             deadline: _deadline,
-        //                             amountIn: _amountIn,
-        //                             amountOutMinimum: _amountOutMinimum,
-        //                             sqrtPriceLimitX96: _sqrtPriceLimitX96})
-        //                     );
+        // DETERMINE IF THE BELOW TWO OPERATIONS CAN OCCUR IN SAME BLOCK
+        // IF NOT, THERE WILL NEED TO BE A BUFFER OF WETH IN address(this)
         
+        // use swaprouter.exactInputSingle() to obtain WETH
+        uint256 depositFee = swapRouter.exactInputSingle(
+                                 ISwapRouter.ExactInputSingleParams({
+                                     tokenIn: _swapFromTokenAddress,
+                                     tokenOut: WETH,
+                                     fee: ,  // ???
+                                     recipient: address(this),
+                                     deadline: ,  // ???
+                                     amountIn: dFee,
+                                     amountOutMinimum: ,  // ???
+                                     sqrtPriceLimitX96: }));  // ???
+                             
         
         // use unwrapWETH9 to obtain ETH and send to NoctStaking.sol
-        //payment.unwrapWETH9(depositFee, nocturnalFinance.sNoctAddress());
-        
-        
+        payment.unwrapWETH9(depositFee, nocturnalFinance.sNoctAddress());
         
         // send remaining "swap from" tokens to the ERC721 address
         ERC20 token = ERC20(_swapFromTokenAddress);
+        // must ensure the below operation occurs, always
         require(token.transferFrom(ERC721.ownerOf(orderID), orderAddress, fromTokenBalance.sub(dFee)), "order creation failed:  tokens did not reach order ERC721");
         
+        //================================//
+        //================================//
         
         // add pending calculated rewards to pending rewards accumulator map
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
@@ -161,18 +165,24 @@ contract OrderFactory is ERC721 {
         
         
         // use pool.swap() to swap fromTokenBalance to toTokenBalance         
+        
         // deduct settlementGratuity percentage from toTokenBalance and swap to ETH
+        
         // calculate gratuity rate value of toTokenBalance
+        uint256 gratuity = _swapFromTokenBalance.mul(settlementGratuity).div(bPDivisor);
+        
         // use swaprouter.exactInputSingle() to swap to WETH
+        
         // use unwrapWETH9 to swap to ETH
+        
         // use transferFrom() to send to settler
         
         
         
         
         // send settlementGratuity to settler
-        ERC20 token = ERC20(tA);
-        require(token.transfer(msg.sender, amount), "transfer failed")
+        ERC20 token = ERC20(toTokenAddress);
+        require(token.transfer(msg.sender, ), "gratuity transfer failed")
         
         // distribute NOCT rewards to settler and creator
         ERC20 token = ERC20(tA);
