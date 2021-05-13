@@ -75,15 +75,12 @@ contract OrderFactory is ERC721 {
         
         
         
+        
+        // deduct nocturnal fee % from "swap from" tokens, swap for ETH, and send to staker addresses
+        
         // send "swap from" tokens to the ERC721 address
         
-        // deduct nocturnal fee % from deposited tokens, swap for ETH, and send to staker addresses
         
-        // deposited token to be traded will need to be converted to ETH value
-        
-        // so if pool token0 / token1 is not WETH, logic must recognize this, and somehow convert deposited token to ETH
-
-
 
         // add pending calculated rewards to pending rewards accumulator map
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
@@ -117,14 +114,15 @@ contract OrderFactory is ERC721 {
         
         
         
-        
-        // perform the swap after deducting settlement fee in ETH
+       
         
         // obtain amount of token received in swap (for event)
         
         // uint256 toTokenBalance =
          
-        // send settlement fee (in ETH) to settler
+        // deduct settlementFee percentage from toTokenBalance and swap to ETH
+         
+        // send settlementFee to settler
         
         // distribute NOCT rewards to closer and creator
         
@@ -154,14 +152,13 @@ contract OrderFactory is ERC721 {
     function closeLimitOrder(address _address) public {
         uint256 orderID = swapOrderID[_address];
         require(ERC721.ownerOf(orderID) == msg.sender, "only order owner can close an order early");
-        
+        address fromTokenAddress = swapFromTokenAddress[_address];
         uint256 creatorRewards = swapCreatorRewards[_address];
         uint256 settlerRewards = swapSettlerRewards[_address];
         
         
         
-        
-        // transfer order asset to msg.sender address
+        // transfer fromTokenAddress from ERC721 to msg.sender address
         
         
         
