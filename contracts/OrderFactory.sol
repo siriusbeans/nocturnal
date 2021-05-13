@@ -103,20 +103,17 @@ contract OrderFactory is ERC721 {
         
         
         
-        // with this code, gas will be higher for deposits that are non-WETH erc20
-        if ((_swapFromTokenAddress == WETH) || (_swapToTokenAddress == WETH)) {
-            if (_swapFromTokenAddress == WETH) {
-                // send dFee WETH to NoctStaking.sol
-            } else {
-                // swap dFee _swapFromTokenAddess into WETH and send it to NoctStaking.sol
-            }
+        if ((_swapFromTokenAddress == WETH) {
+            // send dFee WETH to NoctStaking.sol
+        } else if (_swapToTokenAddress == WETH) {
+            // swap dFee _swapFromTokenAddess into WETH and send it to NoctStaking.sol
         } else {
             // swap dFee _swapFromTokenAddress into WETH and send it to NoctStaking.sol
             // _swapFromTokenAddress's WETH pool address is unknown
         }
       
-                             
-        
+      
+                            
         // send remaining "swap from" tokens to the ERC721 address
         ERC20 token = ERC20(_swapFromTokenAddress);
         // must ensure the below operation occurs, always
@@ -163,12 +160,10 @@ contract OrderFactory is ERC721 {
         
 
 
-        if ((_swapFromTokenAddress == WETH) || (_swapToTokenAddress == WETH)) {
-            if (_swapFromTokenAddress == WETH) {
-                // send gratuity WETH to NoctStaking.sol
-            } else {
-                // swap gratuity _swapFromTokenAddess into WETH and send it to NoctStaking.sol
-            }
+        if ((_swapFromTokenAddress == WETH) {
+            // send gratuity WETH to NoctStaking.sol
+        } else if (_swapToTokenAddress == WETH) {
+            // swap gratuity _swapFromTokenAddess into WETH and send it to NoctStaking.sol
         } else {
             // swap gratuity _swapFromTokenAddress into WETH and send it to NoctStaking.sol
             // _swapFromTokenAddress's WETH pool address is unknown
