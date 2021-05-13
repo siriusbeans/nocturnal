@@ -33,16 +33,8 @@ contract OrderFactory is ERC721 {
     
     // may include all attributes in events
     // someone may want to analyze trade data in future
-    event orderCreated(uint256 _orderID, 
-                       address _orderAddress, 
-                       uint256 _settlementGratuity, 
-                       uint256 _creatorRewards, 
-                       uint256 _settlerRewards);
-    event orderSettled(uint256 _orderID, 
-                       address _orderAddress, 
-                       uint256 _settlementGratuity, 
-                       uint256 _creatorRewards, 
-                       uint256 _settlerRewards);
+    event orderCreated(uint256 _orderID, address _orderAddress, uint256 _settlementGratuity, uint256 _creatorRewards, uint256 _settlerRewards);
+    event orderSettled(uint256 _orderID, address _orderAddress, uint256 _settlementGratuity, uint256 _creatorRewards, uint256 _settlerRewards);
     event orderClosed(uint256 _orderID, address _orderAddress);
     event rewardsPending(uint256 _pendingRewards);
     event rewardsTotal(uint256 _totalRewards);
