@@ -17,6 +17,8 @@ contract OrderFactory is ERC721 {
     uint256 public orderCounter;
     Counter.counters public orderCounter;
     
+    address internal constant UNISWAP_V3_SWAP_ROUTER = 0xbBca0fFBFE60F60071630A8c80bb6253dC9D6023; // Kovan
+    
     mapping(address => uint256) swapOrderID;
     mapping(address => address) swapPoolAddress;
     mapping(address => address) swapFromTokenAddress;
@@ -48,9 +50,14 @@ contract OrderFactory is ERC721 {
     
     NocturnalFinanceInterface public nocturnalFinance;
     IUniswapV3Pool public pool;
+    ISwapRouter public swapRouter;
+    IPeripheryPayments public payment;
     
     constructor(address _nocturnalFinance) public {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
+        uint256 internal constant bPDivisor = 1000;
+        address internal constant WETH = 0xd0a1e359811322d97991e03f863a0c30c2cf029c; // Kovan
+        address internal constant UNISWAP_V3_SWAP_ROUTER = 0xbBca0fFBFE60F60071630A8c80bb6253dC9D6023;
     }
     
     function createLimitOrder(
@@ -62,7 +69,8 @@ contract OrderFactory is ERC721 {
             bool _swapAbove,
             uint256 _swapSlippage, 
             uint256 _swapSettlementGratuity) public {
-        require(_swapSettlementGratuity 
+        //require( creator balance is >= _swapFromTokenBalance )
+        //require(_swapSettlementGratuity <= ) 
         ERC721 nocturnalOrder = new ERC721 ("Nocturnal Order", "oNOCT"); 
         orderCounter.increment();
         uint256 orderID = orderCounter.current();
@@ -89,18 +97,35 @@ contract OrderFactory is ERC721 {
         
         
         // deduct nocturnal fee % from "swap from" tokens, swap for ETH, and send to staker addresses:
+        
         // calculate FeeCalc rate value of fromTokenBalance
-        // using swaprouter.exactInputSingle() to obtain WETH
-        // using unwrapETH9 to obtain ETH
-        // using transferFrom to send to NoctStaking.sol
+        uint256 dRateBasisPoints = nocturnalFinance.depositRate();
+        uint256 dFee = _swapFromTokenBalance.mul(dRateBasisPoints).div(bPDivisor);
+        
+  
+        // use swaprouter.exactInputSingle() to obtain WETH
+        //uint256 depositFee = swapRouter.exactInputSingle(
+        //                         ISwapRouter.ExactInputSingleParams({
+        //                             tokenIn: _tokenIn,
+        //                             tokenOut: _tokenOut,
+        //                             fee: _fee,
+        //                             recipient: _recipient,
+        //                             deadline: _deadline,
+        //                             amountIn: _amountIn,
+        //                             amountOutMinimum: _amountOutMinimum,
+        //                             sqrtPriceLimitX96: _sqrtPriceLimitX96})
+        //                     );
+        
+        
+        // use unwrapWETH9 to obtain ETH and send to NoctStaking.sol
+        //payment.unwrapWETH9(depositFee, nocturnalFinance.sNoctAddress());
         
         
         
+        // send remaining "swap from" tokens to the ERC721 address
+        ERC20 token = ERC20(_swapFromTokenAddress);
+        require(token.transferFrom(ERC721.ownerOf(orderID), orderAddress, fromTokenBalance.sub(dFee)), "order creation failed:  tokens did not reach order ERC721");
         
-        // send "swap from" tokens to the ERC721 address
-        ERC20 token = ERC20(tA);
-        require(token.balanceOf(msg.sender) >= amount, "insufficent NOCT balance");
-        require(token.transferFrom(msg.sender, address(this), amount), "staking failed");
         
         // add pending calculated rewards to pending rewards accumulator map
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
