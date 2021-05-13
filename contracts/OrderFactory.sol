@@ -2,6 +2,9 @@ pragma solidity ^0.6.6;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol";
+import "https://github.com/Uniswap/uniswap-v3-periphery/blob/main/contracts/interfaces/ISwapRouter.sol";
+import "https://github.com/Uniswap/uniswap-v3-periphery/blob/main/contracts/interfaces/IPeripheryPayments.sol";
+import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Pool.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 import {OracleInterface} from "./Interfaces/OracleInterface.sol";
@@ -26,15 +29,25 @@ contract OrderFactory is ERC721 {
     mapping(address => uint256) swapCreatorRewards;
     mapping(address => uint256) swapSettlerRewards;
     
-    // may only include order Address in the events...
-    event orderCreated(uint256 _orderID, address _orderAddress, uint256 _settlementGratuity, uint256 _creatorRewards, uint256 _settlerRewards);
-    event orderSettled(uint256 _orderID, address _orderAddress, uint256 _settlementGratuity, uint256 _creatorRewards, uint256 _settlerRewards);
+    // may include all attributes in events
+    // someone may want to analyze trade data in future
+    event orderCreated(uint256 _orderID, 
+                       address _orderAddress, 
+                       uint256 _settlementGratuity, 
+                       uint256 _creatorRewards, 
+                       uint256 _settlerRewards);
+    event orderSettled(uint256 _orderID, 
+                       address _orderAddress, 
+                       uint256 _settlementGratuity, 
+                       uint256 _creatorRewards, 
+                       uint256 _settlerRewards);
     event orderClosed(uint256 _orderID, address _orderAddress);
     event rewardsPending(uint256 _pendingRewards);
     event rewardsTotal(uint256 _totalRewards);
     event orderModified(uint256 _orderID, address _orderAddress, uint256 _settlementGratuity, uint256 _creatorRewards, uint256 _settlerRewards);
     
     NocturnalFinanceInterface public nocturnalFinance;
+    IUniswapV3Pool public pool;
     
     constructor(address _nocturnalFinance) public {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
@@ -70,19 +83,25 @@ contract OrderFactory is ERC721 {
         swapCreatorRewards[orderAddress] = creatorRewards;
         swapSettlerRewards[orderAddress] = settlerRewards;
 
-        
         _mint(msg.sender, orderID);
         
         
         
         
-        // deduct nocturnal fee % from "swap from" tokens, swap for ETH, and send to staker addresses
+        // deduct nocturnal fee % from "swap from" tokens, swap for ETH, and send to staker addresses:
+        // calculate FeeCalc rate value of fromTokenBalance
+        // using swaprouter.exactInputSingle() to obtain WETH
+        // using unwrapETH9 to obtain ETH
+        // using transferFrom to send to NoctStaking.sol
+        
+        
+        
         
         // send "swap from" tokens to the ERC721 address
+        ERC20 token = ERC20(tA);
+        require(token.balanceOf(msg.sender) >= amount, "insufficent NOCT balance");
+        require(token.transferFrom(msg.sender, address(this), amount), "staking failed");
         
-        
-        
-
         // add pending calculated rewards to pending rewards accumulator map
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
         RewardsInterface(nocturnalFinance.rewardsAddress()).pendingRewards().increment(pendingRewards);  //
@@ -115,21 +134,25 @@ contract OrderFactory is ERC721 {
         
         
         
-       
         
-        // obtain amount of token received in swap (for event)
-        
-        // uint256 toTokenBalance =
-         
+        // use pool.swap() to swap fromTokenBalance to toTokenBalance         
         // deduct settlementGratuity percentage from toTokenBalance and swap to ETH
-         
+        // calculate gratuity rate value of toTokenBalance
+        // use swaprouter.exactInputSingle() to swap to WETH
+        // use unwrapWETH9 to swap to ETH
+        // use transferFrom() to send to settler
+        
+        
+        
+        
         // send settlementGratuity to settler
+        ERC20 token = ERC20(tA);
+        require(token.transfer(msg.sender, amount), "transfer failed")
         
         // distribute NOCT rewards to settler and creator
-        
-        
-        
-        
+        ERC20 token = ERC20(tA);
+        require(token.balanceOf(msg.sender) >= amount, "insufficent NOCT balance");
+        require(token.transferFrom(msg.sender, address(this), amount), "staking failed");
         
         // deduct NOCT pending rewards from NOCT pending rewards accumulator map
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
@@ -141,6 +164,7 @@ contract OrderFactory is ERC721 {
         
         
         // burn ERC721
+        // use _burn()
         
         
         
@@ -160,7 +184,7 @@ contract OrderFactory is ERC721 {
         
         
         // transfer fromTokenAddress from ERC721 to msg.sender address
-        
+        // use transferFrom() 
         
         
         
@@ -173,6 +197,7 @@ contract OrderFactory is ERC721 {
         
         
         // burn ERC721
+        // use _burn()
         
         
         
