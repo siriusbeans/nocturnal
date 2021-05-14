@@ -2,8 +2,6 @@ pragma solidity ^0.6.6;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol";
-import "https://github.com/Uniswap/uniswap-v3-periphery/blob/main/contracts/interfaces/ISwapRouter.sol";
-
 import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Pool.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
@@ -16,8 +14,6 @@ contract OrderFactory is ERC721 {
     
     uint256 public orderCounter;
     Counter.counters public orderCounter;
-    
-    address internal constant UNISWAP_V3_SWAP_ROUTER = 0xbBca0fFBFE60F60071630A8c80bb6253dC9D6023; // Kovan
     
     mapping(address => uint256) swapOrderID;
     mapping(address => address) swapPoolAddress;
@@ -42,13 +38,11 @@ contract OrderFactory is ERC721 {
     
     NocturnalFinanceInterface public nocturnalFinance;
     IUniswapV3Pool public pool;
-    ISwapRouter public swapRouter;
     
     constructor(address _nocturnalFinance) public {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
         uint256 internal constant bPDivisor = 1000;
         address internal constant WETH = 0xd0a1e359811322d97991e03f863a0c30c2cf029c; // Kovan
-        address internal constant UNISWAP_V3_SWAP_ROUTER = 0xbBca0fFBFE60F60071630A8c80bb6253dC9D6023;
     }
     
     function createLimitOrder(
@@ -60,8 +54,10 @@ contract OrderFactory is ERC721 {
             bool _swapAbove,
             uint256 _swapSlippage, 
             uint256 _swapSettlementGratuity) public {
-        //require( creator balance is >= _swapFromTokenBalance )
-        //require(_swapSettlementGratuity <= ) 
+        require((_swapFromTokenAddress == WETH) || (_swapToTokenAddress == WETH), "pool must contain WETH");
+        require(ERC20(_swapFromTokenAddress).balanceOf(msg.sender) >= _swapFromTokenBalance )
+        uint256 dRateBasisPoints = nocturnalFinance.depositRate();
+        require((_swapSettlementGratuity >= 0) && (_swapSettlementGratuity < dRateBasisPoints.mul(100).div(bPDivisor)));
         ERC721 nocturnalOrder = new ERC721 ("Nocturnal Order", "oNOCT"); 
         orderCounter.increment();
         uint256 orderID = orderCounter.current();
@@ -84,35 +80,45 @@ contract OrderFactory is ERC721 {
 
         _mint(msg.sender, orderID);
         
-
-        // DEDUCT PLATFORM FEE FROM DEPOSIT
-        // CONVERT TO WETH AND SEND TO STAKING CONTRACT
-        // THEN SEND WHAT IS LEFT OF TOKEN TO ERC721
         
-        // calculate FeeCalc rate value of fromTokenBalance
-        uint256 dRateBasisPoints = nocturnalFinance.depositRate();
-        uint256 dFee = _swapFromTokenBalance.mul(dRateBasisPoints).div(bPDivisor);
+        // Process:
         
+        // 1)  Calculate dFee
+        uint256 dFee = _swapFromTokenBalance.mul(dRateBasisPoints).div(bPDivisor);      
         
+        // BREAK STEPS 2 AND 3 INTO FUNCTION CALLS
+        // REDUCE LOGIC / REPETITION
         
-        if ((_swapFromTokenAddress == WETH) {
-            // send dFee WETH to NoctStaking.sol
-        } else if (_swapToTokenAddress == WETH) {
-            // swap dFee _swapFromTokenAddess into WETH and send it to NoctStaking.sol
+        pool = IUniswapV3Pool(_swapPoolAddress);
+        
+        bool fromToken0;
+        if (pool.token0 == _swapFromTokenAddress) {
+            fromToken0 = true;
         } else {
-            // swap dFee _swapFromTokenAddress into WETH and send it to NoctStaking.sol
-            // _swapFromTokenAddress's WETH pool address is unknown
+            fromToken0 = false;
         }
-      
-                             
         
-        // send remaining "swap from" tokens to the ERC721 address
-        ERC20 token = ERC20(_swapFromTokenAddress);
-        // must ensure the below operation occurs, always
-        require(token.transferFrom(ERC721.ownerOf(orderID), orderAddress, fromTokenBalance.sub(dFee)), "order creation failed:  tokens did not reach order ERC721");
+        // 2)  If fromToken is WETH, transfer dFee WETH to Staking.sol then Transfer fromTokenBalance-dFee fromToken to ERC721
+        if ((_swapFromTokenAddress == WETH) {
+            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, nocturnalFinance.sNoctAddress(), dFee), "creator to stakers dFee transfer failed");
+            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance-dFee), "creator to ERC721 balance transfer failed");
+                 
+        // 3)  If toToken is WETH, swap dFee for WETH and send it to Staking.sol then Transfer fromTokenBalance-dFee fromToken to ERC721
+        } else if ((_swapToTokenAddress == WETH) && (fromToken0 == true)) {
+            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, address(this), dFee), "ERC721 to factory dfee transfer failed");
+            pool.swap(address(this), true, dFee, 0); // fourth parameter is sqrtPriceLimitX96, unsure what this should be
+            require(ERC20(_swapToTokenAddress).transfer(nocturnalFinance.sNoctAddress(), dFee), "factory to stakers dfee transfer failed");
+            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, ERC721.ownerOf(orderID), _swapFromTokenBalance-dFee), "creator to ERC721 balance transfer failed");
+            
+        } else if ((_swapToTokenAddress == WETH) && (fromToken0 == false)) {
+            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, address(this), dFee), "ERC721 to factory dfee transfer failed");
+            pool.swap(address(this), true, dFee, 0); // fourth parameter is sqrtPriceLimitX96, unsure what this should be
+            require(ERC20(_swapToTokenAddress).transfer(nocturnalFinance.sNoctAddress(), dFee), "factory to stakers dfee transfer failed");
+            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, ERC721.ownerOf(orderID), _swapFromTokenBalance-dFee), "creator to ERC721 balance transfer failed");
+        }
         
         
-        // add pending calculated rewards to pending rewards accumulator map
+        // 4)  Update rewards maps and emit events
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
         RewardsInterface(nocturnalFinance.rewardsAddress()).pendingRewards().increment(pendingRewards);  //
         
@@ -130,7 +136,7 @@ contract OrderFactory is ERC721 {
         } else if (swapAbove == false) {
             require(currentPrice <= limitPrice, "limit not met");
         }
-        
+
         uint256 orderID = swapOrderID[_address];
         address poolAddress = swapPoolAddress[_address];
         address fromTokenAddress = swapFromTokenAddress[_address];
@@ -142,50 +148,61 @@ contract OrderFactory is ERC721 {
         uint256 settlerRewards = swapSettlerRewards[_address];
                
 
+        // Process:
         
-        // use pool.swap() to swap fromTokenBalance to toTokenBalance         
-        
-        // deduct settlementGratuity percentage from toTokenBalance and swap to ETH
-        
-        // calculate gratuity rate value of toTokenBalance
+        // 1)  Calculate gratuity
         uint256 gratuity = _swapFromTokenBalance.mul(settlementGratuity).div(bPDivisor);
         
-
-
-        if ((_swapFromTokenAddress == WETH) {
-            // swap gratuity _swapToTokenAddess into WETH, convert to ETH, and send it to settler
-        } else if (_swapToTokenAddress == WETH) {
-            // convert gratuity WETH to ETH and send to settler
+        // BREAK STEPS 2 AND 3 INTO FUNCTION CALLS
+        // REDUCE LOGIC / REPETITION
+        
+        pool = IUniswapV3Pool(poolAddress);
+        
+        bool fromToken0;
+        if (pool.token0 == _swapFromTokenAddress) {
+            fromToken0 = true;
         } else {
-            // swap gratuity _swapToTokenAddess into WETH, convert to ETH, and send ti to settler
-            // _swapToTokenAddess's WETH pool address is unknown
+            fromToken0 = false;
         }
         
-
+        // 2)  If fromToken is WETH, deduct gratuity from WETH and send to settler before performing the swap then send remainder to creator
+        if ((_swapFromTokenAddress == WETH) && (fromToken0 == true)) {
+            require(ERC20(_swapFromTokenAddress).transferFrom(_address, address(this), _swapFromTokenBalance), "ERC721 to factory transfer failed");
+            require(ERC20(_swapFromTokenAddress).transfer(msg.sender, gratuity), "settler gratuity transfer failed");
+            pool.swap(address(this), true, _swapFromTokenBalance, _swapFromTokenBalance.min(gratuity), 0); // fourth parameter is sqrtPriceLimitX96, unsure what this should be    
+            require(ERC20(_swapToTokenAddress).transfer(ERC721.ownerOf(orderID), _swapFromTokenBalance.min(gratuity)), "creator balance transfer failed");
+                   
+        } else if ((_swapFromTokenAddress == WETH) && (fromToken0 == false)) {
+            require(ERC20(_swapFromTokenAddress).transferFrom(_address, address(this), _swapFromTokenBalance), "ERC721 to factory transfer failed");
+            require(ERC20(_swapFromTokenAddress).transfer(msg.sender, gratuity), "settler gratuity transfer failed");
+            pool.swap(address(this), false, _swapFromTokenBalance, _swapFromTokenBalance.min(gratuity), 0); // fourth parameter is sqrtPriceLimitX96, unsure what this should be    
+            require(ERC20(_swapToTokenAddress).transfer(ERC721.ownerOf(orderID), _swapFromTokenBalance.min(gratuity)), "creator balance transfer failed");
+                 
+        // 3)  If toToken is WETH, perform the swap and then deduct gratuity from WETH and send to settler then send remainder to creator
+        } else if ((_swapToTokenAddress == WETH) && (fromToken0 == true)) {
+            require(ERC20(_swapFromTokenAddress).transferFrom(_address, address(this), _swapFromTokenBalance), "ERC721 to factory transfer failed");
+            pool.swap(address(this), true, _swapFromTokenBalance, 0); // fourth parameter is sqrtPriceLimitX96, unsure what this should be
+            require(ERC20(_swapToTokenAddress).transfer(msg.sender, gratuity), "settler gratuity transfer failed");
+            require(ERC20(_swapToTokenAddress).transfer(ERC721.ownerOf(orderID), gratuity), "settler gratuity transfer failed");
+            
+        } else if ((_swapToTokenAddress == WETH) && (fromToken0 == false)) {
+            require(ERC20(_swapFromTokenAddress).transferFrom(_address, address(this), _swapFromTokenBalance), "ERC721 to factory transfer failed");
+            pool.swap(address(this), false, _swapFromTokenBalance, 0); // fourth parameter is sqrtPriceLimitX96, unsure what this should be
+            require(ERC20(_swapToTokenAddress).transfer(msg.sender, gratuity), "settler gratuity transfer failed");
+            require(ERC20(_swapToTokenAddress).transfer(ERC721.ownerOf(orderID), gratuity), "settler gratuity transfer failed");
+        }
+                
+        // 4)  Distribute the NOCT rewards to the settler and the creator
+        require(ERC20(nocturnalFinance.noctAddress()).transferFrom(nocturnalFinance.noctAddress(), msg.sender, settlerRewards), "settler noct rewards transfer failed");
+        require(ERC20(nocturnalFinance.noctAddress()).transferFrom(nocturnalFinance.noctAddress(), ERC721.ownerOf(orderID), creatorRewards), "creator noct rewards transfer failed");
         
-        // distribute NOCT rewards to settler and creator
-        ERC20 token = ERC20(nocturnalFinance.noctAddress());
-        require(token.transferFrom(nocturnalFinance.noctAddress(), msg.sender, settlerRewards), "settler noct transfer failed");
-        require(token.transferFrom(nocturnalFinance.noctAddress(), ERC721.ownerOf(orderID), creatorRewards), "creator noct transfer failed");
+        // 5)  burn ERC721
+        ERC721._burn(orderID);  //  
         
-        
-        
-        // deduct NOCT pending rewards from NOCT pending rewards accumulator map
+        // 6)  Update rewards maps and emit events
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
         RewardsInterface(nocturnalFinance.rewardsAddress()).pendingRewards().decrement(pendingRewards); 
-        
-        // update NOCT circulating supply map accordingly
         RewardsInterface(nocturnalFinance.rewardsAddress()).totalRewards().increment(pendingRewards);
-        
-        
-
-        
-        // burn ERC721
-        // use _burn()
-        
-        
-        
-        
         emit orderSettled(orderID, orderAddress, settlementGratuity, creatorRewards, settlerRewards);
         emit rewardsPending(pendingRewards);
         emit rewardsTotal(totalRewards);
@@ -196,28 +213,21 @@ contract OrderFactory is ERC721 {
         require(ERC721.ownerOf(orderID) == msg.sender, "only order owner can close an order early");
         address fromTokenAddress = swapFromTokenAddress[_address];
         uint256 creatorRewards = swapCreatorRewards[_address];
-        uint256 settlerRewards = swapSettlerRewards[_address];
+        uint256 settlerRewards = swapSettlerRewards[_address];        
+
+        // transfer fromTokenBalance from ERC721 to msg.sender address
+        require(ERC20(_swapFromTokenAddress).transferFrom(_address, msg.sender, _swapFromTokenBalance), "ERC721 to creator transfer failed");
         
-        
-        
-        // transfer fromTokenAddress from ERC721 to msg.sender address
-        // use transferFrom() 
-        
-        
+        // burn ERC721
+        ERC721._burn(orderID);  //  
         
         // deduct pending rewards from pending rewards accumulator map
         uint256 creatorRewards = swapCreatorRewards[_address];
         uint256 settlerRewards = swapSettlerRewards[_address];
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
         RewardsInterface(nocturnalFinance.rewardsAddress()).pendingRewards().decrement(pendingRewards); 
-        
-        
-        
-        // burn ERC721
-        // use _burn()
-        
-        
-        
+
+
         emit orderClosed(orderID, _address);
         emit rewardsPending(pendingRewards);
         emit rewardsTotal(totalRewards);
