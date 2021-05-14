@@ -1,3 +1,13 @@
+/*                              $$\                                             $$\                                                         
+                                $$ |                                            $$ |                                                  
+$$$$$$$\   $$$$$$\   $$$$$$$\ $$$$$$\   $$\   $$\  $$$$$$\  $$$$$$$\   $$$$$$\  $$ |     
+$$  __$$\ $$  __$$\ $$  _____|\_$$  _|  $$ |  $$ |$$  __$$\ $$  __$$\  \____$$\ $$ |    
+$$ |  $$ |$$ /  $$ |$$ /        $$ |    $$ |  $$ |$$ |  \__|$$ |  $$ | $$$$$$$ |$$ |     
+$$ |  $$ |$$ |  $$ |$$ |        $$ |$$\ $$ |  $$ |$$ |      $$ |  $$ |$$  __$$ |$$ |     
+$$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |$$ |      
+\__|  \__| \______/  \_______|   \____/  \______/ \__|      \__|  \__| \_______|\__|     
+*/
+
 pragma solidity ^0.6.6;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol";
@@ -81,7 +91,7 @@ contract OrderFactory {
 
         OrderInterface(nocturnalFinance.orderAddress())._mint(msg.sender, orderID);
         
-        // Create Functions to reduce repeated code
+        
         // Process:
         
         // 1)  Calculate dFee
@@ -98,7 +108,7 @@ contract OrderFactory {
         // 2)  If fromToken is WETH, transfer dFee WETH to Staking.sol then Transfer fromTokenBalance-dFee fromToken to order
         if ((_swapFromTokenAddress == WETH) {
             require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, nocturnalFinance.sNoctAddress(), dFee), "creator to stakers dFee transfer failed");
-            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance.min(dFee)), "creator to order balance transfer failed");
+            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance-dFee), "creator to order balance transfer failed");
                  
         // 3)  If toToken is WETH, swap dFee for WETH and send it to Staking.sol then Transfer fromTokenBalance-dFee fromToken to order
         } else if ((_swapToTokenAddress == WETH) ) {
@@ -118,10 +128,18 @@ contract OrderFactory {
     function settleLimitOrder(address _address) public {
         bool above = swapAbove[_address];
         uint256 limitPrice = swapLimitPrice[_address];
+        address fromTokenAddress = swapFromTokenAddress[_address];
         uint256 currentPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_address);
-        if (swapAbove == true) {
+        pool = IUniswapV3Pool(_address);
+        if (pool.token0 == fromTokenAddress) {
+            // currentPrice = ???
+        } else {
+            // currentPrice = ???
+        }
+        
+        if (above == true) {
             require(currentPrice >= limitPrice, "limit not met");
-        } else if (swapAbove == false) {
+        } else if (above == false) {
             require(currentPrice <= limitPrice, "limit not met");
         }
 
@@ -135,7 +153,7 @@ contract OrderFactory {
         uint256 creatorRewards = swapCreatorRewards[_address];
         uint256 settlerRewards = swapSettlerRewards[_address];
                
-        // Create functions to reduce repeated code
+
         // Process:
         
         // 1)  Calculate gratuity
