@@ -10,6 +10,7 @@ contract NocturnalFinance is Ownable {
     address public feeRateAdress;
     address public noctAddress;
     address public sNoctAddress;
+    address public orderAddress;
     uint256 public depositRate;
     
     constructor() public {
@@ -19,10 +20,12 @@ contract NocturnalFinance is Ownable {
             address _oracleAddress, 
             address _rewardsAddress,
             address _orderFactoryAddress,
+            address _orderAddress,
             address _feeRateAddress) external onlyOwner {
 		require(_oracleAddress != address(0));
 		require(_rewardsAddress != address(0));
 		require(_orderFactoryAddress != address(0));
+		require(_orderAddress != address(0));
 		require(_feeRateAddress != address(0));
         oracleAddress = _oracleAddress;
         rewardsAddress = _rewardsAddress;
@@ -40,7 +43,7 @@ contract NocturnalFinance is Ownable {
         sNoctAddress = _sNoctAddress;
     }
     
-    function setDepositRate(uint256 _dRate) external onlyOwner {
-        depositRate = _dRate;
+    function setDepositRate(uint256 _dRateBasisPoints) external onlyOwner {
+        depositRate = _dRateBasisPoints;
     }
 }
