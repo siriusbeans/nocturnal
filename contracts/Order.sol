@@ -19,7 +19,7 @@ import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.
  * the Metadata extension, but not including the Enumerable extension, which is available separately as
  * {ERC721Enumerable}.
  */
-contract Order is ERC721Burnable {
+contract Order {
     using Address for address;
     using Strings for uint256;
     
