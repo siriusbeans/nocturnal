@@ -379,7 +379,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
         require(_msgSender() == nocturnalFinance.orderFactoryAddress()), "caller is not order factory");
         
         pool = IUniswapV3Pool(_pool);
-        pool.swap(_recipient, _fromToken0, _fromToken0, _amount, _sqrtPriceLimitX96); // fourth parameter is sqrtPriceLimitX96, unsure what this should be 
+        uint256 (amount0, amount1) = pool.swap(_recipient, _fromToken0, _fromToken0, _amount, _sqrtPriceLimitX96); // fourth parameter is sqrtPriceLimitX96, unsure what this should be 
         
     }
 
