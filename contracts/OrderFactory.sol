@@ -1,14 +1,15 @@
 pragma solidity ^0.6.6;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/ERC721.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol";
 import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Pool.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 import {OracleInterface} from "./Interfaces/OracleInterface.sol";
 import {RewardsInterface} from "./Interfaces/RewardsInterface.sol";
+import {OrderInterface} from "./Interfaces/OrderInteface.sol";
 
-contract OrderFactory is ERC721 {
+contract OrderFactory is Order {
     using SafeMath for uint256;
     using Counters for Counters.Counter;
     
@@ -42,7 +43,7 @@ contract OrderFactory is ERC721 {
     constructor(address _nocturnalFinance) public {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
         uint256 internal constant bPDivisor = 1000;
-        address internal constant WETH = 0xd0a1e359811322d97991e03f863a0c30c2cf029c; // Kovan
+        address internal constant WETH = 0xd0a1e359811322d97991e03f863a0c30c2cf029c; // Kovan, Rinkeby?
     }
     
     function createLimitOrder(
@@ -58,7 +59,7 @@ contract OrderFactory is ERC721 {
         require(ERC20(_swapFromTokenAddress).balanceOf(msg.sender) >= _swapFromTokenBalance )
         uint256 dRateBasisPoints = nocturnalFinance.depositRate();
         require((_swapSettlementGratuity >= 0) && (_swapSettlementGratuity < dRateBasisPoints.mul(100).div(bPDivisor)));
-        ERC721 nocturnalOrder = new ERC721 ("Nocturnal Order", "oNOCT"); 
+        Order nocturnalOrder = new Order ("Nocturnal Order", "oNOCT"); 
         orderCounter.increment();
         uint256 orderID = orderCounter.current();
         address orderAddress = address(nocturnalOrder);
@@ -78,19 +79,15 @@ contract OrderFactory is ERC721 {
         swapCreatorRewards[orderAddress] = creatorRewards;
         swapSettlerRewards[orderAddress] = settlerRewards;
 
-        _mint(msg.sender, orderID);
+        Order._mint(msg.sender, orderID);
         
         
         // Process:
         
         // 1)  Calculate dFee
         uint256 dFee = _swapFromTokenBalance.mul(dRateBasisPoints).div(bPDivisor);      
-        
-        // BREAK STEPS 2 AND 3 INTO FUNCTION CALLS
-        // REDUCE LOGIC / REPETITION
-        
-        pool = IUniswapV3Pool(_swapPoolAddress);
-        
+
+        pool = IUniswapV3Pool(_swapPoolAddress);        
         bool fromToken0;
         if (pool.token0 == _swapFromTokenAddress) {
             fromToken0 = true;
@@ -98,29 +95,20 @@ contract OrderFactory is ERC721 {
             fromToken0 = false;
         }
         
-        // 2)  If fromToken is WETH, transfer dFee WETH to Staking.sol then Transfer fromTokenBalance-dFee fromToken to ERC721
+        // 2)  If fromToken is WETH, transfer dFee WETH to Staking.sol then Transfer fromTokenBalance-dFee fromToken to order
         if ((_swapFromTokenAddress == WETH) {
             require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, nocturnalFinance.sNoctAddress(), dFee), "creator to stakers dFee transfer failed");
-            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance-dFee), "creator to ERC721 balance transfer failed");
+            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance-dFee), "creator to order balance transfer failed");
                  
-        // 3)  If toToken is WETH, swap dFee for WETH and send it to Staking.sol then Transfer fromTokenBalance-dFee fromToken to ERC721
-        } else if ((_swapToTokenAddress == WETH) && (fromToken0 == true)) {
-            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, address(this), dFee), "ERC721 to factory dfee transfer failed");
-            pool.swap(address(this), true, dFee, 0); // fourth parameter is sqrtPriceLimitX96, unsure what this should be
-            require(ERC20(_swapToTokenAddress).transfer(nocturnalFinance.sNoctAddress(), dFee), "factory to stakers dfee transfer failed");
-            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, ERC721.ownerOf(orderID), _swapFromTokenBalance-dFee), "creator to ERC721 balance transfer failed");
-            
-        } else if ((_swapToTokenAddress == WETH) && (fromToken0 == false)) {
-            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, address(this), dFee), "ERC721 to factory dfee transfer failed");
-            pool.swap(address(this), true, dFee, 0); // fourth parameter is sqrtPriceLimitX96, unsure what this should be
-            require(ERC20(_swapToTokenAddress).transfer(nocturnalFinance.sNoctAddress(), dFee), "factory to stakers dfee transfer failed");
-            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, ERC721.ownerOf(orderID), _swapFromTokenBalance-dFee), "creator to ERC721 balance transfer failed");
+        // 3)  If toToken is WETH, swap dFee for WETH and send it to Staking.sol then Transfer fromTokenBalance-dFee fromToken to order
+        } else if ((_swapToTokenAddress == WETH) ) {
+            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance), "creator to order balance transfer failed");
+            OrderInterface(nocturnalFinance.orderAddress()).orderSwap(poolAddress, orderAddress, fromToken0, _swapFromTokenBalance.min(dFee), 0);    
         }
-        
         
         // 4)  Update rewards maps and emit events
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
-        RewardsInterface(nocturnalFinance.rewardsAddress()).pendingRewards().increment(pendingRewards);  //
+        RewardsInterface(nocturnalFinance.rewardsAddress()).pendingRewards().increment(pendingRewards); 
         
         emit orderCreated(orderID, orderAddress, _swapSettlementGratuity, creatorRewards, settlerRewards);
         emit rewardsPending(pendingRewards);
@@ -166,38 +154,22 @@ contract OrderFactory is ERC721 {
         }
         
         // 2)  If fromToken is WETH, deduct gratuity from WETH and send to settler before performing the swap then send remainder to creator
-        if ((_swapFromTokenAddress == WETH) && (fromToken0 == true)) {
-            require(ERC20(_swapFromTokenAddress).transferFrom(_address, address(this), _swapFromTokenBalance), "ERC721 to factory transfer failed");
-            require(ERC20(_swapFromTokenAddress).transfer(msg.sender, gratuity), "settler gratuity transfer failed");
-            pool.swap(address(this), true, _swapFromTokenBalance, _swapFromTokenBalance.min(gratuity), 0); // fourth parameter is sqrtPriceLimitX96, unsure what this should be    
-            require(ERC20(_swapToTokenAddress).transfer(ERC721.ownerOf(orderID), _swapFromTokenBalance.min(gratuity)), "creator balance transfer failed");
-                   
-        } else if ((_swapFromTokenAddress == WETH) && (fromToken0 == false)) {
-            require(ERC20(_swapFromTokenAddress).transferFrom(_address, address(this), _swapFromTokenBalance), "ERC721 to factory transfer failed");
-            require(ERC20(_swapFromTokenAddress).transfer(msg.sender, gratuity), "settler gratuity transfer failed");
-            pool.swap(address(this), false, _swapFromTokenBalance, _swapFromTokenBalance.min(gratuity), 0); // fourth parameter is sqrtPriceLimitX96, unsure what this should be    
-            require(ERC20(_swapToTokenAddress).transfer(ERC721.ownerOf(orderID), _swapFromTokenBalance.min(gratuity)), "creator balance transfer failed");
+        if (_swapFromTokenAddress == WETH) {
+            OrderInterface(nocturnalFinance.orderAddress()).orderTransfer(ERC20(_swapFromTokenAddress), msg.sender, gratuity);            
+            OrderInterface(nocturnalFinance.orderAddress()).orderSwap(poolAddress, Order.ownerOf(orderID), fromToken0, _swapFromTokenBalance.min(gratuity), 0);
                  
         // 3)  If toToken is WETH, perform the swap and then deduct gratuity from WETH and send to settler then send remainder to creator
-        } else if ((_swapToTokenAddress == WETH) && (fromToken0 == true)) {
-            require(ERC20(_swapFromTokenAddress).transferFrom(_address, address(this), _swapFromTokenBalance), "ERC721 to factory transfer failed");
-            pool.swap(address(this), true, _swapFromTokenBalance, 0); // fourth parameter is sqrtPriceLimitX96, unsure what this should be
-            require(ERC20(_swapToTokenAddress).transfer(msg.sender, gratuity), "settler gratuity transfer failed");
-            require(ERC20(_swapToTokenAddress).transfer(ERC721.ownerOf(orderID), gratuity), "settler gratuity transfer failed");
-            
-        } else if ((_swapToTokenAddress == WETH) && (fromToken0 == false)) {
-            require(ERC20(_swapFromTokenAddress).transferFrom(_address, address(this), _swapFromTokenBalance), "ERC721 to factory transfer failed");
-            pool.swap(address(this), false, _swapFromTokenBalance, 0); // fourth parameter is sqrtPriceLimitX96, unsure what this should be
-            require(ERC20(_swapToTokenAddress).transfer(msg.sender, gratuity), "settler gratuity transfer failed");
-            require(ERC20(_swapToTokenAddress).transfer(ERC721.ownerOf(orderID), gratuity), "settler gratuity transfer failed");
+        } else if (_swapToTokenAddress == WETH) {
+            OrderInterface(nocturnalFinance.orderAddress()).orderSwap(poolAddress, Order.ownerOf(orderID), fromToken0, _swapFromTokenBalance.min(gratuity), 0);
+            OrderInterface(nocturnalFinance.orderAddress()).orderSwap(poolAddress, msg.sender, fromToken0, gratuity, 0);
         }
                 
         // 4)  Distribute the NOCT rewards to the settler and the creator
         require(ERC20(nocturnalFinance.noctAddress()).transferFrom(nocturnalFinance.noctAddress(), msg.sender, settlerRewards), "settler noct rewards transfer failed");
-        require(ERC20(nocturnalFinance.noctAddress()).transferFrom(nocturnalFinance.noctAddress(), ERC721.ownerOf(orderID), creatorRewards), "creator noct rewards transfer failed");
+        require(ERC20(nocturnalFinance.noctAddress()).transferFrom(nocturnalFinance.noctAddress(), Order.ownerOf(orderID), creatorRewards), "creator noct rewards transfer failed");
         
-        // 5)  burn ERC721
-        ERC721._burn(orderID);  //  
+        // 5)  burn order
+        Order.burn(orderID);  //  
         
         // 6)  Update rewards maps and emit events
         uint256 pendingRewards = creatorRewards.add(settlerRewards);
@@ -210,16 +182,16 @@ contract OrderFactory is ERC721 {
     
     function closeLimitOrder(address _address) public {
         uint256 orderID = swapOrderID[_address];
-        require(ERC721.ownerOf(orderID) == msg.sender, "only order owner can close an order early");
+        require(Order.ownerOf(orderID) == msg.sender, "only order owner can close an order early");
         address fromTokenAddress = swapFromTokenAddress[_address];
         uint256 creatorRewards = swapCreatorRewards[_address];
         uint256 settlerRewards = swapSettlerRewards[_address];        
 
-        // transfer fromTokenBalance from ERC721 to msg.sender address
-        require(ERC20(_swapFromTokenAddress).transferFrom(_address, msg.sender, _swapFromTokenBalance), "ERC721 to creator transfer failed");
+        // transfer fromTokenBalance from order to msg.sender address
+        require(ERC20(_swapFromTokenAddress).transferFrom(_address, msg.sender, _swapFromTokenBalance), "order to creator transfer failed");
         
-        // burn ERC721
-        ERC721._burn(orderID);  //  
+        // burn order
+        Order.burn(orderID);  //  
         
         // deduct pending rewards from pending rewards accumulator map
         uint256 creatorRewards = swapCreatorRewards[_address];
@@ -279,7 +251,7 @@ contract OrderFactory is ERC721 {
     
     function modifyOrderSwapSlippage(address _orderAddress, uint256 _newSwapSlippage) public returns (uint256) {
         uint256 orderID = swapOrderID[_orderAddress];
-        require(ERC721.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
+        require(Order.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
         swapSlippage[_orderAddress] = _newSwapSlippage;
         
         uint256 settlementGratuity = swapSettlementGratuity[_orderAddress];
@@ -291,7 +263,7 @@ contract OrderFactory is ERC721 {
     
     function modifyOrderSettlementGratuity(address _orderAddress, uint256 _newSettlementGratuity) public returns (uint256) {
         uint256 orderID = swapOrderID[_orderAddress];
-        require(ERC721.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
+        require(Order.ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
         swapSettlementGratuity[_orderAddress] = _newSettlementGratuity;
         
         uint256 settlementGratuity = swapSettlementGratuity[_orderAddress];
