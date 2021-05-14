@@ -81,7 +81,7 @@ contract OrderFactory {
 
         OrderInterface(nocturnalFinance.orderAddress())._mint(msg.sender, orderID);
         
-        
+        // Create Functions to reduce repeated code
         // Process:
         
         // 1)  Calculate dFee
@@ -98,7 +98,7 @@ contract OrderFactory {
         // 2)  If fromToken is WETH, transfer dFee WETH to Staking.sol then Transfer fromTokenBalance-dFee fromToken to order
         if ((_swapFromTokenAddress == WETH) {
             require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, nocturnalFinance.sNoctAddress(), dFee), "creator to stakers dFee transfer failed");
-            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance-dFee), "creator to order balance transfer failed");
+            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance.min(dFee)), "creator to order balance transfer failed");
                  
         // 3)  If toToken is WETH, swap dFee for WETH and send it to Staking.sol then Transfer fromTokenBalance-dFee fromToken to order
         } else if ((_swapToTokenAddress == WETH) ) {
@@ -135,7 +135,7 @@ contract OrderFactory {
         uint256 creatorRewards = swapCreatorRewards[_address];
         uint256 settlerRewards = swapSettlerRewards[_address];
                
-
+        // Create functions to reduce repeated code
         // Process:
         
         // 1)  Calculate gratuity
