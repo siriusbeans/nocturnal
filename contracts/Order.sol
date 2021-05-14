@@ -19,7 +19,7 @@ import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.
  * the Metadata extension, but not including the Enumerable extension, which is available separately as
  * {ERC721Enumerable}.
  */
-contract Order {
+contract Order is Context, ERC165, IERC721, IERC721Metadata {
     using Address for address;
     using Strings for uint256;
     
@@ -47,9 +47,9 @@ contract Order {
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
-    constructor () {
-        string memory _name = "Staked Nocturnal Token";
-        string memory _symbol = "sNOCT";
+    constructor (string memory name_, string memory symbol_) {
+        _name = name_;
+        _symbol = symbol_;
     }
 
     /**
