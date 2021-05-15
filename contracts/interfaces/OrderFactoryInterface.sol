@@ -19,9 +19,9 @@ interface OrderFactoryInterface {
             uint256 _swapLimitPrice,
             bool _swapAbove,
             uint256 _swapSlippage, 
-            uint256 _swapSettlementFee,) external returns ();
-    function settleLimitOrder(address) external returns ();
-    function closeLimitOrder(address) external returns ();
+            uint256 _swapSettlementFee) external;
+    function settleLimitOrder(address) external;
+    function closeLimitOrder(address) external;
     
     function getOrderID(address) external view returns (uint256);
     function getOrderPoolAddress(address) external view returns (address);
@@ -34,8 +34,8 @@ interface OrderFactoryInterface {
     function getOrderSettlementGratuity(address) external view returns (uint256);
     function getOrderSettledFlag(address) external view returns (bool);
     
-    function modifyOrderSwapSlippage(address _orderAddress, uint256 _newSwapSlippage) public returns (uint256) {
-    function modifyOrderSettlementGratuity(address _orderAddress, uint256 _newSettlementGratuity) public returns (uint256) {
+    function modifyOrderSwapSlippage(address _orderAddress, uint256 _newSwapSlippage) external returns (uint256);
+    function modifyOrderSettlementGratuity(address _orderAddress, uint256 _newSettlementGratuity) external returns (uint256);
     
     event orderCreated(uint256 orderID, address orderAddress, uint256 settlementGratuity);
     event orderSettled(uint256 orderID, address orderAddress, uint256 settlementGratuity);
