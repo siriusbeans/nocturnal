@@ -8,7 +8,7 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 \__|  \__| \______/  \_______|   \____/  \______/ \__|      \__|  \__| \_______|\__|     
 */
 
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 interface NoctInterface {
     function totalSupply() external view returns (uint256);
