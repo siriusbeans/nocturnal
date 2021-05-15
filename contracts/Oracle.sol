@@ -1,3 +1,13 @@
+/*                              $$\                                             $$\                                                         
+                                $$ |                                            $$ |                                                  
+$$$$$$$\   $$$$$$\   $$$$$$$\ $$$$$$\   $$\   $$\  $$$$$$\  $$$$$$$\   $$$$$$\  $$ |     
+$$  __$$\ $$  __$$\ $$  _____|\_$$  _|  $$ |  $$ |$$  __$$\ $$  __$$\  \____$$\ $$ |    
+$$ |  $$ |$$ /  $$ |$$ /        $$ |    $$ |  $$ |$$ |  \__|$$ |  $$ | $$$$$$$ |$$ |     
+$$ |  $$ |$$ |  $$ |$$ |        $$ |$$\ $$ |  $$ |$$ |      $$ |  $$ |$$  __$$ |$$ |     
+$$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |$$ |      
+\__|  \__| \______/  \_______|   \____/  \______/ \__|      \__|  \__| \_______|\__|     
+*/
+
 pragma solidity ^0.6.6;
 
 import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Pool.sol";
@@ -9,7 +19,7 @@ contract Oracle {
     
     constructor() public {
     }
-   
+      
     function getCurrentPrice(address _pool) external view returns (int24 cPrice) {
         pool = IUniswapV3Pool(_pool);
         (, cPrice, , , , , ) = pool.slot0();
@@ -22,4 +32,6 @@ contract Oracle {
         uint256 token1 = pool.token1();
         return(token0, token1);
     }
+    
+    
 }
