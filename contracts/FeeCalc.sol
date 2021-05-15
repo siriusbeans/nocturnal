@@ -14,6 +14,8 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 
 contract FeeCalc {
+
+    NocturnalFinanceInterface nocturnalFinance;
     
     constructor(address _nocturnalFinance) public {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);

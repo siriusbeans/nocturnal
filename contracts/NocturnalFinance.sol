@@ -16,15 +16,16 @@ contract NocturnalFinance is Ownable {
     
     address public oracleAddress;
     address public orderFactoryAddress;
-    address public feeRateAdress;
+    address public feeRateAddress;
     address public noctAddress;
     address public sNoctAddress;
     address public orderAddress;
-    uint256 public depositRate;
-    uint256 public rewardsFactor;
-    uint256 public testerRewards;
+    address public rewardsAddress;
+    uint256 public _depositRate;
+    uint256 public _rewardsFactor;
+    uint256 public _testerRewards;
     
-    mapping(address => bool) testerAddress;
+    mapping(address => bool) private testerAddresses;
     
     constructor() public {
     }
@@ -57,34 +58,34 @@ contract NocturnalFinance is Ownable {
     }
     
     function setDepositRate(uint256 _dRateBasisPoints) external onlyOwner {
-        depositRate = _dRateBasisPoints;
+        _depositRate = _dRateBasisPoints;
     }
     
-    function setRewardsFactor(uint256 _rFactorBasisPoints) external onlyOnwer {
-        rewardsFactor = _rFactorBasisPoints;
+    function setRewardsFactor(uint256 _rFactorBasisPoints) external onlyOwner {
+        _rewardsFactor = _rFactorBasisPoints;
     }
     
     function setTesterAddress(address _testerAddress) external onlyOwner {
-        testerAddress[_testerAddress] == true;
+        testerAddresses[_testerAddress] == true;
     }
       
-    function setTesterRewards(uint256 _testerRewards) external onlyOwner {
-        testerRewards = _testerRewards;
+    function setTesterRewards(uint256 __testerRewards) external onlyOwner {
+        _testerRewards = __testerRewards;
     }
     
     function depositRate() external view returns (uint256) {
-        return (depositRate);
+        return (_depositRate);
     }
      
     function rewardsFactor() external view returns (uint256) {
-        return (rewardsFactor);
+        return (_rewardsFactor);
     }
     
     function testerAddress(address _testerAddress) external view returns (bool) {
-        return (testerAddress[_testerAddress]);
+        return (testerAddresses[_testerAddress]);
     }
     
     function testerRewards() external view returns (uint256) {
-        return (testerRewards);
+        return (_testerRewards);
     }
 }

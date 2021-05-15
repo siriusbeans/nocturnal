@@ -10,16 +10,16 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-import "./IERC721.sol";
-import "./IERC721Receiver.sol";
-import "./extensions/IERC721Metadata.sol";
-import "../../utils/Address.sol";
-import "../../utils/Context.sol";
-import "../../utils/Strings.sol";
-import "../../utils/introspection/ERC165.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol";
-import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Pool.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 
 /**
@@ -381,16 +381,16 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     }
     
     function transferOrder(address _tokenAddress, address _recipientAddress, uint256 _amount) external {
-        require(_msgSender() == nocturnalFinance.orderFactoryAddress()), "caller is not order factory");
+        require(_msgSender() == nocturnalFinance.orderFactoryAddress(), "caller is not order factory");
         
-        require(ERC20(_tokenAddress).transfer(_recipient, _amount), "order transfer amount failed");
+        require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
     }
     
     function orderSwap(address _pool, address _recipient, bool _fromToken0, uint256 _amount, uint160 _sqrtPriceLimitX96) external {
-        require(_msgSender() == nocturnalFinance.orderFactoryAddress()), "caller is not order factory");
+        require(_msgSender() == nocturnalFinance.orderFactoryAddress(), "caller is not order factory");
         
         pool = IUniswapV3Pool(_pool);
-        uint256 (amount0, amount1) = pool.swap(_recipient, _fromToken0, _fromToken0, _amount, _sqrtPriceLimitX96); // fourth parameter is sqrtPriceLimitX96, unsure what this should be 
+        (uint256 amount0,uint256 amount1) = pool.swap(_recipient, _fromToken0, _fromToken0, _amount, _sqrtPriceLimitX96); // fourth parameter is sqrtPriceLimitX96, unsure what this should be 
     }
 
     /**

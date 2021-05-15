@@ -13,20 +13,23 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 import {OracleInterface} from "./Interfaces/OracleInterface.sol";
-import {OrderInterface} from "./Interfaces/OrderInteface.sol";
+import {OrderInterface} from "./Interfaces/OrderInterface.sol";
 
 contract OrderFactory {
     using SafeMath for uint256;
     using Counters for Counters.Counter;
     
-    uint256 public orderCounter;
-    uint256 public platformVolume;
     Counter.counters public orderCounter;
     Counter.counters public platformVolume;
+
+
+    uint256 internal constant bPDivisor = 1000;  // 100th of a bip
+    address internal constant WETH;
     
     mapping(address => uint256) swapOrderID;
     mapping(address => address) swapPoolAddress;
@@ -52,10 +55,9 @@ contract OrderFactory {
     NocturnalFinanceInterface public nocturnalFinance;
     IUniswapV3Pool public pool;
     
-    constructor(address _nocturnalFinance) public {
+    constructor(address _nocturnalFinance, address _WETH) public {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
-        uint256 internal constant bPDivisor = 1000;  // 100th of a bip
-        address internal constant WETH = 0xd0a1e359811322d97991e03f863a0c30c2cf029c; // Kovan, Rinkeby?
+        WETH = _WETH; // now we can pass in the one for any testnet
     }
     
     function createLimitOrder(
@@ -68,7 +70,7 @@ contract OrderFactory {
             uint256 _swapSlippage, 
             uint256 _swapSettlementGratuity) public {
         require((_swapFromTokenAddress == WETH) || (_swapToTokenAddress == WETH), "pool must contain WETH");
-        require(ERC20(_swapFromTokenAddress).balanceOf(msg.sender) >= _swapFromTokenBalance )
+        require(ERC20(_swapFromTokenAddress).balanceOf(msg.sender) >= _swapFromTokenBalance );
         uint256 dRateBasisPoints = nocturnalFinance.depositRate();
         require((_swapSettlementGratuity >= 0) && (_swapSettlementGratuity < dRateBasisPoints.mul(100).div(bPDivisor)));
         Order nocturnalOrder = new Order ("Nocturnal Order", "oNOCT"); 
@@ -76,7 +78,7 @@ contract OrderFactory {
         uint256 orderID = orderCounter.current();
         address orderAddress = address(nocturnalOrder);
         
-        swapOrderID[orderAddress] = orderID
+        swapOrderID[orderAddress] = orderID;
         swapPoolAddress[orderAddress] = _swapPoolAddress;
         swapFromTokenAddress[orderAddress] = _swapFromTokenAddress;
         swapToTokenAddress[orderAddress] = _swapToTokenAddress;
@@ -102,7 +104,7 @@ contract OrderFactory {
         uint256 dFee = _swapFromTokenBalance.mul(dRateBasisPoints).div(bPDivisor);
 
         // 2)  If fromToken is WETH, transfer dFee WETH to Staking.sol then Transfer fromTokenBalance-dFee fromToken to order
-        if ((_swapFromTokenAddress == WETH) {
+        if (_swapFromTokenAddress == WETH) {
             require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, nocturnalFinance.sNoctAddress(), dFee), "creator to stakers dFee transfer failed");
             require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance.min(dFee)), "creator to order balance transfer failed");
             
@@ -110,11 +112,11 @@ contract OrderFactory {
             if (fromToken0 == true) {
                 // interpret price tick data accurately
                 // this is not correct
-                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);;
+                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);
             } else {
                 // interpret price tick data accurately
                 // this is not correct
-                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);;
+                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);
             }
             
                  
@@ -127,11 +129,11 @@ contract OrderFactory {
             if (fromToken0 == true) {
                 // interpret price tick data accurately
                 // this is not correct
-                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);;
+                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);
             } else {
                 // interpret price tick data accurately
                 // this is not correct
-                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);;
+                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);
             }
         }
         
@@ -174,7 +176,6 @@ contract OrderFactory {
         //========================================================//
 
         uint256 orderID = swapOrderID[_address];      
-        address fromTokenAddress = swapFromTokenAddress[_address];
         address toTokenAddress = swapToTokenAddress[_address];
         uint256 fromTokenBalance = swapFromTokenBalance[_address];
         uint256 slippage = swapSlippage[_address];

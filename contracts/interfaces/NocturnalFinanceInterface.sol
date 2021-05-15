@@ -18,8 +18,8 @@ interface NocturnalFinanceInterface {
     function noctAddress() external view returns (address);
     function sNoctAddress() external view returns (address);
     
-    function depositRate() external returns ();
-    function rewardsFactor() external view returns ();
+    function depositRate() external;
+    function rewardsFactor() external view;
     function testerAddress(address) external returns (bool);
     function testerRewards() external returns (uint256);
 }
