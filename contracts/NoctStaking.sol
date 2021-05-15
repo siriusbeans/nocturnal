@@ -1,3 +1,13 @@
+/*                              $$\                                             $$\                                                         
+                                $$ |                                            $$ |                                                  
+$$$$$$$\   $$$$$$\   $$$$$$$\ $$$$$$\   $$\   $$\  $$$$$$\  $$$$$$$\   $$$$$$\  $$ |     
+$$  __$$\ $$  __$$\ $$  _____|\_$$  _|  $$ |  $$ |$$  __$$\ $$  __$$\  \____$$\ $$ |    
+$$ |  $$ |$$ /  $$ |$$ /        $$ |    $$ |  $$ |$$ |  \__|$$ |  $$ | $$$$$$$ |$$ |     
+$$ |  $$ |$$ |  $$ |$$ |        $$ |$$\ $$ |  $$ |$$ |      $$ |  $$ |$$  __$$ |$$ |     
+$$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |$$ |      
+\__|  \__| \______/  \_______|   \____/  \______/ \__|      \__|  \__| \_______|\__|     
+*/
+
 pragma solidity ^0.6.6;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.0/contracts/token/ERC20/ERC20.sol";
@@ -61,12 +71,13 @@ contract NoctStaking {
     }
 
     function claimETHRewards() public {
-        // use unwrapWETH9() and transfer to staker
         require(lrc[msg.sender] <= trg, "no rewards available");
         
         uint256 toSend = pendingETHRewards(msg.sender);
         lrc[msg.sender] = trg;
-        require(msg.sender.send(toSend), "transfer failed");
+        // use unwrapWETH9() and transfer to staker
+        IPeripheryPayments.unwrapWETH9(toSend, msg.sender);
+        //require(msg.sender.send(toSend), "transfer failed");
     }
 
     //this function has to be present or transfers to the contract fail silently
