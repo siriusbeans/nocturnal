@@ -1,3 +1,13 @@
+/*                              $$\                                             $$\                                                         
+                                $$ |                                            $$ |                                                  
+$$$$$$$\   $$$$$$\   $$$$$$$\ $$$$$$\   $$\   $$\  $$$$$$\  $$$$$$$\   $$$$$$\  $$ |     
+$$  __$$\ $$  __$$\ $$  _____|\_$$  _|  $$ |  $$ |$$  __$$\ $$  __$$\  \____$$\ $$ |    
+$$ |  $$ |$$ /  $$ |$$ /        $$ |    $$ |  $$ |$$ |  \__|$$ |  $$ | $$$$$$$ |$$ |     
+$$ |  $$ |$$ |  $$ |$$ |        $$ |$$\ $$ |  $$ |$$ |      $$ |  $$ |$$  __$$ |$$ |     
+$$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |$$ |      
+\__|  \__| \______/  \_______|   \____/  \______/ \__|      \__|  \__| \_______|\__|     
+*/
+
 pragma solidity ^0.6.6;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
@@ -5,13 +15,16 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contr
 contract NocturnalFinance is Ownable {
     
     address public oracleAddress;
-    address public rewardsAddress;
     address public orderFactoryAddress;
     address public feeRateAdress;
     address public noctAddress;
     address public sNoctAddress;
     address public orderAddress;
     uint256 public depositRate;
+    uint256 public rewardsFactor;
+    uint256 public testerRewards;
+    
+    mapping(address => bool) testerAddress;
     
     constructor() public {
     }
@@ -45,5 +58,33 @@ contract NocturnalFinance is Ownable {
     
     function setDepositRate(uint256 _dRateBasisPoints) external onlyOwner {
         depositRate = _dRateBasisPoints;
+    }
+    
+    function setRewardsFactor(uint256 _rFactorBasisPoints) external onlyOnwer {
+        rewardsFactor = _rFactorBasisPoints;
+    }
+    
+    function setTesterAddress(address _testerAddress) external onlyOwner {
+        testerAddress[_testerAddress] == true;
+    }
+      
+    function setTesterRewards(uint256 _testerRewards) external onlyOwner {
+        testerRewards = _testerRewards;
+    }
+    
+    function depositRate() external view returns (uint256) {
+        return (depositRate);
+    }
+     
+    function rewardsFactor() external view returns (uint256) {
+        return (rewardsFactor);
+    }
+    
+    function testerAddress(address _testerAddress) external view returns (bool) {
+        return (testerAddress[_testerAddress]);
+    }
+    
+    function testerRewards() external view returns (uint256) {
+        return (testerRewards);
     }
 }
