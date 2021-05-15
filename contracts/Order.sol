@@ -375,24 +375,30 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     }
     
     function burn(uint256 tokenId) public virtual {
-        //solhint-disable-next-line max-line-length
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721Burnable: caller is not owner nor approved");
+        require(_msgSender() == nocturnalFinance.orderFactoryAddress()), "caller is not order factory");
         _burn(tokenId);
     }
     
-    function transferOrder(address _tokenAddress, address _recipientAddress, uint256 _amount) external {
+    function transferOrder(address _tokenAddress, address _recipientAddress, uint256 _amount) public {
         require(_msgSender() == nocturnalFinance.orderFactoryAddress()), "caller is not order factory");
         
-        require(ERC20(_tokenAddress).transfer(_recipient, _amount), "order transfer amount failed");
+        require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
     }
     
-    function orderSwap(address _pool, address _recipient, bool _fromToken0, uint256 _amount, uint160 _sqrtPriceLimitX96) external {
+    function orderSwap(address _pool, address _recipient, bool _fromToken0, uint256 _amount, uint160 _sqrtPriceLimitX96) public {
         require(_msgSender() == nocturnalFinance.orderFactoryAddress()), "caller is not order factory");
         
         pool = IUniswapV3Pool(_pool);
         uint256 (amount0, amount1) = pool.swap(_recipient, _fromToken0, _fromToken0, _amount, _sqrtPriceLimitX96); // fourth parameter is sqrtPriceLimitX96, unsure what this should be 
     }
-
+    
+    function closeOrder(uint256 tokenId, address _tokenAddress, address _recipientAddress, uint256 _amount) external {
+        require(_msgSender() == nocturnalFinance.orderFactoryAddress()), "caller is not order factory");
+        
+        require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
+        
+        _burn(tokenId);
+        
     /**
      * @dev Hook that is called before any token transfer. This includes minting
      * and burning.
@@ -409,3 +415,4 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
      */
     function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual { }
 }
+

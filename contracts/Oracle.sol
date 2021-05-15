@@ -10,8 +10,7 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-
-import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Pool.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 
 contract Oracle {
@@ -27,6 +26,7 @@ contract Oracle {
     }
     
     // to be used by front end to reduce a pool address to its token addresses
+    // front end should also determine which token (0 or 1) is fromToken
     function getTokens(address _pool) external view returns (address, address) {
         pool = IUniswapV3Pool(_pool);
         uint256 token0 = pool.token0();

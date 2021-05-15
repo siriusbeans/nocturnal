@@ -10,11 +10,12 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
 contract NocturnalFinance is Ownable {
     
     address public oracleAddress;
+    address public rewardsAddress;
     address public orderFactoryAddress;
     address public feeRateAdress;
     address public noctAddress;

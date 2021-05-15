@@ -10,10 +10,9 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@uniswap/v3-periphery/contracts/interfaces/IPeripheryPayments.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.0/contracts/token/ERC20/ERC20.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeMath.sol";
+import "https://github.com/Uniswap/uniswap-v3-periphery/blob/main/contracts/interfaces/IPeripheryPayments.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 
 contract NoctStaking {
@@ -49,6 +48,19 @@ contract NoctStaking {
             lrc[msg.sender] = trg;
         }
         staked[msg.sender] = staked[msg.sender].add(amount);
+        emit Stake(amount, totalStaked());
+    }
+    
+    function autoStake(uint256 amount, address _claimantAddress) public {
+        require(msg.sender == nocturnalFinance.rewardsAddress(), "autostake called from rewards contract only");
+        require(amount > 0, "invalid amount");
+        ERC20 token = ERC20(tA);
+        require(token.balanceOf(msg.sender) >= amount, "insufficent NOCT balance");
+        require(token.transferFrom(msg.sender, address(this), amount), "staking failed");
+        if (staked[_claimantAddress] == 0) {
+            lrc[_claimantAddress] = trg;
+        }
+        staked[_claimantAddress] = staked[_claimantAddress].add(amount);
         emit Stake(amount, totalStaked());
     }
 
