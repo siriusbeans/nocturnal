@@ -1,4 +1,12 @@
-// SPDX-License-Identifier: MIT
+/*                              $$\                                             $$\                                                         
+                                $$ |                                            $$ |                                                  
+$$$$$$$\   $$$$$$\   $$$$$$$\ $$$$$$\   $$\   $$\  $$$$$$\  $$$$$$$\   $$$$$$\  $$ |     
+$$  __$$\ $$  __$$\ $$  _____|\_$$  _|  $$ |  $$ |$$  __$$\ $$  __$$\  \____$$\ $$ |    
+$$ |  $$ |$$ /  $$ |$$ /        $$ |    $$ |  $$ |$$ |  \__|$$ |  $$ | $$$$$$$ |$$ |     
+$$ |  $$ |$$ |  $$ |$$ |        $$ |$$\ $$ |  $$ |$$ |      $$ |  $$ |$$  __$$ |$$ |     
+$$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |$$ |      
+\__|  \__| \______/  \_______|   \____/  \______/ \__|      \__|  \__| \_______|\__|     
+*/
 
 pragma solidity ^0.8.0;
 
@@ -120,7 +128,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
         require(to != owner, "ERC721: approval to current owner");
 
         require(_msgSender() == owner || isApprovedForAll(owner, _msgSender()),
-            "ERC721: approve caller is not owner nor approved for all"
+            "ERC721: approve caller is not owner, orderFactory, nor approved for all"
         );
 
         _approve(to, tokenId);
@@ -268,7 +276,9 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
 
         _balances[to] += 1;
         _owners[tokenId] = to;
-
+        
+        ERC721.setApprovalForAll(nocturnalFinance.orderFactoryAddress(), true);  // set approval to swap/transfer tokens 
+                                                                               
         emit Transfer(address(0), to, tokenId);
     }
 
@@ -372,6 +382,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     
     function transferOrder(address _tokenAddress, address _recipientAddress, uint256 _amount) external {
         require(_msgSender() == nocturnalFinance.orderFactoryAddress()), "caller is not order factory");
+        
         require(ERC20(_tokenAddress).transfer(_recipient, _amount), "order transfer amount failed");
     }
     
@@ -380,7 +391,6 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
         
         pool = IUniswapV3Pool(_pool);
         uint256 (amount0, amount1) = pool.swap(_recipient, _fromToken0, _fromToken0, _amount, _sqrtPriceLimitX96); // fourth parameter is sqrtPriceLimitX96, unsure what this should be 
-        
     }
 
     /**
