@@ -10,9 +10,9 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.0/contracts/token/ERC20/ERC20.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeMath.sol";
-import "https://github.com/Uniswap/uniswap-v3-periphery/blob/main/contracts/interfaces/IPeripheryPayments.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@uniswap/v3-periphery/contracts/interfaces/IPeripheryPayments.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 
 contract NoctStaking {
@@ -51,7 +51,7 @@ contract NoctStaking {
         emit Stake(amount, totalStaked());
     }
     
-    function autoStake(uint256 amount, address _claimantAddress) public {
+    function autoStake(address _claimantAddress, uint256 amount) public {
         require(msg.sender == nocturnalFinance.rewardsAddress(), "autostake called from rewards contract only");
         require(amount > 0, "invalid amount");
         ERC20 token = ERC20(tA);
@@ -89,7 +89,7 @@ contract NoctStaking {
         uint256 toSend = pendingETHRewards(msg.sender);
         lrc[msg.sender] = trg;
         // use unwrapWETH9() and transfer to staker
-        IPeripheryPayments.unwrapWETH9(toSend, msg.sender);
+        payment.unwrapWETH9(toSend, msg.sender);
         //require(msg.sender.send(toSend), "transfer failed");
     }
 

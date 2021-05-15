@@ -10,18 +10,18 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.1.0/contracts/math/SafeMath.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 import {OrderFactoryInterface} from "./Interfaces/OrderFactoryInterface.sol";
+import {NoctStakingInterface} from "./Interfaces/NoctStakingInterface.sol";
 
 contract Rewards {
     using SafeMath for uint256;
     using Counters for Counters.Counter;
     
-    uint256 public totalRewards;
-    Counter.counters public totalRewards;
+    Counters.Counter public totalRewards;
     
     mapping(address => uint256) public unclaimedRewards;
 
@@ -37,7 +37,7 @@ contract Rewards {
     }
     
     function stakeRewards(uint256 _amount) public {
-        require(NoctInterace(nocturnalFinance.noctAddress()).balanceOf(msg.sender) >= _amount, "insufficient unclaimed rewards balance");
-        require(NoctInterface(nocturnalFinance.noctAddress()).autoStake(), "rewards stake failed");
+        require(NoctInterface(nocturnalFinance.noctAddress()).balanceOf(msg.sender) >= _amount, "insufficient unclaimed rewards balance");
+        NoctStakingInterface(nocturnalFinance.sNoctAddress()).autoStake(msg.sender, _amount);
     }
 }

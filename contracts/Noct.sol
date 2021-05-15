@@ -10,8 +10,8 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.0/contracts/token/ERC20/ERC20.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 
 contract Noct is ERC20 ("Nocturnal Token", "NOCT") {
@@ -23,8 +23,8 @@ contract Noct is ERC20 ("Nocturnal Token", "NOCT") {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
     
-    mintRewards(uint256 _amount, address _recipient) external {
-        require(msg.sender == nocturnalFinance.rewardsCalcAddress(), "only rewards calc contract address can mint more NOCT");
+    function mintRewards(uint256 _amount, address _recipient) external {
+        require(msg.sender == nocturnalFinance.orderFactoryAddress(), "only order factory address can mint more NOCT");
         _mint(_recipient, _amount * 10 ** uint256(decimals()));
     }
 }

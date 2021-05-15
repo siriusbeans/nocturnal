@@ -10,16 +10,16 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-import "./IERC721.sol";
-import "./IERC721Receiver.sol";
-import "./extensions/IERC721Metadata.sol";
-import "../../utils/Address.sol";
-import "../../utils/Context.sol";
-import "../../utils/Strings.sol";
-import "../../utils/introspection/ERC165.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol";
-import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Pool.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 
 /**
@@ -124,7 +124,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
      * @dev See {IERC721-approve}.
      */
     function approve(address to, uint256 tokenId) public virtual override {
-        address owner = ERC721.ownerOf(tokenId);
+        address owner = Order.ownerOf(tokenId);
         require(to != owner, "ERC721: approval to current owner");
 
         require(_msgSender() == owner || isApprovedForAll(owner, _msgSender()),
@@ -229,7 +229,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
      */
     function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual returns (bool) {
         require(_exists(tokenId), "ERC721: operator query for nonexistent token");
-        address owner = ERC721.ownerOf(tokenId);
+        address owner = Order.ownerOf(tokenId);
         return (spender == owner || getApproved(tokenId) == spender || isApprovedForAll(owner, spender));
     }
 
@@ -277,7 +277,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
         _balances[to] += 1;
         _owners[tokenId] = to;
         
-        ERC721.setApprovalForAll(nocturnalFinance.orderFactoryAddress(), true);  // set approval to swap/transfer tokens 
+        Order.setApprovalForAll(nocturnalFinance.orderFactoryAddress(), true);  // set approval to swap/transfer tokens 
                                                                                
         emit Transfer(address(0), to, tokenId);
     }
@@ -293,7 +293,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
      * Emits a {Transfer} event.
      */
     function _burn(uint256 tokenId) internal virtual {
-        address owner = ERC721.ownerOf(tokenId);
+        address owner = Order.ownerOf(tokenId);
 
         _beforeTokenTransfer(owner, address(0), tokenId);
 
@@ -318,7 +318,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
      * Emits a {Transfer} event.
      */
     function _transfer(address from, address to, uint256 tokenId) internal virtual {
-        require(ERC721.ownerOf(tokenId) == from, "ERC721: transfer of token that is not own");
+        require(Order.ownerOf(tokenId) == from, "ERC721: transfer of token that is not own");
         require(to != address(0), "ERC721: transfer to the zero address");
 
         _beforeTokenTransfer(from, to, tokenId);
@@ -340,7 +340,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
      */
     function _approve(address to, uint256 tokenId) internal virtual {
         _tokenApprovals[tokenId] = to;
-        emit Approval(ERC721.ownerOf(tokenId), to, tokenId);
+        emit Approval(Order.ownerOf(tokenId), to, tokenId);
     }
 
     /**
@@ -375,29 +375,30 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     }
     
     function burn(uint256 tokenId) public virtual {
-        require(_msgSender() == nocturnalFinance.orderFactoryAddress()), "caller is not order factory");
+        require(_msgSender() == nocturnalFinance.orderFactoryAddress(), "caller is not order factory");
         _burn(tokenId);
     }
     
     function transferOrder(address _tokenAddress, address _recipientAddress, uint256 _amount) public {
-        require(_msgSender() == nocturnalFinance.orderFactoryAddress()), "caller is not order factory");
+        require(_msgSender() == nocturnalFinance.orderFactoryAddress(), "caller is not order factory");
         
         require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
     }
     
-    function orderSwap(address _pool, address _recipient, bool _fromToken0, uint256 _amount, uint160 _sqrtPriceLimitX96) public {
-        require(_msgSender() == nocturnalFinance.orderFactoryAddress()), "caller is not order factory");
-        
-        pool = IUniswapV3Pool(_pool);
-        uint256 (amount0, amount1) = pool.swap(_recipient, _fromToken0, _fromToken0, _amount, _sqrtPriceLimitX96); // fourth parameter is sqrtPriceLimitX96, unsure what this should be 
+    function orderSwap(address _pool, address _recipient, bool _fromToken0, int256 _amount, uint160 _sqrtPriceLimitX96, bytes calldata _data) public {
+        require(_msgSender() == nocturnalFinance.orderFactoryAddress(), "caller is not order factory");
+        int256 amount0;
+        int256 amount1;
+        (amount0, amount1) = pool.swap(_recipient, _fromToken0, _amount, _sqrtPriceLimitX96, _data); // fourth parameter is sqrtPriceLimitX96, unsure what this should be 
     }
     
     function closeOrder(uint256 tokenId, address _tokenAddress, address _recipientAddress, uint256 _amount) external {
-        require(_msgSender() == nocturnalFinance.orderFactoryAddress()), "caller is not order factory");
+        require(_msgSender() == nocturnalFinance.orderFactoryAddress(), "caller is not order factory");
         
         require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
         
         _burn(tokenId);
+    }
         
     /**
      * @dev Hook that is called before any token transfer. This includes minting

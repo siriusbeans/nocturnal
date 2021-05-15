@@ -10,23 +10,25 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol";
-import "https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/interfaces/IUniswapV3Pool.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 import {OracleInterface} from "./Interfaces/OracleInterface.sol";
-import {OrderInterface} from "./Interfaces/OrderInteface.sol";
-import {RewardsInterface} from "./Interfaces/Rewards.sol";
+import {OrderInterface} from "./Interfaces/OrderInterface.sol";
+import {RewardsInterface} from "./Interfaces/RewardsInterface.sol";
 
 contract OrderFactory {
     using SafeMath for uint256;
     using Counters for Counters.Counter;
     
-    uint256 public orderCounter;
-    uint256 public platformVolume;
-    Counter.counters public orderCounter;
-    Counter.counters public platformVolume;
+    Counters.Counter public orderCounter;
+    Counters.Counter public platformVolume;
+    
+    uint256 internal constant bPDivisor = 1000;  // 100th of a bip
+    address internal constant WETH; 
     
     mapping(address => uint256) swapOrderID;
     mapping(address => address) swapPoolAddress;
@@ -35,7 +37,7 @@ contract OrderFactory {
     mapping(address => uint256) swapFromTokenBalance;
     mapping(address => uint256) swapToTokenBalance;
     mapping(address => uint256) swapFromTokenValueInETH;
-    mapping(address => uint256) swapToTokenLimitPrice;
+    mapping(address => uint256) swapLimitPrice;
     mapping(address => bool) swapAbove;
     mapping(address => uint256) swapSlippage;
     mapping(address => uint256) swapSettlementGratuity;
@@ -51,11 +53,11 @@ contract OrderFactory {
     
     NocturnalFinanceInterface public nocturnalFinance;
     IUniswapV3Pool public pool;
+    OrderInterface public Order;
     
-    constructor(address _nocturnalFinance) public {
+    constructor(address _nocturnalFinance, address _WETH) public {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
-        uint256 internal constant bPDivisor = 1000;  // 100th of a bip
-        address internal constant WETH = 0xd0a1e359811322d97991e03f863a0c30c2cf029c; // Kovan, Rinkeby?
+        WETH = _WETH;
     }
     
     function createLimitOrder(
@@ -64,19 +66,20 @@ contract OrderFactory {
             address _swapToTokenAddress, 
             uint256 _swapFromTokenBalance, 
             uint256 _swapLimitPrice,
+            uint256 _swapSlippage,
             bool _swapAbove,
             bool _swapFromToken0,
             uint256 _swapSettlementGratuity) public {
         require((_swapFromTokenAddress == WETH) || (_swapToTokenAddress == WETH), "pool must contain WETH");
-        require(ERC20(_swapFromTokenAddress).balanceOf(msg.sender) >= _swapFromTokenBalance )
+        require(ERC20(_swapFromTokenAddress).balanceOf(msg.sender) >= _swapFromTokenBalance);
         uint256 dRateBasisPoints = nocturnalFinance.depositRate();
-        require((_swapSettlementGratuity >= 0) && (_swapSettlementGratuity < dRateBasisPoints.mul(100).div(bPDivisor)));
+        require((_swapSettlementGratuity >= 0) && (_swapSettlementGratuity < dRateBasisPoints.mul(100).div(bPDivisor))); // expressed in basis points
         Order nocturnalOrder = new Order ("Nocturnal Order", "oNOCT"); 
         orderCounter.increment();
         uint256 orderID = orderCounter.current();
         address orderAddress = address(nocturnalOrder);
         
-        swapOrderID[orderAddress] = orderID
+        swapOrderID[orderAddress] = orderID;
         swapPoolAddress[orderAddress] = _swapPoolAddress;
         swapFromTokenAddress[orderAddress] = _swapFromTokenAddress;
         swapToTokenAddress[orderAddress] = _swapToTokenAddress;
@@ -102,7 +105,7 @@ contract OrderFactory {
         uint256 dFee = _swapFromTokenBalance.mul(dRateBasisPoints).div(bPDivisor);
 
         // 2)  If fromToken is WETH, transfer dFee WETH to Staking.sol then Transfer fromTokenBalance-dFee fromToken to order
-        if ((_swapFromTokenAddress == WETH) {
+        if (_swapFromTokenAddress == WETH) {
             require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, nocturnalFinance.sNoctAddress(), dFee), "creator to stakers dFee transfer failed");
             require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance.min(dFee)), "creator to order balance transfer failed");
             
@@ -110,27 +113,27 @@ contract OrderFactory {
             if (fromToken0 == true) {
                 // interpret price tick data accurately
                 // this is not correct
-                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);;
+                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);
             } else {
                 // interpret price tick data accurately
                 // this is not correct
-                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);;
+                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);
             }           
                  
         // 3)  If toToken is WETH, swap dFee for WETH and send it to Staking.sol then Transfer fromTokenBalance-dFee fromToken to order
         } else if ((_swapToTokenAddress == WETH) ) {
-            require(OrderInterface(nocturnalFinance.orderAddress()).orderSwap(poolAddress, nocturnalFinance.sNoctAddress(), fromToken0, dFee, 0), "creator to stakers fee transfer failed");
+            require(OrderInterface(nocturnalFinance.orderAddress()).orderSwap(swapPoolAddress, nocturnalFinance.sNoctAddress(), fromToken0, int256(dFee), 0), "creator to stakers fee transfer failed");
             require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance.min(dFee)), "creator to order balance transfer failed");
             
             // get fromTokenBalance value in ETH for tracking platform volume
             if (fromToken0 == true) {
                 // interpret price tick data accurately
                 // this is not correct
-                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);;
+                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);
             } else {
                 // interpret price tick data accurately
                 // this is not correct
-                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);;
+                swapFromTokenValueInETH[orderAddress] = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);
             }
         }
         
@@ -139,8 +142,6 @@ contract OrderFactory {
         
         // emit events
         emit orderCreated(orderID, orderAddress, _swapSettlementGratuity);
-        emit rewardsPending(pendingRewards);
-        emit rewardsTotal(totalRewards);
     }
     
     function settleLimitOrder(address _address) public {
@@ -173,7 +174,6 @@ contract OrderFactory {
         //========================================================//
 
         uint256 orderID = swapOrderID[_address];      
-        address fromTokenAddress = swapFromTokenAddress[_address];
         address toTokenAddress = swapToTokenAddress[_address];
         uint256 fromTokenBalance = swapFromTokenBalance[_address];
         uint256 slippage = swapSlippage[_address];
@@ -183,30 +183,30 @@ contract OrderFactory {
         // Process:
         
         // 1)  Calculate gratuity
-        uint256 gratuity = _swapFromTokenBalance.mul(settlementGratuity).div(bPDivisor);
+        uint256 gratuity = fromTokenBalance.mul(settlementGratuity).div(bPDivisor);
         
         bool fromToken0;
-        if (pool.token0 == _swapFromTokenAddress) {
+        if (pool.token0 == fromTokenAddress) {
             fromToken0 = true;
         } else {
             fromToken0 = false;
         }
         
         // 2)  If fromToken is WETH, deduct gratuity from WETH and send to settler before performing the swap
-        if (_swapFromTokenAddress == WETH) {
-            require(OrderInterface(nocturnalFinance.orderAddress()).orderTransfer(ERC20(_swapFromTokenAddress), msg.sender, gratuity), "order to settler gratuity transfer failed");            
-            require(OrderInterface(nocturnalFinance.orderAddress()).orderSwap(poolAddress, _address, fromToken0, _swapFromTokenBalance.min(gratuity), 0), "order swap failed"); 
+        if (fromTokenAddress == WETH) {
+            require(OrderInterface(nocturnalFinance.orderAddress()).orderTransfer(ERC20(fromTokenAddress), msg.sender, gratuity), "order to settler gratuity transfer failed");            
+            require(OrderInterface(nocturnalFinance.orderAddress()).orderSwap(poolAddress, _address, fromToken0, int256(fromTokenBalance.min(gratuity)), 0), "order swap failed"); 
                  
         // 3)  If toToken is WETH, perform the swap and then deduct gratuity from WETH and send to settler
-        } else if (_swapToTokenAddress == WETH) {
+        } else if (toTokenAddress == WETH) {
             require(OrderInterface(nocturnalFinance.orderAddress()).orderSwap(poolAddress, msg.sender, fromToken0, gratuity, 0), "order to settler gratuity transfer failed");
-            require(OrderInterface(nocturnalFinance.orderAddress()).orderSwap(poolAddress, _address, fromToken0, _swapFromTokenBalance.min(gratuity), 0), "order swap failed");
+            require(OrderInterface(nocturnalFinance.orderAddress()).orderSwap(poolAddress, _address, fromToken0, int256(fromTokenBalance.min(gratuity)), 0), "order swap failed");
         }
         
         // update Order toTokenBalance attribute for order closure
-        swapToTokenBalance[orderAddress] = _swapToTokenBalance.min(gratuity);
+        swapToTokenBalance[_address] = fromTokenBalance.min(gratuity);
         // update Order fromTokenBalance attribute for order closure
-        swapFromTokenBalance[orderAddress] = 0;
+        swapFromTokenBalance[_address] = 0;
         
         // set swap settle flag to true
         swapSettledFlag[_address] = true;
@@ -219,24 +219,24 @@ contract OrderFactory {
         // creator gets 88% of amount of NOCT equal to swapFromTokenValueInETH
         // rewards balance is updated, and rewards can be claimed at rewards.sol contract address
         // increment totalRewards by creator rewards
-        uint256 creatorRewards = swapFromTokenValueInETH[orderAddress].mul(nocturnalFinance.rewardsFactor()).div(bPDivisor);
-        nocturnalFinance.noctAddress().mintRewards(settlerRewards, nocturnalFinance.rewardsAddress());
+        uint256 creatorRewards = swapFromTokenValueInETH[_address].mul(nocturnalFinance.rewardsFactor()).div(bPDivisor);
+        nocturnalFinance.noctAddress().mintRewards(creatorRewards, nocturnalFinance.rewardsAddress());
         RewardsInterface(nocturnalFinance.rewardsAddress()).unclaimedRewards[orderCreatorAddress].add(creatorRewards);
         RewardsInterface(nocturnalFinance.rewardsAddress()).totalRewards().increment(creatorRewards);
         
         // settler gets 8% of amount of NOCT equal to swapFromTokenValueInETH
         // rewards balance is updated, and rewards can be claimed at rewards.sol contract address
         // increment total rewards by settler rewards
-        uint256 settlerRewards = swapFromTokenValueInETH[orderAddress].min(creatorRewards);
+        uint256 settlerRewards = swapFromTokenValueInETH[_address].min(creatorRewards);
         nocturnalFinance.noctAddress().mintRewards(settlerRewards, nocturnalFinance.rewardsAddress());
         RewardsInterface(nocturnalFinance.rewardsAddress()).unclaimedRewards[orderSettlerAddress].add(settlerRewards);
         RewardsInterface(nocturnalFinance.rewardsAddress()).totalRewards().increment(settlerRewards);
 
         // increment platform volume tracker counter
-        platformVolume.increment(swapFromTokenValueInETH[orderAddress]);
+        platformVolume.increment(swapFromTokenValueInETH[_address]);
        
         // 6) emit events
-        emit orderSettled(orderID, orderAddress, settlementGratuity);
+        emit orderSettled(orderID, _address, settlementGratuity);
         emit platformVolumeUpdate(platformVolume);
     }
     
@@ -256,51 +256,51 @@ contract OrderFactory {
         }
         
         // emit events
-        emit orderClosed(orderID, _address);
+        emit orderClosed(swapOrderID[_address], _address);
     }
 
     function getOrderID(address _orderAddress) public view returns (uint256) {
-        return swapOrderID[_address];
+        return swapOrderID[_orderAddress];
     }
     
     function getOrderPoolAddress(address _orderAddress) public view returns (address) {
-        return swapPoolAddress[_address];
+        return swapPoolAddress[_orderAddress];
     }
     
     function getOrderFromTokenAddress(address _orderAddress) public view returns (address) {
-        return swapFromTokenAddress[_address];
+        return swapFromTokenAddress[_orderAddress];
     }
     
     function getOrderFromTokenBalance(address _orderAddress) public view returns (uint256) {
-        return swapFromTokenBalance[_address];
+        return swapFromTokenBalance[_orderAddress];
     }
     
     function getOrderToTokenAddress(address _orderAddress) public view returns (address) {
-        return swapToTokenAddress[_address];
+        return swapToTokenAddress[_orderAddress];
     }
     
     function getOrderToTokenBalance(address _orderAddress) public view returns (uint256) {
-        return swapToTokenBalance[_address];
+        return swapToTokenBalance[_orderAddress];
     }
     
     function getOrderLimitPrice(address _orderAddress) public view returns (uint256) {
-        return swapToTokenLimitPrice[_address];
+        return swapLimitPrice[_orderAddress];
     }
     
     function getOrderLimitType(address _orderAddress) public view returns (bool) {
-        return swapAbove[_address];
+        return swapAbove[_orderAddress];
     }
     
     function getOrderSwapSlippage(address _orderAddress) public view returns (uint256) {
-        return swapSlippage[_address];
+        return swapSlippage[_orderAddress];
     }
     
     function getOrderSettlementGratuity(address _orderAddress) public view returns (uint256) {
-        return swapSettlementGratuity[_address];
+        return swapSettlementGratuity[_orderAddress];
     }
     
     function getOrderSettledFlag(address _orderAddress) public view returns (bool) {
-        return swapSettledFlag[_address];
+        return swapSettledFlag[_orderAddress];
     }
     
     function modifyOrderSwapSlippage(address _orderAddress, uint256 _newSwapSlippage) public returns (uint256) {
@@ -316,8 +316,7 @@ contract OrderFactory {
     function modifyOrderSettlementGratuity(address _orderAddress, uint256 _newSettlementGratuity) public returns (uint256) {
         uint256 orderID = swapOrderID[_orderAddress];
         require(OrderInterface(nocturnalFinance.orderAddress()).ownerOf(orderID) == msg.sender, "only owner can modify an existing order");
-        swapSettlementGratuity[_orderAddress] = _newSettlementGratuity;
-        
+        swapSettlementGratuity[_orderAddress] = _newSettlementGratuity;      
         
         emit orderModified(orderID, _orderAddress, _newSettlementGratuity);      
     }
