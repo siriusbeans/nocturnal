@@ -61,6 +61,6 @@ module.exports = function(deployer, network, accounts) {
         });
     }).then(function() {
 
-        return NocturnalFinanceInstance.initsNoct(sNoctInstance.address);
+        return NocturnalFinanceInstance.initsNoct(NoctStakingInstance.address);
     });
 };
