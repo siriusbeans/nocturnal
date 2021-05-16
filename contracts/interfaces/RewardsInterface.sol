@@ -13,6 +13,6 @@ pragma solidity ^0.8.0;
 interface RewardsInterface {
     function stakeRewards(uint256) external;
     function claimRewards(uint256) external;
-    function totalRewards() external view returns (uint256);
+    function totalRewards() external returns (uint256);
     function unclaimedRewards(address) external view returns (uint256);
 }
