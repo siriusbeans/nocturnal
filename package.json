@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "ganache-cli": "ganache-cli -p 8545 --networkId 50 -m \"concert load couple harbor equip island argue ramp clarify fence smart topic\" -l 112100011"
+    "ganache-cli": "ganache-cli -p 8545 --networkId 50 -m \"SEED_PHRASE_HERE\" -l 112100011"
   },
   "author": "siriusbeans",
   "private": true,
