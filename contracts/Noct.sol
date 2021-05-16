@@ -23,7 +23,7 @@ contract Noct is ERC20 ("Nocturnal Token", "NOCT") {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
     
-    function mintRewards(uint256 _amount, address _recipient) external {
+    function mintRewards(address _recipient, uint256 _amount) external {
         require(msg.sender == nocturnalFinance.orderFactoryAddress(), "only order factory address can mint more NOCT");
         _mint(_recipient, _amount * 10 ** uint256(decimals()));
     }

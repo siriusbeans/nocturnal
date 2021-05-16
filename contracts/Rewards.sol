@@ -21,7 +21,7 @@ contract Rewards {
     using SafeMath for uint256;
     using Counters for Counters.Counter;
     
-    Counters.Counter public totalRewards;
+    uint256 public totalRewards;
     
     mapping(address => uint256) public unclaimedRewards;
 
@@ -34,10 +34,14 @@ contract Rewards {
     function claimRewards(uint256 _amount) public {
         require(NoctInterface(nocturnalFinance.noctAddress()).balanceOf(msg.sender) >= _amount, "insufficient unclaimed rewards balance");
         require(NoctInterface(nocturnalFinance.noctAddress()).transfer(msg.sender, _amount), "rewards transfer failed");
+        uint256 rBalance = unclaimedRewards[msg.sender];
+        unclaimedRewards[msg.sender] = rBalance.sub(_amount);
     }
     
     function stakeRewards(uint256 _amount) public {
         require(NoctInterface(nocturnalFinance.noctAddress()).balanceOf(msg.sender) >= _amount, "insufficient unclaimed rewards balance");
         NoctStakingInterface(nocturnalFinance.sNoctAddress()).autoStake(msg.sender, _amount);
+        uint256 rBalance = unclaimedRewards[msg.sender];
+        unclaimedRewards[msg.sender] = rBalance.sub(_amount);
     }
 }
