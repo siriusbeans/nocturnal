@@ -18,6 +18,7 @@ import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 import {OracleInterface} from "./Interfaces/OracleInterface.sol";
 import {OrderInterface} from "./Interfaces/OrderInterface.sol";
+import {Order} from "./Order.sol";
 import {RewardsInterface} from "./Interfaces/RewardsInterface.sol";
 
 contract OrderFactory {
@@ -28,7 +29,7 @@ contract OrderFactory {
     Counters.Counter public platformVolume;
     
     uint256 internal constant bPDivisor = 1000;  // 100th of a bip
-    address internal constant WETH; 
+    address internal WETH; 
     
     mapping(address => uint256) swapOrderID;
     mapping(address => address) swapPoolAddress;
@@ -53,7 +54,6 @@ contract OrderFactory {
     
     NocturnalFinanceInterface public nocturnalFinance;
     IUniswapV3Pool public pool;
-    OrderInterface public Order;
     
     constructor(address _nocturnalFinance, address _WETH) public {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
@@ -74,7 +74,7 @@ contract OrderFactory {
         require(ERC20(_swapFromTokenAddress).balanceOf(msg.sender) >= _swapFromTokenBalance);
         uint256 dRateBasisPoints = nocturnalFinance.depositRate();
         require((_swapSettlementGratuity >= 0) && (_swapSettlementGratuity < dRateBasisPoints.mul(100).div(bPDivisor))); // expressed in basis points
-        Order nocturnalOrder = new Order ("Nocturnal Order", "oNOCT"); 
+        Order nocturnalOrder = new Order("Nocturnal Order", "oNOCT"); 
         orderCounter.increment();
         uint256 orderID = orderCounter.current();
         address orderAddress = address(nocturnalOrder);
@@ -93,7 +93,7 @@ contract OrderFactory {
         
         pool = IUniswapV3Pool(_swapPoolAddress);        
         bool fromToken0;
-        if (pool.token0 == _swapFromTokenAddress) {
+        if (pool.token0() == _swapFromTokenAddress) {
             fromToken0 = true;
         } else {
             fromToken0 = false;    
@@ -107,7 +107,7 @@ contract OrderFactory {
         // 2)  If fromToken is WETH, transfer dFee WETH to Staking.sol then Transfer fromTokenBalance-dFee fromToken to order
         if (_swapFromTokenAddress == WETH) {
             require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, nocturnalFinance.sNoctAddress(), dFee), "creator to stakers dFee transfer failed");
-            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance.min(dFee)), "creator to order balance transfer failed");
+            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance.sub(dFee)), "creator to order balance transfer failed");
             
             // get fromTokenBalance value in ETH for tracking platform volume
             if (fromToken0 == true) {
@@ -122,8 +122,8 @@ contract OrderFactory {
                  
         // 3)  If toToken is WETH, swap dFee for WETH and send it to Staking.sol then Transfer fromTokenBalance-dFee fromToken to order
         } else if ((_swapToTokenAddress == WETH) ) {
-            require(OrderInterface(nocturnalFinance.orderAddress()).orderSwap(swapPoolAddress, nocturnalFinance.sNoctAddress(), fromToken0, int256(dFee), 0), "creator to stakers fee transfer failed");
-            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance.min(dFee)), "creator to order balance transfer failed");
+            OrderInterface(nocturnalFinance.orderAddress()).orderSwap(_swapPoolAddress, nocturnalFinance.sNoctAddress(), fromToken0, dFee, 0);//this function doesn't return a boolean so can't be put in a require statment "creator to stakers fee transfer failed"
+            require(ERC20(_swapFromTokenAddress).transferFrom(msg.sender, orderAddress, _swapFromTokenBalance.sub(dFee)), "creator to order balance transfer failed");
             
             // get fromTokenBalance value in ETH for tracking platform volume
             if (fromToken0 == true) {
@@ -138,7 +138,7 @@ contract OrderFactory {
         }
         
         // update Order fromTokenBalance attribute for settlement
-        swapFromTokenBalance[orderAddress] = _swapFromTokenBalance.min(dFee);
+        swapFromTokenBalance[orderAddress] = _swapFromTokenBalance.sub(dFee);
         
         // emit events
         emit orderCreated(orderID, orderAddress, _swapSettlementGratuity);
@@ -157,7 +157,7 @@ contract OrderFactory {
         // oracle returns a tick accum value
         // the value of the limit returned by front end may 
         // need to be a function of token0 (fromToken or toToken?)
-        if (pool.token0 == fromTokenAddress) {
+        if (pool.token0() == fromTokenAddress) {
             // currentPrice = ???
             currentPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_address);
         } else {
@@ -186,7 +186,7 @@ contract OrderFactory {
         uint256 gratuity = fromTokenBalance.mul(settlementGratuity).div(bPDivisor);
         
         bool fromToken0;
-        if (pool.token0 == fromTokenAddress) {
+        if (pool.token0() == fromTokenAddress) {
             fromToken0 = true;
         } else {
             fromToken0 = false;
