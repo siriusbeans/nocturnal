@@ -28,7 +28,7 @@ contract NoctStaking {
 
     constructor (address _nocturnalFinance) public {
       nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
-      tA = nocturnalFinance.sNoctAddress();
+      tA = nocturnalFinance.noctAddress();
     }
 
     event Stake(uint256 amount, uint256 total);
