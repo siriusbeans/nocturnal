@@ -1,0 +1,537 @@
+{
+  "contractName": "OracleInterface",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "getCurrentPrice",
+      "outputs": [
+        {
+          "internalType": "int24",
+          "name": "",
+          "type": "int24"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "getTokens",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"getCurrentPrice\",\"outputs\":[{\"internalType\":\"int24\",\"name\":\"\",\"type\":\"int24\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"getTokens\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/knott/Desktop/nocturnal/contracts/interfaces/OracleInterface.sol\":\"OracleInterface\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/knott/Desktop/nocturnal/contracts/interfaces/OracleInterface.sol\":{\"keccak256\":\"0x3d97c187adbd42d41b7d19233ad945c56682446e8b66fa8a012d0670d1e6174d\",\"urls\":[\"bzz-raw://4e3f67eaa8ab4ebdaf4253763224b89ee6bd987ef49a1a8763c24e670b58939e\",\"dweb:/ipfs/QmWsKfNsrGVM5UR2ZFKKsYtJ6WgGcKjETcXyuUhX7aPims\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "/*                              $$\\                                             $$\\                                                         \n                                $$ |                                            $$ |                                                  \n$$$$$$$\\   $$$$$$\\   $$$$$$$\\ $$$$$$\\   $$\\   $$\\  $$$$$$\\  $$$$$$$\\   $$$$$$\\  $$ |     \n$$  __$$\\ $$  __$$\\ $$  _____|\\_$$  _|  $$ |  $$ |$$  __$$\\ $$  __$$\\  \\____$$\\ $$ |    \n$$ |  $$ |$$ /  $$ |$$ /        $$ |    $$ |  $$ |$$ |  \\__|$$ |  $$ | $$$$$$$ |$$ |     \n$$ |  $$ |$$ |  $$ |$$ |        $$ |$$\\ $$ |  $$ |$$ |      $$ |  $$ |$$  __$$ |$$ |     \n$$ |  $$ |\\$$$$$$  |\\$$$$$$$\\   \\$$$$  |\\$$$$$$  |$$ |      $$ |  $$ |\\$$$$$$$ |$$ |      \n\\__|  \\__| \\______/  \\_______|   \\____/  \\______/ \\__|      \\__|  \\__| \\_______|\\__|     \n*/\n\npragma solidity ^0.8.0;\n\ninterface OracleInterface {\n    function getCurrentPrice(address) external view returns (int24);\n    function getTokens(address) external view returns (address, address);\n}\n",
+  "sourcePath": "/Users/knott/Desktop/nocturnal/contracts/interfaces/OracleInterface.sol",
+  "ast": {
+    "absolutePath": "/Users/knott/Desktop/nocturnal/contracts/interfaces/OracleInterface.sol",
+    "exportedSymbols": {
+      "OracleInterface": [
+        3749
+      ]
+    },
+    "id": 3750,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3732,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "820:23:17"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 3749,
+        "linearizedBaseContracts": [
+          3749
+        ],
+        "name": "OracleInterface",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "84cc315b",
+            "id": 3739,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getCurrentPrice",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3735,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3734,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3739,
+                  "src": "902:7:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 3733,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "902:7:17",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "901:9:17"
+            },
+            "returnParameters": {
+              "id": 3738,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3737,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3739,
+                  "src": "934:5:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_int24",
+                    "typeString": "int24"
+                  },
+                  "typeName": {
+                    "id": 3736,
+                    "name": "int24",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "934:5:17",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_int24",
+                      "typeString": "int24"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "933:7:17"
+            },
+            "scope": 3749,
+            "src": "877:64:17",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "450efe21",
+            "id": 3748,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getTokens",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3742,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3741,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "965:7:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 3740,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "965:7:17",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "964:9:17"
+            },
+            "returnParameters": {
+              "id": 3747,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3744,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "997:7:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 3743,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "997:7:17",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3746,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "1006:7:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 3745,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1006:7:17",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "996:18:17"
+            },
+            "scope": 3749,
+            "src": "946:69:17",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3750,
+        "src": "845:172:17"
+      }
+    ],
+    "src": "820:198:17"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/knott/Desktop/nocturnal/contracts/interfaces/OracleInterface.sol",
+    "exportedSymbols": {
+      "OracleInterface": [
+        3749
+      ]
+    },
+    "id": 3750,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3732,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "820:23:17"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 3749,
+        "linearizedBaseContracts": [
+          3749
+        ],
+        "name": "OracleInterface",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "84cc315b",
+            "id": 3739,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getCurrentPrice",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3735,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3734,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3739,
+                  "src": "902:7:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 3733,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "902:7:17",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "901:9:17"
+            },
+            "returnParameters": {
+              "id": 3738,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3737,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3739,
+                  "src": "934:5:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_int24",
+                    "typeString": "int24"
+                  },
+                  "typeName": {
+                    "id": 3736,
+                    "name": "int24",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "934:5:17",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_int24",
+                      "typeString": "int24"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "933:7:17"
+            },
+            "scope": 3749,
+            "src": "877:64:17",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "450efe21",
+            "id": 3748,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getTokens",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3742,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3741,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "965:7:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 3740,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "965:7:17",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "964:9:17"
+            },
+            "returnParameters": {
+              "id": 3747,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3744,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "997:7:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 3743,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "997:7:17",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3746,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "1006:7:17",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 3745,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1006:7:17",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "996:18:17"
+            },
+            "scope": 3749,
+            "src": "946:69:17",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3750,
+        "src": "845:172:17"
+      }
+    ],
+    "src": "820:198:17"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.0+commit.c7dfd78e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.3",
+  "updatedAt": "2021-05-16T02:21:48.636Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
