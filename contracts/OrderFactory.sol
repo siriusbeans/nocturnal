@@ -28,7 +28,7 @@ contract OrderFactory {
     Counters.Counter public orderCounter;
     
     uint256 public platformVolume;
-    uint256 internal constant bPDivisor = 10000;  // 100th of a bip
+    uint256 internal constant bPDivisor = 10000;
     address WETH; 
     
     mapping(address => uint256) swapOrderID;
