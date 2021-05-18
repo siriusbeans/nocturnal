@@ -7,8 +7,8 @@ const Oracle = artifacts.require("./Oracle.sol");
 const Order = artifacts.require("./Order.sol");
 const OrderFactory = artifacts.require("./OrderFactory.sol");
 const Rewards = artifacts.require("./Rewards.sol");
-
-const WETH = "";
+const LinkToken = artifacts.require("./Mocks/LinkToken.sol");
+const WethToken = artifacts.require("./Mocks/WethToken.sol");
 
 module.exports = function(deployer, network, accounts) {
     const ownerAddress = accounts[0];
@@ -19,23 +19,33 @@ module.exports = function(deployer, network, accounts) {
     let OrderInstance;
     let OrderFactoryInstance;
     let RewardsInstance;
+    let LinkTokenInstance;
+    let WethTokenInstance;
 
     deployer.then(function() {
         // Deploy first set of contracts, no interdependance
         return deployer.deploy(NocturnalFinance, { from: ownerAddress }).then(instance => {
             NocturnalFinanceInstance = instance;
+            
+            return deployer.deploy(LinkToken, { from: ownerAddress });
+        }).then(instance => {
+            LinkTokenInstance = instance;
+
+            return deployer.deploy(WethToken, { from: ownerAddress });
+        }).then(instance => {
+            WethTokenInstance = instance;
+            
         });
     }).then(function() {
   
-            return deployer.deploy(Noct, NocturnalFinance.address, { from: ownerAddress });
-        }).then(instance => {
+            return deployer.deploy(Noct, NocturnalFinance.address, { from: ownerAddress }).then(instance => {
             NoctInstance = instance;
             
             return deployer.deploy(NoctStaking, NocturnalFinance.address, { from: ownerAddress });
         }).then(instance => {
             NoctStakingInstance = instance;
         
-            return deployer.deploy(OrderFactory, NocturnalFinance.address, WETH { from: ownerAddress });
+            return deployer.deploy(OrderFactory, NocturnalFinance.address, WethToken.address, { from: ownerAddress });
         }).then(instance => {
             OrderFactoryInstance = instance;
             
@@ -49,18 +59,17 @@ module.exports = function(deployer, network, accounts) {
             
             return deployer.deploy(Rewards, NocturnalFinance.address, { from: ownerAddress });
         }).then(instance => {
-            RewardsInstance = instance;
+            RewardsInstance = instance; 
+               
         });
     }).then(function() {
 
         return NocturnalFinanceInstance.initNocturnal(OracleInstance.address, RewardsInstance.address, OrderFactoryInstance.address, OrderInstance.address);
-        });
     }).then(function() {
 
         return NocturnalFinanceInstance.initNoct(NoctInstance.address);
-        });
     }).then(function() {
 
-        return NocturnalFinanceInstance.initsNoct(NoctStakingInstance.address);
+        return NocturnalFinanceInstance.initsNoct(sNoctInstance.address);
     });
 };
