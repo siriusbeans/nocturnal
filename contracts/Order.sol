@@ -17,10 +17,14 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
-
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
+import {OracleInterface} from "./Interfaces/OracleInterface.sol";
 
 /**
  * @dev Implementation of https://eips.ethereum.org/EIPS/eip-721[ERC721] Non-Fungible Token Standard, including
@@ -30,9 +34,15 @@ import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.
 contract Order is Context, ERC165, IERC721, IERC721Metadata {
     using Address for address;
     using Strings for uint256;
+    using SafeMath for uint256;
+    
+    uint256 public immutable MAXINT = type(uint256).max;
+    address internal constant UniswapV3SwapRouter = 0xbBca0fFBFE60F60071630A8c80bb6253dC9D6023;
+    uint256 internal constant bPDivisor = 10000;  // 100th of a bip
     
     NocturnalFinanceInterface public nocturnalFinance;
     IUniswapV3Pool public pool;
+    ISwapRouter public swapRouter;
 
     // Token name
     string private _name;
@@ -58,6 +68,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     constructor (string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
+        swapRouter = ISwapRouter(UniswapV3SwapRouter);
     }
 
     /**
@@ -385,11 +396,47 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
         require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
     }
     
-    function orderSwap(address _pool, address _recipient, bool _fromToken0, int256 _amount, uint160 _sqrtPriceLimitX96, bytes calldata _data) public {
+    function orderSwap(address _pool, address _recipient, bool _fromToken0, uint256 _amount, uint256 _slippage, uint160 _sqrtPriceLimitX96) public returns (uint256 amountOut) {
         require(_msgSender() == nocturnalFinance.orderFactoryAddress(), "caller is not order factory");
-        int256 amount0;
-        int256 amount1;
-        (amount0, amount1) = pool.swap(_recipient, _fromToken0, _amount, _sqrtPriceLimitX96, _data); // fourth parameter is sqrtPriceLimitX96, unsure what this should be 
+        address token0 = IUniswapV3Pool(_pool).token0();
+        address token1 = IUniswapV3Pool(_pool).token1();
+        uint24 pFee = IUniswapV3Pool(_pool).fee();
+        uint256 amountOutMin;
+        uint256 amountSlippage;
+        uint256 amount;
+        uint256 cPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_pool);
+        uint256 cPriceReciprocal = OracleInterface(nocturnalFinance.oracleAddress()).getPriceReciprocal(cPrice);
+        
+        // using slippage, and Oracle.sol, calculate the amountOutMinimum parameter for exactInputSingle()
+        
+        if (_fromToken0 == true) {
+            amount = cPriceReciprocal.mul(_amount); 
+            amountSlippage = amount.mul(_slippage).div(bPDivisor);
+            amountOutMin = amount.sub(amountSlippage);
+            amountOut = getExactInputSingle(token0, token1, pFee, _recipient, _amount, amountOutMin, _sqrtPriceLimitX96);
+        } else {
+            amount = cPrice.mul(_amount);
+            amountSlippage = amount.mul(_slippage).div(bPDivisor);
+            amountOutMin = amount.sub(amountSlippage);
+            amountOut = getExactInputSingle(token1, token0, pFee, _recipient, _amount, amountOutMin, _sqrtPriceLimitX96);
+        }   
+    }  
+    
+    function getExactInputSingle(address _tokenIn, address _tokenOut, uint24 _fee, address _recipient, uint256 _amount, uint256 _amountOutMin, uint160 _sqrtPriceLimitX96) internal returns (uint256 amountOut) {
+        IERC20 token = IERC20(_tokenIn);
+        require(token.approve(UniswapV3SwapRouter, MAXINT), "approve failed");
+		amountOut = swapRouter.exactInputSingle(
+		ISwapRouter.ExactInputSingleParams({
+		    tokenIn: _tokenIn,
+		    tokenOut: _tokenOut,
+		    fee: _fee,
+		    recipient: _recipient,
+		    deadline: block.timestamp + 600, // 10 minutes from current block
+		    amountIn: _amount,
+		    amountOutMinimum: _amountOutMin, // function of slippage and CurrentPrice(_pool)
+		    sqrtPriceLimitX96: _sqrtPriceLimitX96
+		    })
+		);
     }
     
     function closeOrder(uint256 tokenId, address _tokenAddress, address _recipientAddress, uint256 _amount) external {
