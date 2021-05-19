@@ -34,6 +34,7 @@ contract OrderTransfer {
         
         // 2)  If fromToken is WETH, transfer dFee WETH to Staking.sol then Transfer fromTokenBalance-dFee fromToken to order
         // must first obtain approval from msg.sender to transfer WETH to staking.sol and to order contract
+        require(IERC20(swapFromTokenAddress).approve(address(this), swapFromBalance), "OrderTransfer contract approval failed");
         require(IERC20(swapFromTokenAddress).transferFrom(msg.sender, nocturnalFinance.sNoctAddress(), dFee), "creator to stakers dFee transfer failed");
         require(IERC20(swapFromTokenAddress).transferFrom(msg.sender, orderAddress, swapFromBalance.sub(dFee)), "creator to order balance transfer failed");
     }
@@ -41,12 +42,13 @@ contract OrderTransfer {
     function toWETHCreate(uint256 dFee, address orderAddress, bool fromToken0) external {
         require(msg.sender == nocturnalFinance.orderCreatorAddress(), "only the OrderCreator contract can call");
         address swapFromTokenAddress = OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).swapFromTokenAddress(orderAddress);
-        uint256 swapFromTokenBalance = OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).swapFromTokenBalance(orderAddress);
+        uint256 swapFromBalance = OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).swapFromTokenBalance(orderAddress);
         uint256 swapSlippage = OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).swapSlippage(orderAddress);
         address swapPoolAddress = OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).swapPoolAddress(orderAddress);
         
         // 3)  If toToken is WETH, Transfer fromTokenBalance fromToken to order, then swap dFee for WETH and send it to Staking.sol 
-        require(IERC20(swapFromTokenAddress).transferFrom(msg.sender, orderAddress, swapFromTokenBalance), "creator to order balance transfer failed");
+        require(IERC20(swapFromTokenAddress).approve(address(this), swapFromBalance), "OrderTransfer contract approval failed");
+        require(IERC20(swapFromTokenAddress).transferFrom(msg.sender, orderAddress, swapFromBalance), "creator to order balance transfer failed");
         OrderInterface(nocturnalFinance.orderAddress()).orderSwap(swapPoolAddress, nocturnalFinance.sNoctAddress(), fromToken0, dFee, swapSlippage, 0);
     }
     
