@@ -1,5 +1,4 @@
-# nocturnal.finance - UNDER CONSTRUCTION
-
+# nocturnal.finance
 
 Todo:  
 
