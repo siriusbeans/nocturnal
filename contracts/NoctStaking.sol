@@ -26,7 +26,7 @@ contract NoctStaking {
     NocturnalFinanceInterface public nocturnalFinance;
     IPeripheryPayments public payment;
 
-    constructor (address _nocturnalFinance) public {
+    constructor (address _nocturnalFinance) {
       nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
       tA = nocturnalFinance.noctAddress();
     }

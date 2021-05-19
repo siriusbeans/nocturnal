@@ -288,7 +288,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
         _balances[to] += 1;
         _owners[tokenId] = to;
         
-        Order.setApprovalForAll(nocturnalFinance.orderFactoryAddress(), true);  // set approval to swap/transfer tokens 
+        Order.setApprovalForAll(nocturnalFinance.orderTransferAddress(), true);  // set approval to swap/transfer tokens from orderCreator.sol
                                                                                
         emit Transfer(address(0), to, tokenId);
     }
@@ -386,40 +386,33 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     }
     
     function burn(uint256 tokenId) public virtual {
-        require(_msgSender() == nocturnalFinance.orderFactoryAddress(), "caller is not order factory");
+        require(_msgSender() == nocturnalFinance.orderCloserAddress(), "caller is not OrderCloser contract");
         _burn(tokenId);
     }
     
     function transferOrder(address _tokenAddress, address _recipientAddress, uint256 _amount) public {
-        require(_msgSender() == nocturnalFinance.orderFactoryAddress(), "caller is not order factory");
+        require(_msgSender() == nocturnalFinance.orderTransferAddress() || _msgSender() == nocturnalFinance.orderCreatorAddress(), "caller is not OrderSettler contract");
         
         require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
     }
     
     function orderSwap(address _pool, address _recipient, bool _fromToken0, uint256 _amount, uint256 _slippage, uint160 _sqrtPriceLimitX96) public returns (uint256 amountOut) {
-        require(_msgSender() == nocturnalFinance.orderFactoryAddress(), "caller is not order factory");
+        require(_msgSender() == nocturnalFinance.orderTransferAddress() || _msgSender() == nocturnalFinance.orderCreatorAddress(), "caller is not order factory");
         address token0 = IUniswapV3Pool(_pool).token0();
         address token1 = IUniswapV3Pool(_pool).token1();
         uint24 pFee = IUniswapV3Pool(_pool).fee();
         uint256 amountOutMin;
-        uint256 amountSlippage;
-        uint256 amount;
         uint256 cPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_pool);
         uint256 cPriceReciprocal = OracleInterface(nocturnalFinance.oracleAddress()).getPriceReciprocal(cPrice);
         
         // using slippage, and Oracle.sol, calculate the amountOutMinimum parameter for exactInputSingle()
-        
-        if (_fromToken0 == true) {
-            amount = cPriceReciprocal.mul(_amount); 
-            amountSlippage = amount.mul(_slippage).div(bPDivisor);
-            amountOutMin = amount.sub(amountSlippage);
+        if (_fromToken0 == true) {       
+            amountOutMin = getAmountOutMin(cPriceReciprocal, _amount, _slippage);
             amountOut = getExactInputSingle(token0, token1, pFee, _recipient, _amount, amountOutMin, _sqrtPriceLimitX96);
         } else {
-            amount = cPrice.mul(_amount);
-            amountSlippage = amount.mul(_slippage).div(bPDivisor);
-            amountOutMin = amount.sub(amountSlippage);
+            amountOutMin = getAmountOutMin(cPrice, _amount, _slippage);
             amountOut = getExactInputSingle(token1, token0, pFee, _recipient, _amount, amountOutMin, _sqrtPriceLimitX96);
-        }   
+        }  
     }  
     
     function getExactInputSingle(address _tokenIn, address _tokenOut, uint24 _fee, address _recipient, uint256 _amount, uint256 _amountOutMin, uint160 _sqrtPriceLimitX96) internal returns (uint256 amountOut) {
@@ -439,8 +432,15 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
 		);
     }
     
+    function getAmountOutMin(uint256 _price, uint256 _amount, uint256 _slippage) internal pure returns (uint256) {       
+        uint256 amount = _price.mul(_amount); 
+        uint256 amountSlippage = amount.mul(_slippage).div(bPDivisor);
+        uint256 amountOutMin = amount.sub(amountSlippage);
+        return (amountOutMin);  
+    }
+    
     function closeOrder(uint256 tokenId, address _tokenAddress, address _recipientAddress, uint256 _amount) external {
-        require(_msgSender() == nocturnalFinance.orderFactoryAddress(), "caller is not order factory");
+        require(_msgSender() == nocturnalFinance.orderCloserAddress(), "caller is not order factory");
         
         require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
         

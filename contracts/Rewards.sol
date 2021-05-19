@@ -14,7 +14,6 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
-import {OrderFactoryInterface} from "./Interfaces/OrderFactoryInterface.sol";
 import {NoctStakingInterface} from "./Interfaces/NoctStakingInterface.sol";
 
 contract Rewards {
@@ -27,7 +26,7 @@ contract Rewards {
 
     NocturnalFinanceInterface public nocturnalFinance;
     
-    constructor(address _nocturnalFinance) public {
+    constructor(address _nocturnalFinance) {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
     

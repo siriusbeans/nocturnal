@@ -19,7 +19,7 @@ contract Noct is ERC20 ("Nocturnal Token", "NOCT") {
 
     NocturnalFinanceInterface public nocturnalFinance;
    
-    constructor (address _nocturnalFinance) public {
+    constructor (address _nocturnalFinance) {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
     

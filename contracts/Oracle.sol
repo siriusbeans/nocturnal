@@ -21,7 +21,7 @@ contract Oracle {
 
     IUniswapV3Pool public pool;
     
-    constructor() public {
+    constructor() {
     }
     
     function getCurrentPrice(address _pool) external view returns (uint256) {
@@ -34,7 +34,7 @@ contract Oracle {
         return sqrtPriceX96;
     }
     
-    function getPriceReciprocal(uint256 _price) external view returns (uint256) {
+    function getPriceReciprocal(uint256 _price) external pure returns (uint256) {
         uint256 reciprocalPrice = multiplicand.mul(multiplicand).div(_price);
         return (reciprocalPrice);
     }
