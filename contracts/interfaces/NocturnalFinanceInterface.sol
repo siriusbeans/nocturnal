@@ -14,6 +14,11 @@ interface NocturnalFinanceInterface {
     function oracleAddress() external view returns (address);
     function rewardsAddress() external view returns (address);
     function orderFactoryAddress() external view returns (address);
+    function orderCreatorAddress() external view returns (address);
+    function orderSettlerAddress() external view returns (address);
+    function orderCloserAddress() external view returns (address);
+    function orderModifierAddress() external view returns (address);
+    function orderTransferAddress() external view returns (address);
     function orderAddress() external view returns (address);
     function feeRateAddress() external view returns (address);
     function noctAddress() external view returns (address);

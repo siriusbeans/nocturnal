@@ -10,11 +10,16 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-interface OrderInterface {
-    function ownerOf(uint256) external view returns (address);
-    function burn(uint256) external;
-    function transferOrder(address, address, uint256) external;
-    function orderSwap(address, address, bool, uint256, uint256, uint160) external;
-    function closeOrder(uint256, address, address, uint256) external;
-    function _mint(address, uint256) external;
+interface OrderCreatorInterface {
+    function createLimitOrder(
+            address _swapPoolAddress, 
+            address _swapFromTokenAddress, 
+            address _swapToTokenAddress, 
+            uint256 _swapFromTokenBalance, 
+            uint256 _swapLimitPrice,
+            uint256 _swapSlippage,
+            bool _swapAbove,
+            uint256 _swapSettlementFee) external;
+    
+    event orderCreated(uint256 orderID, address orderAddress, uint256 settlementGratuity);
 }
