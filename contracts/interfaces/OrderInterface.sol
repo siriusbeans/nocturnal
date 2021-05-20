@@ -17,4 +17,5 @@ interface OrderInterface {
     function orderSwap(address, address, bool, uint256, uint256, uint160) external;
     function closeOrder(uint256, address, address, uint256) external;
     function _mint(address, uint256) external;
+    function _setTokenURI(uint256, string memory) external;
 }

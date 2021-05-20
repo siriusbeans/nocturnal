@@ -20,10 +20,12 @@ interface NocturnalFinanceInterface {
     function orderModifierAddress() external view returns (address);
     function orderTransferAddress() external view returns (address);
     function orderAddress() external view returns (address);
-    function feeRateAddress() external view returns (address);
+    function treasuryAddress() external view returns (address);
     function noctAddress() external view returns (address);
     function sNoctAddress() external view returns (address);
     
     function depositRate() external view returns (uint256);
     function rewardsFactor() external view returns (uint256);
+    function treasuryFactor() external view returns (uint256);
+    function getURI() external view returns (string memory);
 }
