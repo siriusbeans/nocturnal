@@ -1,4 +1,4 @@
-Navigate to project directory 
+Navigate to project directory (~/Truffle/nocturnal/nocturnal-mainV2)
 
 ** ADD TEST ACCOUNT SEED PHRASE IN package.json LINE 6 **
 
@@ -12,8 +12,11 @@ Run following commands:
 
     *IN NEW TERMINAL TAB*
 
-2)  truffle compile
+2)  npm install
 
-3)  truffle migrate
+3)  truffle compile
 
-4)  truffle test
+4)  truffle migrate
+
+5)  truffle test
+
