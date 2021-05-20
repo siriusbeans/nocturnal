@@ -1,12 +1,8 @@
-Navigate to project directory (~/Truffle/nocturnal-main)
-
+Navigate to project directory 
 
 ** ADD TEST ACCOUNT SEED PHRASE IN package.json LINE 6 **
 
-
 Install nodejs:  sudo dnf install nodejs
-
-Install yarn:  sudo npm install yarn -g
 
 Install ganache-cli:  sudo yarn global add ganache-cli
 
@@ -18,9 +14,6 @@ Run following commands:
 
 2)  truffle compile
 
-    *THIS IS WHERE THE ERRORS OCCUR*
-
 3)  truffle migrate
 
 4)  truffle test
-
