@@ -12,11 +12,14 @@ const OrderCloser = artifacts.require("./OrderCloser.sol");
 const OrderModifier = artifacts.require("./OrderModifier.sol");
 const OrderTransfer = artifacts.require("./OrderTransfer.sol");
 const Rewards = artifacts.require("./Rewards.sol");
+const Treasury = artifacts.require("./Treasury.sol");
 const LinkToken = artifacts.require("./Mocks/LinkToken.sol");
 const WethToken = artifacts.require("./Mocks/WethToken.sol");
 
 module.exports = function(deployer, network, accounts) {
-    const ownerAddress = accounts[0];
+    const ownerAddress = accounts[0]; 
+    const initialSupply = 1100000;
+    const rewardsSupply = 20900000;   
     let NoctInstance;
     let NoctStakingInstance;
     let NocturnalFinanceInstance;
@@ -29,6 +32,7 @@ module.exports = function(deployer, network, accounts) {
     let OrderModifierInstance;
     let OrderTransferInstance;
     let RewardsInstance;
+    let TreasuryInstance;
     let LinkTokenInstance;
     let WethTokenInstance;
 
@@ -48,11 +52,7 @@ module.exports = function(deployer, network, accounts) {
         });
     }).then(function() {
   
-            return deployer.deploy(Noct, NocturnalFinance.address, { from: ownerAddress }).then(instance => {
-            NoctInstance = instance;
-            
-            return deployer.deploy(NoctStaking, NocturnalFinance.address, { from: ownerAddress });
-        }).then(instance => {
+            return deployer.deploy(NoctStaking, NocturnalFinance.address, { from: ownerAddress }).then(instance => {
             NoctStakingInstance = instance;
         
             return deployer.deploy(OrderFactory, NocturnalFinance.address, { from: ownerAddress });
@@ -91,6 +91,10 @@ module.exports = function(deployer, network, accounts) {
         }).then(instance => {
             RewardsInstance = instance; 
                
+            return deployer.deploy(Treasury, NocturnalFinance.address, { from: ownerAddress });
+        }).then(instance => {
+            TreasuryInstance = instance;    
+            
         });
     }).then(function() {
 
@@ -102,9 +106,15 @@ module.exports = function(deployer, network, accounts) {
                         OrderCloserInstance.address, 
                         OrderModifierInstance.address, 
                         OrderTransferInstance.address, 
-                        OrderInstance.address);
+                        OrderInstance.address,
+                        TreasuryInstance.address);
     }).then(function() {
-
+    
+        return deployer.deploy(Noct, NocturnalFinance.address, rewardsSupply, initialSupply, { from: ownerAddress }).then(instance => {
+        NoctInstance = instance;
+        });
+    }).then(function() {
+    
         return NocturnalFinanceInstance.initNoct(NoctInstance.address);
     }).then(function() {
 
