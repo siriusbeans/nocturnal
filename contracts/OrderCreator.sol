@@ -72,7 +72,7 @@ contract OrderCreator {
         OrderInterface(nocturnalFinance.orderAddress())._mint(msg.sender, orderCounter.current());
         
         // set order URI using initializer contract's orderURI() string
-      	OrderInterface(nocturnalFinance.orderInterfaceAddress())._setTokenURI(orderCounter.current(), nocturnalFinance.getURI());
+      	OrderInterface(nocturnalFinance.orderAddress())._setTokenURI(orderCounter.current(), nocturnalFinance.getURI());
       
         pool = IUniswapV3Pool(_swapPoolAddress);        
 
@@ -86,7 +86,7 @@ contract OrderCreator {
             fromToken0 = false;
         }
         
-        uint256 cPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(pool);
+        uint256 cPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);
         uint256 cPriceReciprocal = OracleInterface(nocturnalFinance.oracleAddress()).getPriceReciprocal(cPrice);
 
         // 2)  If fromToken is WETH, transfer dFee WETH to Staking.sol then Transfer fromTokenBalance.min(dFee) fromToken to order

@@ -1,0 +1,349 @@
+{
+  "contractName": "ERC677Receiver",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_sender",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_value",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "onTokenTransfer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_sender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_value\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"onTokenTransfer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/knott/Desktop/nocturnal/contracts/Mocks/ERC677Receiver.sol\":\"ERC677Receiver\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":1000000},\"remappings\":[]},\"sources\":{\"/Users/knott/Desktop/nocturnal/contracts/Mocks/ERC677Receiver.sol\":{\"keccak256\":\"0xecc0d853e43ad2b5a2d24b0a08b52f22ab9b5a346eaf6d099f5b2ce39866ef48\",\"urls\":[\"bzz-raw://956ee32338be452d3ce12cdbfd76f930d4bd3ff8ce8d8d941e1f79cfb10a2622\",\"dweb:/ipfs/QmevVxVj7dfWGzBvxh9hEPYecQ6gEdLuvHwAtJ5AWrpDCZ\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.8.0;\n\nabstract contract ERC677Receiver {\n  function onTokenTransfer(address _sender, uint _value, bytes memory _data) public virtual;\n}\n",
+  "sourcePath": "/Users/knott/Desktop/nocturnal/contracts/Mocks/ERC677Receiver.sol",
+  "ast": {
+    "absolutePath": "/Users/knott/Desktop/nocturnal/contracts/Mocks/ERC677Receiver.sol",
+    "exportedSymbols": {
+      "ERC677Receiver": [
+        837
+      ]
+    },
+    "id": 838,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 827,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:13"
+      },
+      {
+        "abstract": true,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": false,
+        "id": 837,
+        "linearizedBaseContracts": [
+          837
+        ],
+        "name": "ERC677Receiver",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "a4c0ed36",
+            "id": 836,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "onTokenTransfer",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 834,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 829,
+                  "mutability": "mutable",
+                  "name": "_sender",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 836,
+                  "src": "87:15:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 828,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "87:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 831,
+                  "mutability": "mutable",
+                  "name": "_value",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 836,
+                  "src": "104:11:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 830,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "104:4:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 833,
+                  "mutability": "mutable",
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 836,
+                  "src": "117:18:13",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 832,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "117:5:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "86:50:13"
+            },
+            "returnParameters": {
+              "id": 835,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "151:0:13"
+            },
+            "scope": 837,
+            "src": "62:90:13",
+            "stateMutability": "nonpayable",
+            "virtual": true,
+            "visibility": "public"
+          }
+        ],
+        "scope": 838,
+        "src": "25:129:13"
+      }
+    ],
+    "src": "0:155:13"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/knott/Desktop/nocturnal/contracts/Mocks/ERC677Receiver.sol",
+    "exportedSymbols": {
+      "ERC677Receiver": [
+        837
+      ]
+    },
+    "id": 838,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 827,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:13"
+      },
+      {
+        "abstract": true,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": false,
+        "id": 837,
+        "linearizedBaseContracts": [
+          837
+        ],
+        "name": "ERC677Receiver",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "a4c0ed36",
+            "id": 836,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "onTokenTransfer",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 834,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 829,
+                  "mutability": "mutable",
+                  "name": "_sender",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 836,
+                  "src": "87:15:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 828,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "87:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 831,
+                  "mutability": "mutable",
+                  "name": "_value",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 836,
+                  "src": "104:11:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 830,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "104:4:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 833,
+                  "mutability": "mutable",
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 836,
+                  "src": "117:18:13",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 832,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "117:5:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "86:50:13"
+            },
+            "returnParameters": {
+              "id": 835,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "151:0:13"
+            },
+            "scope": 837,
+            "src": "62:90:13",
+            "stateMutability": "nonpayable",
+            "virtual": true,
+            "visibility": "public"
+          }
+        ],
+        "scope": 838,
+        "src": "25:129:13"
+      }
+    ],
+    "src": "0:155:13"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.0+commit.c7dfd78e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.3",
+  "updatedAt": "2021-05-20T06:19:55.820Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
