@@ -11,14 +11,14 @@ module.exports = {
       host: "localhost",
       port: 8545,
       network_id: "50",
-      gas: 4700000,
+      gas: 10000000,
       gasPrice: 1
     },
     testnet: {
       host: "localhost",
       port: 8545,
       network_id: "50",
-      gas: 4700000,
+      gas: 10000000,
       gasPrice: 20000000000
     },
   },
