@@ -86,8 +86,7 @@ contract OrderCreator {
             fromToken0 = false;
         }
         
-        uint256 cPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);
-        uint256 cPriceReciprocal = OracleInterface(nocturnalFinance.oracleAddress()).getPriceReciprocal(cPrice);
+        uint256 cPrice;
 
         // 2)  If fromToken is WETH, transfer dFee WETH to Staking.sol then Transfer fromTokenBalance.min(dFee) fromToken to order
         if (_swapFromTokenAddress == WETH) {
@@ -99,10 +98,13 @@ contract OrderCreator {
             OrderTransferInterface(nocturnalFinance.orderTransferAddress()).toWETHCreate(dFee, address(nocturnalOrder), pool.token0() == _swapFromTokenAddress);
             // get fromTokenBalance value in ETH for tracking platform volume
             if (fromToken0 == true) {
-                OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).setOrderFromTokenValueInETH(address(nocturnalOrder), _swapFromTokenBalance.mul(cPriceReciprocal));
-            } else {                                                          
-                OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).setOrderFromTokenValueInETH(address(nocturnalOrder), _swapFromTokenBalance.mul(cPrice));
+                // get reciprocal of current price
+                cPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPriceReciprocal(_swapPoolAddress);
+            } else {           
+                // get current price    
+                cPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress);                             
             }
+            OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).setOrderFromTokenValueInETH(address(nocturnalOrder), _swapFromTokenBalance.mul(cPrice));
         }
         
         // update Order fromTokenBalance attribute for settlement

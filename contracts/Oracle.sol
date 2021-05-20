@@ -34,9 +34,10 @@ contract Oracle {
         return sqrtPriceX96;
     }
     
-    function getPriceReciprocal(uint256 _price) external pure returns (uint256) {
-        uint256 reciprocalPrice = multiplicand.mul(multiplicand).div(_price);
-        return (reciprocalPrice);
+    function getCurrentPriceReciprocal(address _pool) external view returns (uint256) {
+        (uint160 sqrtPriceX96,,,,,,) = IUniswapV3Pool(_pool).slot0();
+        uint256 _price = uint256(sqrtPriceX96).mul(uint256(sqrtPriceX96)).mul(1e18) >> (96*2);
+        return (multiplicand.mul(multiplicand).div(_price));
     }
     
     // to be used by front end to reduce a pool address to its token addresses

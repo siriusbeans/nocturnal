@@ -55,8 +55,7 @@ contract OrderSettler {
             currentPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_address);
         } else {
             // obtain the reciprocal of below value
-            currentPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_address);
-            currentPrice = OracleInterface(nocturnalFinance.oracleAddress()).getPriceReciprocal(currentPrice);
+            currentPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPriceReciprocal(_address);
         }
         
         if (above == true) {

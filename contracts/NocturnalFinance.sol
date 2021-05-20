@@ -84,7 +84,7 @@ contract NocturnalFinance is Ownable {
         rewardsRatioFactor = _rFactorBasisPoints;
     }
     
-    function setTreasuryFactory(uint256 _tFactorBasisPoints) external onlyOwner {
+    function setTreasuryFactor(uint256 _tFactorBasisPoints) external onlyOwner {
         treasuryFactor = _tFactorBasisPoints;
     }
     

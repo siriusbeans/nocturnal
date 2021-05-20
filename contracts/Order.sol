@@ -429,14 +429,14 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
         address token1 = IUniswapV3Pool(_pool).token1();
         uint24 pFee = IUniswapV3Pool(_pool).fee();
         uint256 amountOutMin;
-        uint256 cPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_pool);
-        uint256 cPriceReciprocal = OracleInterface(nocturnalFinance.oracleAddress()).getPriceReciprocal(cPrice);
         
         // using slippage, and Oracle.sol, calculate the amountOutMinimum parameter for exactInputSingle()
-        if (_fromToken0 == true) {       
+        if (_fromToken0 == true) { 
+            uint256 cPriceReciprocal = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPriceReciprocal(_pool);      
             amountOutMin = getAmountOutMin(cPriceReciprocal, _amount, _slippage);
             amountOut = getExactInputSingle(token0, token1, pFee, _recipient, _amount, amountOutMin, _sqrtPriceLimitX96);
         } else {
+            uint256 cPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_pool);
             amountOutMin = getAmountOutMin(cPrice, _amount, _slippage);
             amountOut = getExactInputSingle(token1, token0, pFee, _recipient, _amount, amountOutMin, _sqrtPriceLimitX96);
         }  
