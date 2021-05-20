@@ -2,10 +2,9 @@
 
 Todo:  
 
- 1)  Write migration scripts and tests
+ 1)  Test script development
  2)  Front-end development
  3)  Settlement bot development
- 4)  Consider gitbooks documents 
- 5)  Consider publishing medium articles
- 6)  Consider creating a TG Channel (during or after testnet launch)
- 7)  Consider creating a Discord Server (during or after testnet launch)
+ 4)  Gitbooks documentation
+ 5)  Create Nocturnal accoutns for Telegram, Discord, Twitter, Medium
+ 6)  Publish Medium articles (project description, testnet guide)
