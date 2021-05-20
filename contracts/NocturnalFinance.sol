@@ -25,10 +25,11 @@ contract NocturnalFinance is Ownable {
     address public noctAddress;
     address public sNoctAddress;
     address public orderAddress;
+    address public treasuryAddress;
     uint256 public depositFeeRate;
     uint256 public rewardsRatioFactor;
-    
-    mapping(address => bool) testerAddress;
+    uint256 public treasuryFactor;
+    string public orderURI;
     
     constructor() {
     }
@@ -42,7 +43,8 @@ contract NocturnalFinance is Ownable {
             address _orderCloserAddress,
             address _orderModifierAddress,
             address _orderTransferAddress,
-            address _orderAddress) external onlyOwner {
+            address _orderAddress,
+            address _treasuryAddress) external onlyOwner {
 		require(_oracleAddress != address(0));
 		require(_rewardsAddress != address(0));
 		require(_orderFactoryAddress != address(0));
@@ -52,6 +54,7 @@ contract NocturnalFinance is Ownable {
 		require(_orderModifierAddress != address(0));
 		require(_orderTransferAddress != address(0));
 		require(_orderAddress != address(0));
+		require(_treasuryAddress != address(0));
         oracleAddress = _oracleAddress;
         rewardsAddress = _rewardsAddress;
         orderFactoryAddress = _orderFactoryAddress;
@@ -59,6 +62,8 @@ contract NocturnalFinance is Ownable {
         orderSettlerAddress = _orderSettlerAddress;
         orderModifierAddress = _orderModifierAddress;
         orderTransferAddress = _orderTransferAddress;
+        orderAddress = _orderAddress;
+        treasuryAddress = _treasuryAddress;
     }
     
     function initNoct(address _noctAddress) external onlyOwner {
@@ -79,11 +84,27 @@ contract NocturnalFinance is Ownable {
         rewardsRatioFactor = _rFactorBasisPoints;
     }
     
+    function setTreasuryFactory(uint256 _tFactorBasisPoints) external onlyOwner {
+        treasuryFactor = _tFactorBasisPoints;
+    }
+    
+    function setOrderURI(string memory _orderURI) external onlyOwner {
+        orderURI = _orderURI;
+    }
+    
     function depositRate() external view returns (uint256) {
         return (depositFeeRate);
     }
      
     function rewardsFactor() external view returns (uint256) {
         return (rewardsRatioFactor);
+    }
+    
+    function treasuryRate() external view returns (uint256) {
+        return (treasuryFactor);
+    }
+    
+    function getURI() external view returns (string memory) {
+        return (orderURI);
     }
 }

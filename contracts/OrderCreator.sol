@@ -70,11 +70,24 @@ contract OrderCreator {
         OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).setOrderSettlementGratuity(address(nocturnalOrder), _swapSettlementGratuity);
 
         OrderInterface(nocturnalFinance.orderAddress())._mint(msg.sender, orderCounter.current());
+        
+        // set order URI using initializer contract's orderURI() string
+      	OrderInterface(nocturnalFinance.orderInterfaceAddress())._setTokenURI(orderCounter.current(), nocturnalFinance.getURI());
       
         pool = IUniswapV3Pool(_swapPoolAddress);        
 
         // 1)  Calculate dFee
         uint256 dFee = _swapFromTokenBalance.mul(nocturnalFinance.depositRate()).div(bPDivisor);
+        
+        bool fromToken0;
+        if (pool.token0() == _swapFromTokenAddress) {
+            fromToken0 = true;
+        } else {
+            fromToken0 = false;
+        }
+        
+        uint256 cPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(pool);
+        uint256 cPriceReciprocal = OracleInterface(nocturnalFinance.oracleAddress()).getPriceReciprocal(cPrice);
 
         // 2)  If fromToken is WETH, transfer dFee WETH to Staking.sol then Transfer fromTokenBalance.min(dFee) fromToken to order
         if (_swapFromTokenAddress == WETH) {
@@ -85,12 +98,16 @@ contract OrderCreator {
         } else if ((_swapToTokenAddress == WETH) ) {
             OrderTransferInterface(nocturnalFinance.orderTransferAddress()).toWETHCreate(dFee, address(nocturnalOrder), pool.token0() == _swapFromTokenAddress);
             // get fromTokenBalance value in ETH for tracking platform volume
-            OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).setOrderFromTokenValueInETH(address(nocturnalOrder), OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_swapPoolAddress));
+            if (fromToken0 == true) {
+                OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).setOrderFromTokenValueInETH(address(nocturnalOrder), _swapFromTokenBalance.mul(cPriceReciprocal));
+            } else {                                                          
+                OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).setOrderFromTokenValueInETH(address(nocturnalOrder), _swapFromTokenBalance.mul(cPrice));
+            }
         }
         
         // update Order fromTokenBalance attribute for settlement
         OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).setOrderFromTokenBalance(address(nocturnalOrder), _swapFromTokenBalance.sub(dFee));
-        // emit events
+        // emit events                                                
         emit orderCreated(orderCounter.current(), address(nocturnalOrder), _swapSettlementGratuity);
     }
 }

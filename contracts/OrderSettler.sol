@@ -102,14 +102,26 @@ contract OrderSettler {
     }
 
     function distributeNOCTRewards(uint256 sFTVIE, address orderCreatorAddress) internal {
-        uint256 creatorRewards = sFTVIE.mul(nocturnalFinance.rewardsFactor()).div(bPDivisor);
-        NoctInterface(nocturnalFinance.noctAddress()).mintRewards(nocturnalFinance.rewardsAddress(), creatorRewards);
+        
+        uint256 totalRewards = RewardsInterface(nocturnalFinance.rewardsAddress()).calcRewards(sFTVIE);
+        
+        // distribute treasury rewards
+        uint256 treasuryRewards = totalRewards.mul(nocturnalFinance.treasuryFactor()).div(bPDivisor);
+        RewardsInterface(nocturnalFinance.rewardsAddress()).unclaimedRewards(nocturnalFinance.treasuryAddress()).add(treasuryRewards);
+        RewardsInterface(nocturnalFinance.rewardsAddress()).totalRewards().add(treasuryRewards);
+        
+        totalRewards = totalRewards.sub(treasuryRewards);
+    
+        // distribute creator rewards
+        uint256 creatorRewards = totalRewards.mul(nocturnalFinance.rewardsFactor()).div(bPDivisor);
         RewardsInterface(nocturnalFinance.rewardsAddress()).unclaimedRewards(orderCreatorAddress).add(creatorRewards);
         RewardsInterface(nocturnalFinance.rewardsAddress()).totalRewards().add(creatorRewards);
         
-        uint256 settlerRewards = sFTVIE.sub(creatorRewards);
-        NoctInterface(nocturnalFinance.noctAddress()).mintRewards(nocturnalFinance.rewardsAddress(), settlerRewards);
+        // distribute settler rewards
+        uint256 settlerRewards = totalRewards.sub(creatorRewards);
         RewardsInterface(nocturnalFinance.rewardsAddress()).unclaimedRewards(msg.sender).add(settlerRewards);
         RewardsInterface(nocturnalFinance.rewardsAddress()).totalRewards().add(settlerRewards);
+        
+        
     }
 }

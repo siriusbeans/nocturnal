@@ -61,6 +61,9 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
 
     // Mapping from owner to operator approvals
     mapping (address => mapping (address => bool)) private _operatorApprovals;
+    
+    // Mapping from tokenID to token URIs
+    mapping (uint256 => string) private _tokenURIs;
 
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
@@ -113,14 +116,34 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
 
     /**
      * @dev See {IERC721Metadata-tokenURI}.
-     */
+     */    
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+        require(_exists(tokenId), "ERC721URIStorage: URI query for nonexistent token");
 
-        string memory baseURI = _baseURI();
-        return bytes(baseURI).length > 0
-            ? string(abi.encodePacked(baseURI, tokenId.toString()))
-            : '';
+        string memory _tokenURI = _tokenURIs[tokenId];
+        string memory base = _baseURI();
+
+        // If there is no base URI, return the token URI.
+        if (bytes(base).length == 0) {
+            return _tokenURI;
+        }
+        // If both are set, concatenate the baseURI and tokenURI (via abi.encodePacked).
+        if (bytes(_tokenURI).length > 0) {
+            return string(abi.encodePacked(base, _tokenURI));
+        }
+    }
+    
+    /**
+     * @dev Sets `_tokenURI` as the tokenURI of `tokenId`.
+     *
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     */
+    function _setTokenURI(uint256 tokenId, string memory _tokenURI) external virtual {
+        require(msg.sender == nocturnalFinance.orderCreatorAddress(), "tokenURI set by order creator contract only");
+        require(_exists(tokenId), "ERC721URIStorage: URI set of nonexistent token");
+        _tokenURIs[tokenId] = _tokenURI;
     }
 
     /**
@@ -313,6 +336,10 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
 
         _balances[owner] -= 1;
         delete _owners[tokenId];
+        
+        if (bytes(_tokenURIs[tokenId]).length != 0) {
+            delete _tokenURIs[tokenId];
+        }
 
         emit Transfer(owner, address(0), tokenId);
     }
