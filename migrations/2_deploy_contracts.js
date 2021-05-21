@@ -15,6 +15,8 @@ const Rewards = artifacts.require("./Rewards.sol");
 const Treasury = artifacts.require("./Treasury.sol");
 const LinkToken = artifacts.require("./Mocks/LinkToken.sol");
 const WethToken = artifacts.require("./Mocks/WethToken.sol");
+const MockPool = artifacts.require("./Mocks/mockPool.sol");
+const MockRouter = artifacts.require("./Mocks/mockRouter.sol");
 
 module.exports = function(deployer, network, accounts) {
     const ownerAddress = accounts[0]; 
@@ -35,6 +37,8 @@ module.exports = function(deployer, network, accounts) {
     let TreasuryInstance;
     let LinkTokenInstance;
     let WethTokenInstance;
+    let MockPoolInstance;
+    let MockRouterInstance;
 
     deployer.then(function() {
         // Deploy first set of contracts, no interdependance
@@ -48,6 +52,10 @@ module.exports = function(deployer, network, accounts) {
             return deployer.deploy(WethToken, { from: ownerAddress });
         }).then(instance => {
             WethTokenInstance = instance;
+            
+        return deployer.deploy(MockRouter, { from: ownerAddress });
+        }).then(instance => {
+            MockRouterInstance = instance;
             
         });
     }).then(function() {
@@ -93,7 +101,11 @@ module.exports = function(deployer, network, accounts) {
                
             return deployer.deploy(Treasury, NocturnalFinance.address, { from: ownerAddress });
         }).then(instance => {
-            TreasuryInstance = instance;    
+            TreasuryInstance = instance;  
+            
+            return deployer.deploy(MockPool, LinkToken.address, WethToken.address { from: ownerAddress });
+        }).then(instance => {
+            MockPoolInstance = instance;      
             
         });
     }).then(function() {
