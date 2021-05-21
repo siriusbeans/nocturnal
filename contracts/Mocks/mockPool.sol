@@ -1,33 +1,24 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity =0.8.0;
 
-import './interfaces/IUniswapV3Pool.sol';
+import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 
-import './NoDelegateCall.sol';
+import "@uniswap/v3-core/contracts/libraries/LowGasSafeMath.sol";
+import "@uniswap/v3-core/contracts/libraries/SafeCast.sol";
+import "@uniswap/v3-core/contracts/libraries/Tick.sol";
+import "@uniswap/v3-core/contracts/libraries/TickBitmap.sol";
+import "@uniswap/v3-core/contracts/libraries/Position.sol";
+import "@uniswap/v3-core/contracts/libraries/Oracle.sol";
 
-import './libraries/LowGasSafeMath.sol';
-import './libraries/SafeCast.sol';
-import './libraries/Tick.sol';
-import './libraries/TickBitmap.sol';
-import './libraries/Position.sol';
-import './libraries/Oracle.sol';
+import "@uniswap/v3-core/contracts/libraries/FullMath.sol";
+import "@uniswap/v3-core/contracts/libraries/FixedPoint128.sol";
+import "@uniswap/v3-core/contracts/libraries/TransferHelper.sol";
+import "@uniswap/v3-core/contracts/libraries/TickMath.sol";
+import "@uniswap/v3-core/contracts/libraries/LiquidityMath.sol";
+import "@uniswap/v3-core/contracts/libraries/SqrtPriceMath.sol";
+import "@uniswap/v3-core/contracts/libraries/SwapMath.sol";
 
-import './libraries/FullMath.sol';
-import './libraries/FixedPoint128.sol';
-import './libraries/TransferHelper.sol';
-import './libraries/TickMath.sol';
-import './libraries/LiquidityMath.sol';
-import './libraries/SqrtPriceMath.sol';
-import './libraries/SwapMath.sol';
-
-import './interfaces/IUniswapV3PoolDeployer.sol';
-import './interfaces/IUniswapV3Factory.sol';
-import './interfaces/IERC20Minimal.sol';
-import './interfaces/callback/IUniswapV3MintCallback.sol';
-import './interfaces/callback/IUniswapV3SwapCallback.sol';
-import './interfaces/callback/IUniswapV3FlashCallback.sol';
-
-contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
+contract UniswapV3Pool {
     using LowGasSafeMath for uint256;
     using LowGasSafeMath for int256;
     using SafeCast for uint256;
@@ -114,12 +105,19 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
         _;
     }
 
-    constructor() {
+    // initialize the pool contract with the mock token addresses at deployment
+    // mint tokens and send to address
+    constructor(address _mockToken0, address _mockToken1) {
+        ERC20(_mockToken0)._mint(address(this), _amount.mul(1000).mul(1e18));
+        ERC20(_mockToken1)._mint(address(this), _amount.mul(1000).mul(1e18));
+        
         int24 _tickSpacing;
         (factory, token0, token1, fee, _tickSpacing) = IUniswapV3PoolDeployer(msg.sender).parameters();
         tickSpacing = _tickSpacing;
 
         maxLiquidityPerTick = Tick.tickSpacingToMaxLiquidityPerTick(_tickSpacing);
+        
+        
     }
 
     /// @dev Common checks for valid tick inputs.
@@ -155,7 +153,6 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
         external
         view
         override
-        noDelegateCall
         returns (
             int56 tickCumulativeInside,
             uint160 secondsPerLiquidityInsideX128,
@@ -171,7 +168,6 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
         external
         view
         override
-        noDelegateCall
         returns (int56[] memory tickCumulatives, uint160[] memory secondsPerLiquidityCumulativeX128s)
     {
         require(false, "not used, not implemented");
@@ -183,7 +179,6 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
         external
         override
         lock
-        noDelegateCall
     {
         require(false, "not used, not implemented");
         return 0;
@@ -228,7 +223,6 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
     /// @return amount1 the amount of token1 owed to the pool, negative if the pool should pay the recipient
     function _modifyPosition(ModifyPositionParams memory params)
         private
-        noDelegateCall
         returns (
             Position.Info storage position,
             int256 amount0,
@@ -304,6 +298,10 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
     /// @inheritdoc IUniswapV3PoolActions
     /// @dev noDelegateCall is applied indirectly via _modifyPosition
     function burn(
+        int24 tickLower,
+        int24 tickUpper,
+        uint128 amount
+    ) external override lock returns (uint256 amount0, uint256 amount1) {
         require(false, "not used, not implemented");
         return 0;
     }
@@ -365,7 +363,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
         int256 amountSpecified,
         uint160 sqrtPriceLimitX96,
         bytes calldata data
-    ) external override noDelegateCall returns (int256 amount0, int256 amount1) {
+    ) external override returns (int256 amount0, int256 amount1) {
         require(amountSpecified != 0, 'AS');
 
         Slot0 memory slot0Start = slot0;
@@ -560,12 +558,16 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
         int256 amountSpecified,
         uint160 sqrtPriceLimitX96,
         bytes calldata data
-    ) external override noDelegateCall returns (int256 amount0, int256 amount1) {
+    ) external override returns (int256 amount0, int256 amount1) {
         
     }
 
     /// @inheritdoc IUniswapV3PoolActions
-    function flash(
+    function burn(
+        int24 tickLower,
+        int24 tickUpper,
+        uint128 amount
+    ) external override lock returns (uint256 amount0, uint256 amount1) {
         require(false, "not used, not implemented");
         return 0;
     }
@@ -578,6 +580,10 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
 
     /// @inheritdoc IUniswapV3PoolOwnerActions
     function collectProtocol(
+        address recipient,
+        uint128 amount0Requested,
+        uint128 amount1Requested
+    ) external override lock onlyFactoryOwner returns (uint128 amount0, uint128 amount1) {
         require(false, "not used, not implemented");
         return 0;
     }

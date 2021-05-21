@@ -236,7 +236,7 @@ library Path {
 /// @notice Router for stateless execution of swaps against Uniswap V3
 contract SwapRouter is
     ISwapRouter,
-    PeripheryImmutableState,
+    PeripheryImmutableState
 {
     using Path for bytes;
     using SafeCast for uint256;
