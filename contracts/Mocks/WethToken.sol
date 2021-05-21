@@ -13,7 +13,6 @@ contract WethToken is ERC20 {
   uint public tokensReceived;
 
   constructor() ERC20(NAME, SYMBOL)
-    public
   {
     _onCreate();
   }
