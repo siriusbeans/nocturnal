@@ -14,7 +14,7 @@ contract WethToken is ERC20 {
 
   constructor() ERC20(NAME, SYMBOL)
   {
-    //_onCreate();
+    _onCreate();
   }
 
   /**
