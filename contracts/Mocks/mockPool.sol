@@ -114,7 +114,12 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
         _;
     }
 
-    constructor() {
+    // initialize the pool contract with the mock token addresses at deployment
+    // mint tokens and send to address
+    constructor(address _mockToken0, address _mockToken1) {
+        ERC20(_mockToken0)._mint(address(this), _amount.mul(1000).mul(1e18);
+        ERC20(_mockToken1)._mint(address(this), _amount.mul(1000).mul(1e18);
+        
         int24 _tickSpacing;
         (factory, token0, token1, fee, _tickSpacing) = IUniswapV3PoolDeployer(msg.sender).parameters();
         tickSpacing = _tickSpacing;
