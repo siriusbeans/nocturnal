@@ -10,6 +10,6 @@ contract Mock1 is Ownable, ERC20 ("Mock1 Token", "MOCK1") {
     }
     
     function mintMock(uint256 _amount) public onlyOwner {
-        _mint(msg.sender, _amount * 10 * uint256(decimals()));
+        _mint(msg.sender, _amount * 10**18);
     }
 }
