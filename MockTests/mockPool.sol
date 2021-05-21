@@ -30,8 +30,8 @@ contract MockPool is Ownable {
         factory = IUniswapV3Factory(UniswapV3Factory);
     }
     
-    function createPool(address _token0, address _token1, uint24 _fee) public onlyOwner {
-        address poolAddress = factory.createPool(token0, token1, fee);
+    function createPool(uint24 _fee) public onlyOwner {
+        address poolAddress = factory.createPool(token0, token1, _fee);
     }
     
     function getPool(address _token0, address _token1, uint24 _fee) external view returns (address) {
