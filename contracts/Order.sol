@@ -68,10 +68,11 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
-    constructor (string memory name_, string memory symbol_) {
+    constructor (string memory name_, string memory symbol_, address _nocturnalFinance) {
         _name = name_;
         _symbol = symbol_;
         swapRouter = ISwapRouter(UniswapV3SwapRouter);
+        nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
 
     /**
