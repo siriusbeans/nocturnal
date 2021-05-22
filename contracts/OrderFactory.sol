@@ -130,14 +130,14 @@ contract OrderFactory {
                                                                             address, 
                                                                             address, 
                                                                             uint256, 
-                                                                            uint256, 
+                                                                            address, 
                                                                             uint256, 
                                                                             uint256, 
                                                                             bool, 
                                                                             uint256, 
                                                                             uint256, 
                                                                             bool) {
-        return (swapOrderID[_orderAddress],
+        return(swapOrderID[_orderAddress],
                 swapPoolAddress[_orderAddress],
                 swapFromTokenAddress[_orderAddress],
                 swapFromTokenBalance[_orderAddress], 
@@ -149,7 +149,6 @@ contract OrderFactory {
                 swapSettlementGratuity[_orderAddress],
                 swapSettledFlag[_orderAddress]);
     }
-
 
     function getOrderID(address _orderAddress) public view returns (uint256) {
         return swapOrderID[_orderAddress];
