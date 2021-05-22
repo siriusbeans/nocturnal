@@ -491,4 +491,3 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
      */
     function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual { }
 }
-
