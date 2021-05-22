@@ -50,5 +50,6 @@ contract Oracle {
             return (true);
         } else {
             return (false);
+        }
     }
 }
