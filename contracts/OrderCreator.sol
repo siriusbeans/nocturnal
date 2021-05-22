@@ -56,7 +56,7 @@ contract OrderCreator {
         require((_swapFromTokenAddress == WETH) || (_swapToTokenAddress == WETH), "pool must contain WETH");
         require(IERC20(_swapFromTokenAddress).balanceOf(msg.sender) >= _swapFromTokenBalance);
         require((_swapSettlementGratuity >= 0) && (_swapSettlementGratuity < 100));  
-        Order nocturnalOrder = new Order("Nocturnal Order", "oNOCT", nocturnalFinance); 
+        Order nocturnalOrder = new Order("Nocturnal Order", "oNOCT", address(nocturnalFinance)); 
         orderCounter.increment();
         
         OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).setOrderID(address(nocturnalOrder), orderCounter.current());
