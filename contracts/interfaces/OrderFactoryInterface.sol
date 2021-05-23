@@ -48,7 +48,7 @@ interface OrderFactoryInterface {
     function setOrderSwapSlippage(address, uint256) external;
     function setOrderSettlementGratuity(address, uint256) external;
     function setOrderSettledFlag(address, bool) external;
-    
+
     function getOrderID(address) external view returns (uint256);
     function getOrderPoolAddress(address) external view returns (address);
     function getOrderFromTokenAddress(address) external view returns (address);
