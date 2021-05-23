@@ -36,8 +36,6 @@ contract Oracle {
         return (multiplicand.mul(multiplicand).div(_price));
     }
     
-    // to be used by front end to reduce a pool address to its token addresses
-    // front end should also determine which token (0 or 1) is fromToken
     function getTokens(address _pool) external view returns (address, address) {
         address token0 = IUniswapV3Pool(_pool).token0();
         address token1 = IUniswapV3Pool(_pool).token1();

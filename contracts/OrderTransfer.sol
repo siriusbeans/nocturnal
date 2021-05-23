@@ -60,7 +60,7 @@ contract OrderTransfer {
         uint256 slippage = OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).swapSlippage(_address);
         uint256 fromTokenBalance = OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).swapFromTokenBalance(_address);
         
-        OrderInterface(nocturnalFinance.orderAddress()).transferOrder(fromTokenAddress, msg.sender, gratuity);            
+        OrderInterface(nocturnalFinance.orderAddress()).orderTransfer(fromTokenAddress, msg.sender, gratuity);            
         OrderInterface(nocturnalFinance.orderAddress()).orderSwap(poolAddress, _address, fromToken0, slippage, fromTokenBalance.sub(gratuity), 0);  
     }
 

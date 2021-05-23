@@ -126,30 +126,6 @@ contract OrderFactory {
         swapSettledFlag[_orderAddress] = _settleFlag;
     }
 
-    function getOrderAttributes(address _orderAddress) public view returns (uint256, 
-                                                                            address, 
-                                                                            address, 
-                                                                            uint256, 
-                                                                            address, 
-                                                                            uint256, 
-                                                                            uint256, 
-                                                                            bool, 
-                                                                            uint256, 
-                                                                            uint256, 
-                                                                            bool) {
-        return(swapOrderID[_orderAddress],
-                swapPoolAddress[_orderAddress],
-                swapFromTokenAddress[_orderAddress],
-                swapFromTokenBalance[_orderAddress], 
-                swapToTokenAddress[_orderAddress],
-                swapToTokenBalance[_orderAddress],
-                swapLimitPrice[_orderAddress],
-                swapAbove[_orderAddress],
-                swapSlippage[_orderAddress],
-                swapSettlementGratuity[_orderAddress],
-                swapSettledFlag[_orderAddress]);
-    }
-
     function getOrderID(address _orderAddress) public view returns (uint256) {
         return swapOrderID[_orderAddress];
     }

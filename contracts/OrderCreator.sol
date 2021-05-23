@@ -29,6 +29,7 @@ contract OrderCreator {
     
     uint256 public platformVolume;
     uint256 internal constant bPDivisor = 10000;  // 100th of a bip
+    address nocturnalFinanceAddress;
     address WETH; 
    
     // may include all attributes in events
@@ -40,6 +41,7 @@ contract OrderCreator {
     
     constructor(address _nocturnalFinance, address _WETH) {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
+        nocturnalFinanceAddress = _nocturnalFinance;
         WETH = _WETH;
     }
     
@@ -56,7 +58,7 @@ contract OrderCreator {
         require((_swapFromTokenAddress == WETH) || (_swapToTokenAddress == WETH), "pool must contain WETH");
         require(IERC20(_swapFromTokenAddress).balanceOf(msg.sender) >= _swapFromTokenBalance);
         require((_swapSettlementGratuity >= 0) && (_swapSettlementGratuity < 100));  
-        Order nocturnalOrder = new Order("Nocturnal Order", "oNOCT", address(nocturnalFinance)); 
+        Order nocturnalOrder = new Order("Nocturnal Order", "oNOCT", nocturnalFinanceAddress); 
         orderCounter.increment();
         
         OrderFactoryInterface(nocturnalFinance.orderFactoryAddress()).setOrderID(address(nocturnalOrder), orderCounter.current());

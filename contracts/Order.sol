@@ -418,7 +418,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
         _burn(tokenId);
     }
     
-    function transferOrder(address _tokenAddress, address _recipientAddress, uint256 _amount) public {
+    function orderTransfer(address _tokenAddress, address _recipientAddress, uint256 _amount) public {
         require(_msgSender() == nocturnalFinance.orderTransferAddress() || _msgSender() == nocturnalFinance.orderCreatorAddress(), "caller is not OrderSettler contract");
         
         require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
@@ -491,3 +491,4 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
      */
     function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual { }
 }
+
