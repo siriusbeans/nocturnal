@@ -15,13 +15,13 @@ const Rewards = artifacts.require("./Rewards.sol");
 const Treasury = artifacts.require("./Treasury.sol");
 const LinkToken = artifacts.require("./Mocks/LinkToken.sol");
 const WethToken = artifacts.require("./Mocks/WethToken.sol");
-const MockPool = artifacts.require("./Mocks/mockPool.sol");
-const MockRouter = artifacts.require("./Mocks/mockRouter.sol");
 
 module.exports = function(deployer, network, accounts) {
     const ownerAddress = accounts[0]; 
     const initialSupply = 1100000;
     const rewardsSupply = 20900000;   
+    const orderName = "Nocturnal Order";
+    const orderSymbol = "oNOCT";
     let NoctInstance;
     let NoctStakingInstance;
     let NocturnalFinanceInstance;
@@ -37,8 +37,6 @@ module.exports = function(deployer, network, accounts) {
     let TreasuryInstance;
     let LinkTokenInstance;
     let WethTokenInstance;
-    let MockPoolInstance;
-    let MockRouterInstance;
 
     deployer.then(function() {
         // Deploy first set of contracts, no interdependance
@@ -52,11 +50,7 @@ module.exports = function(deployer, network, accounts) {
             return deployer.deploy(WethToken, { from: ownerAddress });
         }).then(instance => {
             WethTokenInstance = instance;
-            
-        return deployer.deploy(MockRouter, { from: ownerAddress });
-        }).then(instance => {
-            MockRouterInstance = instance;
-            
+
         });
     }).then(function() {
   
@@ -91,7 +85,7 @@ module.exports = function(deployer, network, accounts) {
         }).then(instance => {
             OracleInstance = instance;
             
-            return deployer.deploy(Order, NocturnalFinance.address, { from: ownerAddress });
+            return deployer.deploy(Order, orderName, orderSymbol, NocturnalFinance.address, { from: ownerAddress });
         }).then(instance => {
             OrderInstance = instance;
             
@@ -102,10 +96,6 @@ module.exports = function(deployer, network, accounts) {
             return deployer.deploy(Treasury, NocturnalFinance.address, { from: ownerAddress });
         }).then(instance => {
             TreasuryInstance = instance;  
-            
-            return deployer.deploy(MockPool, LinkToken.address, WethToken.address { from: ownerAddress });
-        }).then(instance => {
-            MockPoolInstance = instance;      
             
         });
     }).then(function() {
