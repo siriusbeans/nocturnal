@@ -14,7 +14,7 @@ contract LinkToken is ERC20 {
 
   constructor() ERC20(NAME, SYMBOL)
   {
-    _onCreate();
+    //_onCreate();
   }
 
   /**
@@ -103,7 +103,7 @@ contract LinkToken is ERC20 {
   }
 
   function isContract(address _addr)
-    private
+    private view
     returns (bool hasCode)
   {
     uint length;
