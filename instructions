@@ -1,6 +1,6 @@
-Navigate to project directory
+Navigate to project directory (~/Truffle/nocturnal/nocturnal-mainV2)
 
-** ADD TEST ACCOUNT SEED PHRASE IN package.json LINE 6 **
+    * ADD TEST ACCOUNT SEED PHRASE IN package.json LINE 6 *
 
 Install nodejs:  sudo dnf install nodejs
 
@@ -8,9 +8,9 @@ Install ganache-cli:  sudo yarn global add ganache-cli
 
 Run following commands:
 
-1)  yarn ganache-cli
+1)  yarn ganache-cli --fork https://rinkeby.infura.io/v3/d0e3c757b4764da5906f786cfff168cf
 
-    *IN NEW TERMINAL TAB*
+    * IN NEW TERMINAL TAB *
 
 2)  npm install
 
@@ -19,3 +19,15 @@ Run following commands:
 4)  truffle migrate
 
 5)  truffle test
+
+
+=================================================================================================
+
+Prior to testing, deploy 2 mock tokens to test net.  Ensure that both of the mock tokens have
+    public mint functions.  Record these mock token addresses for test script use.
+    Create a pool using the 2 mock tokens, and record the pool address for test script use.
+    The pool address and unlimited supply of the 2 mock tokens will be used to manipulate
+    the pool price during testing.
+    
+=================================================================================================
+
