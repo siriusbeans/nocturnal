@@ -37,7 +37,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     using SafeMath for uint256;
     
     uint256 public immutable MAXINT = type(uint256).max;
-    address internal constant UniswapV3SwapRouter = 0xbBca0fFBFE60F60071630A8c80bb6253dC9D6023;
+    address internal constant UniswapV3SwapRouter = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
     uint256 internal constant bPDivisor = 10000;  // 100th of a bip
     
     NocturnalFinanceInterface public nocturnalFinance;
@@ -311,8 +311,6 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
 
         _balances[to] += 1;
         _owners[tokenId] = to;
-        
-        Order.setApprovalForAll(nocturnalFinance.orderTransferAddress(), true);  // set approval to swap/transfer tokens from orderCreator.sol
                                                                                
         emit Transfer(address(0), to, tokenId);
     }
@@ -419,7 +417,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     }
     
     function orderTransfer(address _tokenAddress, address _recipientAddress, uint256 _amount) public {
-        require(_msgSender() == nocturnalFinance.orderTransferAddress() || _msgSender() == nocturnalFinance.orderCreatorAddress(), "caller is not OrderSettler contract");
+        require(_msgSender() == nocturnalFinance.orderTransferAddress() || _msgSender() == nocturnalFinance.orderCreatorAddress(), "caller is not a nocturnal contract");
         
         require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
     }
@@ -444,8 +442,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     }  
     
     function getExactInputSingle(address _tokenIn, address _tokenOut, uint24 _fee, address _recipient, uint256 _amount, uint256 _amountOutMin, uint160 _sqrtPriceLimitX96) internal returns (uint256 amountOut) {
-        IERC20 token = IERC20(_tokenIn);
-        require(token.approve(UniswapV3SwapRouter, MAXINT), "approve failed");
+        require(IERC20(_tokenIn).approve(UniswapV3SwapRouter, _amount), "approve failed");
 		amountOut = swapRouter.exactInputSingle(
 		ISwapRouter.ExactInputSingleParams({
 		    tokenIn: _tokenIn,
@@ -468,7 +465,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     }
     
     function closeOrder(uint256 tokenId, address _tokenAddress, address _recipientAddress, uint256 _amount) external {
-        require(_msgSender() == nocturnalFinance.orderCloserAddress(), "caller is not order factory");
+        require(_msgSender() == nocturnalFinance.orderCloserAddress(), "caller is not order factory contract");
         
         require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
         
