@@ -13,8 +13,7 @@ const OrderModifier = artifacts.require("./OrderModifier.sol");
 const OrderTransfer = artifacts.require("./OrderTransfer.sol");
 const Rewards = artifacts.require("./Rewards.sol");
 const Treasury = artifacts.require("./Treasury.sol");
-const LinkToken = artifacts.require("./Mocks/LinkToken.sol");
-const WethToken = artifacts.require("./Mocks/WethToken.sol");
+const TokenMinter = artifacts.require("./Mocks/TokenMinter.sol");
 
 module.exports = function(deployer, network, accounts) {
     const ownerAddress = accounts[0]; 
@@ -22,6 +21,8 @@ module.exports = function(deployer, network, accounts) {
     const rewardsSupply = 20900000;   
     const orderName = "Nocturnal Order";
     const orderSymbol = "oNOCT";
+    const WETH = "0x84fff9F8Bec0835494C4c9f43cfe32C7d37F82b5";
+    const LINK = "0x27E1A4409fa79E5380aDE99ED289DBF342613Ce6";
     let NoctInstance;
     let NoctStakingInstance;
     let NocturnalFinanceInstance;
@@ -35,21 +36,15 @@ module.exports = function(deployer, network, accounts) {
     let OrderTransferInstance;
     let RewardsInstance;
     let TreasuryInstance;
-    let LinkTokenInstance;
-    let WethTokenInstance;
+    let TokenMinterInstance;
 
     deployer.then(function() {
         // Deploy first set of contracts, no interdependance
         return deployer.deploy(NocturnalFinance, { from: ownerAddress }).then(instance => {
             NocturnalFinanceInstance = instance;
             
-            return deployer.deploy(LinkToken, { from: ownerAddress });
-        }).then(instance => {
-            LinkTokenInstance = instance;
-
-            return deployer.deploy(WethToken, { from: ownerAddress });
-        }).then(instance => {
-            WethTokenInstance = instance;
+        return deployer.deploy(TokenMinter, LINK, WETH, { from: ownerAddress }).then(instance => {
+            TokenMinterInstance = instance;
 
         });
     }).then(function() {
@@ -61,11 +56,11 @@ module.exports = function(deployer, network, accounts) {
         }).then(instance => {
             OrderFactoryInstance = instance;
             
-            return deployer.deploy(OrderCreator, NocturnalFinance.address, WethToken.address, { from: ownerAddress });
+            return deployer.deploy(OrderCreator, NocturnalFinance.address, WETH, { from: ownerAddress });
         }).then(instance => {
             OrderCreatorInstance = instance;
             
-            return deployer.deploy(OrderSettler, NocturnalFinance.address, WethToken.address, { from: ownerAddress });
+            return deployer.deploy(OrderSettler, NocturnalFinance.address, WETH, { from: ownerAddress });
         }).then(instance => {
             OrderSettlerInstance = instance;
             
