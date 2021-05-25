@@ -20,17 +20,23 @@ Run following commands:
 
 5)  truffle test
 
-
-==============================================================================================
+=================================================================================================
 
 Prior to testing, deploy 2 mock tokens to test net.  Ensure that both of the mock tokens have
     public mint functions.  Record these mock token addresses for test script use.
-    Create a pool using the 2 mock tokens, and record the pool address for test script use.
-    The pool address and unlimited supply of the 2 mock tokens will be used to manipulate
-    the pool price during testing.
+    Create a pool using the 2 mock tokens using the Uniswap V3 UI. Record the pool address 
+    for test script use. The pool address and unlimited supply of the 2 mock tokens will 
+    be used to manipulate the pool price during testing.
     
-    Mock0 Token Address (LINK):     0x84740cA8D4609d4CAa495D330c7B7FaB7231a5Cf
-    Mock1 Token Address (WETH):     0x714e666505FC58339bCA6077559728495196C531
-    Mock Pool Address (LINK/WETH):  0x58Cd6F838d82C8b9bb6466D0e6f3E448398d0c9B
+    Mock0 Token Address (LINK):     0x27E1A4409fa79E5380aDE99ED289DBF342613Ce6
+    Mock1 Token Address (WETH):     0x84fff9F8Bec0835494C4c9f43cfe32C7d37F82b5
     
-==============================================================================================
+    Mock Pool Address (LINK/WETH):  0xEa9ab84751A2ef0db5f3601aE8EC0F1E4798728B
+    Mock Pool Address (WETH/LINK):  0x
+    
+    
+    When TokenMinter.sol is deployed in 2_deploy_contracts.js, 1000000 of both
+    tokes are minted and sent to deployment owner address.
+    
+=================================================================================================
+
