@@ -16,4 +16,9 @@ contract Mock0 is ERC20 ("Mock0 Token", "MOCK0") {
     function mint(address _address, uint256 _amount) public {
         _mint(_address, _amount.mul(1e18));
     }
+    
+    function approve(address sender, uint256 _amount) public override returns (bool) {
+        _approve(msg.sender, sender, _amount);
+        return (true);
+    }
 }

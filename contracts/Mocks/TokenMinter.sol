@@ -8,4 +8,4 @@ contract TokenMinter {
         TokenInterface(_link).mint(msg.sender, 1000000);
         TokenInterface(_weth).mint(msg.sender, 1000000);
     }
-}    
+}  
