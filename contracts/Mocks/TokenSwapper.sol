@@ -46,8 +46,9 @@ contract TokenResource is IUniswapV3SwapCallback, Ownable {
     }
     
     function getExactInputSingle(address _tokenIn, address _tokenOut, uint256 _amount) external returns (uint256 amountOut) {
-        IERC20 token = IERC20(_tokenIn);
-        require(token.approve(UniswapV3SwapRouter, MAXINT), "approve failed");
+        //IERC20 token = IERC20(_tokenIn);
+        //require(token.approve(UniswapV3SwapRouter, MAXINT), "approve failed");
+	IERC20(_tokenIn).transferFrom(msg.sender, address(this), _amount);
 		amountOut = swapRouter.exactInputSingle(
 		ISwapRouter.ExactInputSingleParams({
 		    tokenIn: _tokenIn,
