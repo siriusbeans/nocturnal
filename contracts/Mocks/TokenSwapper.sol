@@ -11,7 +11,7 @@ contract TokenSwapper {
     
     ISwapRouter public swapRouter;
     
-    constructor(address _pool) {
+    constructor() {
         swapRouter = ISwapRouter(UniswapV3SwapRouter);
     }
     
