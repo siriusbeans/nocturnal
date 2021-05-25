@@ -121,4 +121,4 @@ module.exports = function(deployer, network, accounts) {
         return NocturnalFinanceInstance.initsNoct(NoctStakingInstance.address);
     });
 });
-};
+});};
