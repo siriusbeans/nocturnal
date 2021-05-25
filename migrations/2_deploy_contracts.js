@@ -14,6 +14,7 @@ const OrderTransfer = artifacts.require("./OrderTransfer.sol");
 const Rewards = artifacts.require("./Rewards.sol");
 const Treasury = artifacts.require("./Treasury.sol");
 const TokenMinter = artifacts.require("./Mocks/TokenMinter.sol");
+const TokenSwapper = artifacts.require("./Mocks/TokenSwapper.sol");
 
 module.exports = function(deployer, network, accounts) {
     const ownerAddress = accounts[0]; 
@@ -37,15 +38,17 @@ module.exports = function(deployer, network, accounts) {
     let RewardsInstance;
     let TreasuryInstance;
     let TokenMinterInstance;
+    let TokenSwapperInstance;
 
     deployer.then(function() {
-        // Deploy first set of contracts, no interdependance
         return deployer.deploy(NocturnalFinance, { from: ownerAddress }).then(instance => {
             NocturnalFinanceInstance = instance;
             
         return deployer.deploy(TokenMinter, LINK, WETH, { from: ownerAddress }).then(instance => {
             TokenMinterInstance = instance;
-
+            
+        return deployer.deploy(TokenSwapper, { from: ownerAddress }).then(instance => {
+            TokenSwapperInstance = instance;
         });
     }).then(function() {
   
