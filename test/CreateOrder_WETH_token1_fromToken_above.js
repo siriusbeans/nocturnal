@@ -1,5 +1,4 @@
 const BigNumber = require("bignumber.js");
-const truffleAssert = require('truffle-assertions');
 const NocturnalFinance = artifacts.require("./NocturnalFinance.sol");
 const Noct = artifacts.require("./Noct.sol");
 const NoctStaking = artifacts.require("./NoctStaking.sol");
@@ -48,6 +47,7 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     const swapSlippage = 500; // 5% slippage (basis points)
     const swapAbove = true;
     const swapSettlementGratuity = 200; // 2% of fromToken (basis points)
+    
 //=============================================================================================//    
 //=============================================================================================//      
 
