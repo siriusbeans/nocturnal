@@ -63,8 +63,7 @@ contract OrderFactory {
     function closeLimitOrder(address _address) public {
         OrderCloserInterface(nocturnalFinance.orderCloserAddress()).closeLimitOrder(_address);
     }
-    
-    
+        
 
     function setOrderID(address _orderAddress, uint256 _orderID) public {
         require(msg.sender == nocturnalFinance.orderCreatorAddress(), "only OrderCreator contract can set order attribute");
@@ -125,6 +124,7 @@ contract OrderFactory {
         require(msg.sender == nocturnalFinance.orderCreatorAddress(), "only OrderCreator contract can set order attribute");
         swapSettledFlag[_orderAddress] = _settleFlag;
     }
+
 
     function getOrderID(address _orderAddress) public view returns (uint256) {
         return swapOrderID[_orderAddress];
