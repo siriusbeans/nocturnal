@@ -7,6 +7,7 @@ const Oracle = artifacts.require("./Oracle.sol");
 const Order = artifacts.require("./Order.sol");
 const OrderManager = artifacts.require("./OrderManager.sol");
 const CreateOrder = artifacts.require("./CreateOrder.sol");
+const DepositOrder = artifacts.require("./DepositOrder.sol");
 const SettleOrder = artifacts.require("./SettleOrder.sol");
 const CloseOrder = artifacts.require("./CloseOrder.sol");
 const ModifyOrder = artifacts.require("./ModifyOrder.sol");
@@ -37,6 +38,7 @@ module.exports = function(deployer, network, accounts) {
     let OrderInstance;
     let OrderManagerInstance;
     let CreateOrderInstance;
+    let DepositOrderInstance;
     let SettleOrderInstance;
     let CloseOrderInstance;
     let ModifyOrderInstance;
@@ -70,6 +72,10 @@ module.exports = function(deployer, network, accounts) {
             return deployer.deploy(CreateOrder, NocturnalFinance.address, WETH, { from: ownerAddress });
         }).then(instance => {
             CreateOrderInstance = instance;
+            
+            return deployer.deploy(DepositOrder, NocturnalFinance.address, { from: ownerAddress });
+        }).then(instance => {
+            DepositOrderInstance = instance;
             
             return deployer.deploy(SettleOrder, NocturnalFinance.address, WETH, { from: ownerAddress });
         }).then(instance => {
@@ -118,6 +124,7 @@ module.exports = function(deployer, network, accounts) {
                         RewardsInstance.address, 
                         OrderManagerInstance.address,
                         CreateOrderInstance.address,
+                        DepositOrderInstance.address,
                         SettleOrderInstance.address, 
                         CloseOrderInstance.address, 
                         ModifyOrderInstance.address, 
