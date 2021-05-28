@@ -29,12 +29,8 @@ contract CreateOrder {
 
     function depositOrder(uint256 _orderID) public {
         require(msg.sender == nocturnalFinance.orderManagerAddress());
-        (,,,,,,,,,,bool depositedFlag,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (address orderAddress,address poolAddress,address fromTokenAddress,,uint256 tokenBalance,,,,,,bool depositedFlag,) = CreateOrderInterface(nocturnalFinance.createOrderAddress()).orderAttributes(_orderID);
         require(depositedFlag == false, "deposit filled");
-        (,,address fromTokenAddress,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,uint256 tokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,address poolAddress,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (address orderAddress,,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         address orderOwnerAddress = OrderInterface(orderAddress).ownerOf(_orderID);
        
         // transfer fromTokenBalance to order
@@ -49,6 +45,5 @@ contract CreateOrder {
 
         // emit events                                                
         emit orderDeposited(_orderID);
-       
     }
 }

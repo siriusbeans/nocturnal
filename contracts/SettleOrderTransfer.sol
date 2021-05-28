@@ -17,9 +17,12 @@ import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.
 import {OrderInterface} from "./Interfaces/OrderInterface.sol";
 import {SettleOrderInterface} from "./Interfaces/SettleOrderInterface.sol";
 import {OrderManagerInterface} from "./Interfaces/OrderManagerInterface.sol";
+import {CreateOrderInterface} from "./Interfaces/CreateOrderInterface.sol";
 
 contract SettleOrderTransfer {
     using SafeMath for uint256;
+    
+    uint256 internal constant bPDivisor = 10000;  // 100th of a bip
     
     NocturnalFinanceInterface public nocturnalFinance;
     
@@ -29,13 +32,9 @@ contract SettleOrderTransfer {
     
     function fromWETHSettle(uint256 _orderID) external {
         require(msg.sender == nocturnalFinance.settleOrderAddress(), "not SettleOrder contract");
-        (,,address fromTokenAddress,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,,,,,,uint256 gratuity,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,address poolAddress,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        //(,,,,,,,,uint256 slippage,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,uint256 tokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (address orderAddress,,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        
+        (address orderAddress,address poolAddress,address fromTokenAddress,,uint256 tokenBalance,,,,,uint256 gratuity,,) = CreateOrderInterface(nocturnalFinance.createOrderAddress()).orderAttributes(_orderID);
+        gratuity = tokenBalance.mul(gratuity).div(bPDivisor);
+
         OrderInterface(orderAddress).orderTransfer(fromTokenAddress, msg.sender, gratuity);        
         if (IUniswapV3Pool(poolAddress).token0() == fromTokenAddress) {
             OrderInterface(orderAddress).getExactInputSingle(
@@ -52,16 +51,14 @@ contract SettleOrderTransfer {
                 orderAddress, 
                 tokenBalance.sub(gratuity));  
         }
+        // update Order toTokenBalance attribute for order closure
+        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setTokenBalance(_orderID, tokenBalance);
     }
 
     function toWETHSettle(uint256 _orderID) external {
         require(msg.sender == nocturnalFinance.settleOrderAddress(), "not SettleOrder contract");
-        (,,address fromTokenAddress,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,,,,,,uint256 gratuity,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,address poolAddress,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        //(,,,,,,,,uint256 slippage,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,uint256 tokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (address orderAddress,,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (address orderAddress,address poolAddress,address fromTokenAddress,,uint256 tokenBalance,,,,,uint256 gratuity,,) = CreateOrderInterface(nocturnalFinance.createOrderAddress()).orderAttributes(_orderID);
+        gratuity = tokenBalance.mul(gratuity).div(bPDivisor);
         
         if (IUniswapV3Pool(poolAddress).token0() == fromTokenAddress) {
             OrderInterface(orderAddress).getExactInputSingle(
@@ -90,5 +87,7 @@ contract SettleOrderTransfer {
                 orderAddress, 
                 tokenBalance.sub(gratuity));
         }
+        // update Order toTokenBalance attribute for order closure
+        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setTokenBalance(_orderID, tokenBalance);
     }
 }

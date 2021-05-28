@@ -33,14 +33,7 @@ contract CloseOrder {
     
     function closeOrder(uint256 _orderID) external {
         require(msg.sender == nocturnalFinance.orderManagerAddress(), "caller is not order factory");
-        (,,,,,,,,,,bool depositedFlag,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,,,,,,,,bool settledFlag) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,address toTokenAddress,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,uint256 tokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,address fromTokenAddress,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        //(,,,,,,,,uint256 slippage,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,address poolAddress,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (address orderAddress,,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (address orderAddress,address poolAddress,address fromTokenAddress,address toTokenAddress,uint256 tokenBalance,,,,,,bool depositedFlag,bool settledFlag) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         address orderOwnerAddress = OrderInterface(orderAddress).ownerOf(_orderID);
         
         if (settledFlag == true) {

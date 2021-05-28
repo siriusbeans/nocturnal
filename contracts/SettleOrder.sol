@@ -25,7 +25,6 @@ contract SettleOrder {
     using SafeMath for uint256;
     
     uint256 public platformVolume;
-    uint256 internal constant bPDivisor = 10000;  // 100th of a bip
     address WETH; 
     
     // may include all attributes in events
@@ -42,14 +41,9 @@ contract SettleOrder {
     
     function settleOrder(uint256 _orderID) external {
         require(msg.sender == nocturnalFinance.orderManagerAddress(), "caller is not order manager address");
-        (,,,,,,,,,,bool depositedFlag,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (address orderAddress,address poolAddress,address fromTokenAddress,,uint256 tokenBalance,uint256 sFTVIE,uint256 limitPrice,bool limitType,,uint256 settlementGratuity,bool depositedFlag,bool settledFlag) = CreateOrderInterface(nocturnalFinance.createOrderAddress()).orderAttributes(_orderID);
         require(depositedFlag == true, "deposit filled");
-        (,,,,,,,,,,,bool settledFlag) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         require(settledFlag == false, "order settled");
-        (,,,,,,,bool limitType,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,,,uint256 limitPrice,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,address fromTokenAddress,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,address poolAddress,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         uint256 currentPrice;
         
         // the value of the limit returned by front end 
@@ -66,15 +60,6 @@ contract SettleOrder {
         } else if (limitType == false) {
             require(currentPrice <= limitPrice, "limit not met");
         }
-      
-        (,,,,uint256 tokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,,,,,,uint256 settlementGratuity,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (address orderAddress,,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);        
-        address orderOwnerAddress = OrderInterface(orderAddress).ownerOf(_orderID);
-        (,,,,,uint256 sFTVIE,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        
-        // calculate gratuity
-        uint256 gratuity = tokenBalance.mul(settlementGratuity).div(bPDivisor);
 
         // if fromToken is WETH, deduct gratuity from WETH and send to settler before performing the swap
         if (fromTokenAddress == WETH) {
@@ -83,12 +68,13 @@ contract SettleOrder {
         } else {
             SettleOrderTransferInterface(nocturnalFinance.settleOrderTransferAddress()).toWETHSettle(_orderID);
         }
-        // update Order toTokenBalance attribute for order closure
-        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setTokenBalance(_orderID, tokenBalance.sub(gratuity));
         // set swap settle flag to true
-        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setSettledFlag(_orderID, true);            
+        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setSettledFlag(_orderID, true); 
+                   
         // distribute the NOCT rewards to the settler and the creator 
+        address orderOwnerAddress = OrderInterface(orderAddress).ownerOf(_orderID);
         DistributeRewardsInterface(nocturnalFinance.distributeRewardsAddress()).distributeNOCT(sFTVIE, orderOwnerAddress);
+        
         // increment platform volume tracker counter
         platformVolume.add(sFTVIE);
         
