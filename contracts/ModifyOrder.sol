@@ -10,18 +10,29 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
+import {OrderManagerInterface} from "./Interfaces/OrderManagerInterface.sol";
+import {CreateOrderInterface} from "./Interfaces/CreateOrderInterface.sol";
 
-contract Noct is ERC20 ("Nocturnal Token", "NOCT") {
-    using SafeMath for uint256;
-
-    NocturnalFinanceInterface public nocturnalFinance;
+contract ModifyOrder {
    
-    constructor (address _nocturnalFinance, uint256 _rewardsSupply, uint256 _initialSupply) {
+    event orderModified(uint256 _orderID);
+    
+    NocturnalFinanceInterface public nocturnalFinance;
+    
+    constructor(address _nocturnalFinance) {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
-        _mint(nocturnalFinance.rewardsAddress(), _rewardsSupply * (1e18));
-        _mint(nocturnalFinance.treasuryAddress(), _initialSupply * (1e18));
+    }
+    
+    function modifySlippage(uint256 _orderID, uint256 _slippage) external {
+        require(msg.sender == nocturnalFinance.orderManagerAddress(), "not order manager");
+        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setSlippage(_orderID, _slippage);
+        emit orderModified(_orderID);      
+    }
+    
+    function modifySettlementGratuity(uint256 _orderID, uint256 _gratuity) external {
+        require(msg.sender == nocturnalFinance.orderManagerAddress(), "not order manager");
+        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setSettlementGratuity(_orderID, _gratuity);      
+        emit orderModified(_orderID);      
     }
 }

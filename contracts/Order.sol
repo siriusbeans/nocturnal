@@ -36,9 +36,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     using Strings for uint256;
     using SafeMath for uint256;
     
-    uint256 public immutable MAXINT = type(uint256).max;
     address internal constant UniswapV3SwapRouter = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
-    uint256 internal constant bPDivisor = 10000;  // 100th of a bip
     
     NocturnalFinanceInterface public nocturnalFinance;
     IUniswapV3Pool public pool;
@@ -114,7 +112,8 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     function symbol() public view virtual override returns (string memory) {
         return _symbol;
     }
-
+    
+    
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */    
@@ -133,6 +132,15 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
             return string(abi.encodePacked(base, _tokenURI));
         }
     }
+
+    /**
+     * @dev Base URI for computing {tokenURI}. If set, the resulting URI for each
+     * token will be the concatenation of the `baseURI` and the `tokenId`. Empty 
+     * by default, can be overriden in child contracts.
+     */
+    function _baseURI() internal view virtual returns (string memory) {
+        return "";
+    }
     
     /**
      * @dev Sets `_tokenURI` as the tokenURI of `tokenId`.
@@ -142,17 +150,9 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
      * - `tokenId` must exist.
      */
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) external virtual {
-        require(msg.sender == nocturnalFinance.orderCreatorAddress(), "tokenURI set by order creator contract only");
+        require(msg.sender == nocturnalFinance.createOrderAddress(), "not CreateOrder contract");
         require(_exists(tokenId), "ERC721URIStorage: URI set of nonexistent token");
         _tokenURIs[tokenId] = _tokenURI;
-    }
-
-    /**
-     * @dev Base URI for computing {tokenURI}. Empty by default, can be overriden
-     * in child contracts.
-     */
-    function _baseURI() internal view virtual returns (string memory) {
-        return "";
     }
 
     /**
@@ -411,67 +411,38 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
         }
     }
     
-    function burn(uint256 tokenId) public virtual {
-        require(_msgSender() == nocturnalFinance.orderCloserAddress(), "caller is not OrderCloser contract");
+    function burn(uint256 tokenId) public {
+        require(_msgSender() == nocturnalFinance.closeOrderAddress(), "not CloseOrder contract");
         _burn(tokenId);
     }
     
-    function orderTransfer(address _tokenAddress, address _recipientAddress, uint256 _amount) public {
-        require(_msgSender() == nocturnalFinance.orderTransferAddress() || _msgSender() == nocturnalFinance.orderCreatorAddress(), "caller is not a nocturnal contract");
-        
-        require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
+    function mint(address to, uint256 tokenId) public {
+        require(_msgSender() == nocturnalFinance.createOrderAddress(), "not CreateOrder contract");
+        _mint(to, tokenId);
     }
     
-    function orderSwap(address _pool, address _recipient, bool _fromToken0, uint256 _amount, uint256 _slippage, uint160 _sqrtPriceLimitX96) public returns (uint256 amountOut) {
-        require(_msgSender() == nocturnalFinance.orderTransferAddress() || _msgSender() == nocturnalFinance.orderCreatorAddress(), "caller is not order factory");
-        address token0 = IUniswapV3Pool(_pool).token0();
-        address token1 = IUniswapV3Pool(_pool).token1();
-        uint24 pFee = IUniswapV3Pool(_pool).fee();
-        uint256 amountOutMin;
-        
-        // using slippage, and Oracle.sol, calculate the amountOutMinimum parameter for exactInputSingle()
-        if (_fromToken0 == true) { 
-            uint256 cPriceReciprocal = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPriceReciprocal(_pool);      
-            amountOutMin = getAmountOutMin(cPriceReciprocal, _amount, _slippage);
-            amountOut = getExactInputSingle(token0, token1, pFee, _recipient, _amount, amountOutMin, _sqrtPriceLimitX96);
-        } else {
-            uint256 cPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_pool);
-            amountOutMin = getAmountOutMin(cPrice, _amount, _slippage);
-            amountOut = getExactInputSingle(token1, token0, pFee, _recipient, _amount, amountOutMin, _sqrtPriceLimitX96);
-        }  
-    }  
-    
-    function getExactInputSingle(address _tokenIn, address _tokenOut, uint24 _fee, address _recipient, uint256 _amount, uint256 _amountOutMin, uint160 _sqrtPriceLimitX96) internal returns (uint256 amountOut) {
+    function getExactInputSingle(address _tokenIn, address _tokenOut, uint24 _fee, address _recipient, uint256 _amount) public {
+        require(_msgSender() == nocturnalFinance.closeOrderAddress() || _msgSender() == nocturnalFinance.settleOrderTransferAddress(), "caller is not a nocturnal contract");
         require(IERC20(_tokenIn).approve(UniswapV3SwapRouter, _amount), "approve failed");
-		amountOut = swapRouter.exactInputSingle(
-		ISwapRouter.ExactInputSingleParams({
-		    tokenIn: _tokenIn,
-		    tokenOut: _tokenOut,
-		    fee: _fee,
-		    recipient: _recipient,
-		    deadline: block.timestamp + 600, // 10 minutes from current block
-		    amountIn: _amount,
-		    amountOutMinimum: _amountOutMin, // function of slippage and CurrentPrice(_pool)
-		    sqrtPriceLimitX96: _sqrtPriceLimitX96
+		swapRouter.exactInputSingle(
+		    ISwapRouter.ExactInputSingleParams({
+		        tokenIn: _tokenIn,
+		        tokenOut: _tokenOut,
+		        fee: _fee,
+		        recipient: _recipient,
+		        deadline: block.timestamp + 600, // 10 minutes from current block
+		        amountIn: _amount,
+		        amountOutMinimum: 0, // function of slippage and CurrentPrice(_pool)
+		        sqrtPriceLimitX96: 0
 		    })
 		);
     }
     
-    function getAmountOutMin(uint256 _price, uint256 _amount, uint256 _slippage) internal pure returns (uint256) {       
-        uint256 amount = _price.mul(_amount); 
-        uint256 amountSlippage = amount.mul(_slippage).div(bPDivisor);
-        uint256 amountOutMin = amount.sub(amountSlippage);
-        return (amountOutMin);  
-    }
-    
-    function closeOrder(uint256 tokenId, address _tokenAddress, address _recipientAddress, uint256 _amount) external {
-        require(_msgSender() == nocturnalFinance.orderCloserAddress(), "caller is not order factory contract");
-        
+    function orderTransfer(address _tokenAddress, address _recipientAddress, uint256 _amount) public {
+        require(_msgSender() == nocturnalFinance.closeOrderAddress() || _msgSender() == nocturnalFinance.settleOrderTransferAddress(), "caller is not a nocturnal contract");
         require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
-        
-        _burn(tokenId);
-    }
-        
+    }  
+    
     /**
      * @dev Hook that is called before any token transfer. This includes minting
      * and burning.
