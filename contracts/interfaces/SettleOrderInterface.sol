@@ -10,9 +10,10 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-interface OracleInterface {
-    function getCurrentPrice(address) external view returns (uint256);
-    function getCurrentPriceReciprocal(address) external view returns (uint256);
-    function getTokens(address) external view returns (address, address);
-    function isV3(address) external view returns (bool);
+interface SettleOrderInterface {
+
+    function settleOrder(uint256) external;
+    
+    event orderSettled(uint256 orderID, address orderAddress, uint256 settlementGratuity);
+    event platformVolumeUpdate(uint256 volume);
 }

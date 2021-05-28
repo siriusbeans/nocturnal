@@ -11,6 +11,7 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 pragma solidity ^0.8.0;
 
 interface RewardsInterface {
+    function approveStaking() external;
     function stakeRewards(uint256) external;
     function claimRewards(uint256) external;
     function totalRewards() external returns (uint256);
