@@ -14,12 +14,14 @@ interface OrderManagerInterface {
 
     function createOrder(address, address, address, uint256, uint256, uint256, bool, uint256) external;
     
+    function depositOrder(uint256) external;
+    
     function settleOrder(uint256) external;
     
     function closeOrder(uint256) external;
     
     function getOrderAttributes(uint256) external view 
-        returns (address, address, address, address, uint256, uint256, uint256, uint256, bool, uint256, uint256, bool);
+        returns (address, address, address, address, uint256, uint256, uint256, bool, uint256, uint256, bool, bool);
 
     function modifyOrderSlippage(uint256, uint256) external;
     

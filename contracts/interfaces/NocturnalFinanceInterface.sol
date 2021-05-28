@@ -15,6 +15,7 @@ interface NocturnalFinanceInterface {
     function rewardsAddress() external view returns (address);
     function orderManagerAddress() external view returns (address);
     function createOrderAddress() external view returns (address);
+    function depositOrderAddress() external view returns (address);
     function settleOrderAddress() external view returns (address);
     function closeOrderAddress() external view returns (address);
     function modifyOrderAddress() external view returns (address);
