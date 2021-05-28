@@ -42,8 +42,12 @@ contract SettleOrder {
     
     function settleOrder(uint256 _orderID) external {
         require(msg.sender == nocturnalFinance.orderManagerAddress(), "caller is not order manager address");
-        (,,,,,,,,bool limitType,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,,,,uint256 limitPrice,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (,,,,,,,,,,bool depositedFlag,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        require(depositedFlag == true, "deposit filled");
+        (,,,,,,,,,,,bool settledFlag) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        require(settledFlag == false, "order settled");
+        (,,,,,,,bool limitType,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (,,,,,,uint256 limitPrice,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         (,,address fromTokenAddress,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         (,address poolAddress,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         uint256 currentPrice;
@@ -63,14 +67,14 @@ contract SettleOrder {
             require(currentPrice <= limitPrice, "limit not met");
         }
       
-        (,,,,uint256 fromTokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,,,,,,,uint256 settlementGratuity,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (,,,,uint256 tokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (,,,,,,,,,uint256 settlementGratuity,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         (address orderAddress,,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);        
         address orderOwnerAddress = OrderInterface(orderAddress).ownerOf(_orderID);
-        (,,,,,,uint256 sFTVIE,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (,,,,,uint256 sFTVIE,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         
         // calculate gratuity
-        uint256 gratuity = fromTokenBalance.mul(settlementGratuity).div(bPDivisor);
+        uint256 gratuity = tokenBalance.mul(settlementGratuity).div(bPDivisor);
 
         // if fromToken is WETH, deduct gratuity from WETH and send to settler before performing the swap
         if (fromTokenAddress == WETH) {
@@ -80,15 +84,14 @@ contract SettleOrder {
             SettleOrderTransferInterface(nocturnalFinance.settleOrderTransferAddress()).toWETHSettle(_orderID);
         }
         // update Order toTokenBalance attribute for order closure
-        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setToTokenBalance(_orderID, fromTokenBalance.sub(gratuity));
-        // update Order fromTokenBalance attribute for order closure
-        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setFromTokenBalance(_orderID, 0);
+        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setTokenBalance(_orderID, tokenBalance.sub(gratuity));
         // set swap settle flag to true
         CreateOrderInterface(nocturnalFinance.createOrderAddress()).setSettledFlag(_orderID, true);            
         // distribute the NOCT rewards to the settler and the creator 
         DistributeRewardsInterface(nocturnalFinance.distributeRewardsAddress()).distributeNOCT(sFTVIE, orderOwnerAddress);
         // increment platform volume tracker counter
         platformVolume.add(sFTVIE);
+        
         // emit events
         emit orderSettled(_orderID);
         emit platformVolumeUpdate(platformVolume);

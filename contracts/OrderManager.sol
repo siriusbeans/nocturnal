@@ -16,6 +16,7 @@ import {SettleOrderInterface} from "./Interfaces/SettleOrderInterface.sol";
 import {CloseOrderInterface} from "./Interfaces/CloseOrderInterface.sol";
 import {ModifyOrderInterface} from "./Interfaces/ModifyOrderInterface.sol";
 import {OrderInterface} from "./Interfaces/OrderInterface.sol";
+import {DepositOrderInterface} from "./Interfaces/DepositOrderInterface.sol";
 
 contract OrderManager {
 
@@ -29,7 +30,7 @@ contract OrderManager {
         address poolAddress,
         address fromTokenAddress,
         address toTokenAddress,
-        uint256 fromTokenBalance,
+        uint256 tokenBalance,
         uint256 limitPrice,
         uint256 slippage,
         bool limitType,
@@ -39,12 +40,16 @@ contract OrderManager {
             poolAddress,
             fromTokenAddress,
             toTokenAddress,
-            fromTokenBalance,
+            tokenBalance,
             limitPrice,
             slippage,
             limitType,
             settlementGratuity
         );
+    }
+    
+    function depositOrder(uint256 _orderID) public {
+        DepositOrderInterface(nocturnalFinance.depositOrderAddress()).depositOrder(_orderID);
     }
     
     function settleOrder(uint256 _orderID) public {
@@ -58,7 +63,7 @@ contract OrderManager {
     }
 
     function getOrderAttributes(uint256 _orderID) public view 
-        returns (address , address, address, address, uint256, uint256, uint256, uint256, bool, uint256, uint256, bool) 
+        returns (address , address, address, address, uint256, uint256, uint256, bool, uint256, uint256, bool, bool) 
     {
         return CreateOrderInterface(nocturnalFinance.createOrderAddress()).orderAttributes(_orderID);
     }

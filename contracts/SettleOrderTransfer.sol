@@ -30,10 +30,10 @@ contract SettleOrderTransfer {
     function fromWETHSettle(uint256 _orderID) external {
         require(msg.sender == nocturnalFinance.settleOrderAddress(), "not SettleOrder contract");
         (,,address fromTokenAddress,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,,,,,,,uint256 gratuity,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (,,,,,,,,,uint256 gratuity,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         (,address poolAddress,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        //(,,,,,,,,,uint256 slippage,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,uint256 fromTokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        //(,,,,,,,,uint256 slippage,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (,,,,uint256 tokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         (address orderAddress,,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         
         OrderInterface(orderAddress).orderTransfer(fromTokenAddress, msg.sender, gratuity);        
@@ -43,24 +43,24 @@ contract SettleOrderTransfer {
                 IUniswapV3Pool(poolAddress).token1(), 
                 IUniswapV3Pool(poolAddress).fee(), 
                 orderAddress, 
-                fromTokenBalance.sub(gratuity));
+                tokenBalance.sub(gratuity));
         } else {
             OrderInterface(orderAddress).getExactInputSingle(
                 IUniswapV3Pool(poolAddress).token1(),
                 IUniswapV3Pool(poolAddress).token0(), 
                 IUniswapV3Pool(poolAddress).fee(), 
                 orderAddress, 
-                fromTokenBalance.sub(gratuity));  
+                tokenBalance.sub(gratuity));  
         }
     }
 
     function toWETHSettle(uint256 _orderID) external {
         require(msg.sender == nocturnalFinance.settleOrderAddress(), "not SettleOrder contract");
         (,,address fromTokenAddress,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,,,,,,,uint256 gratuity,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (,,,,,,,,,uint256 gratuity,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         (,address poolAddress,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        //(,,,,,,,,,uint256 slippage,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,uint256 fromTokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        //(,,,,,,,,uint256 slippage,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (,,,,uint256 tokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         (address orderAddress,,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         
         if (IUniswapV3Pool(poolAddress).token0() == fromTokenAddress) {
@@ -75,7 +75,7 @@ contract SettleOrderTransfer {
                 IUniswapV3Pool(poolAddress).token1(), 
                 IUniswapV3Pool(poolAddress).fee(), 
                 orderAddress, 
-                fromTokenBalance.sub(gratuity));
+                tokenBalance.sub(gratuity));
         } else {
             OrderInterface(orderAddress).getExactInputSingle(
                 IUniswapV3Pool(poolAddress).token1(),
@@ -88,7 +88,7 @@ contract SettleOrderTransfer {
                 IUniswapV3Pool(poolAddress).token0(), 
                 IUniswapV3Pool(poolAddress).fee(), 
                 orderAddress, 
-                fromTokenBalance.sub(gratuity));
+                tokenBalance.sub(gratuity));
         }
     }
 }

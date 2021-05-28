@@ -36,13 +36,13 @@ contract CreateOrder {
         address poolAddress;
         address fromTokenAddress;
         address toTokenAddress;
-        uint256 fromTokenBalance;
-        uint256 toTokenBalance;
+        uint256 tokenBalance;
         uint256 fromTokenValueInETH;
         uint256 limitPrice;
         bool limitType;
         uint256 slippage;
         uint256 settlementGratuity;
+        bool depositedFlag;
         bool settledFlag;
     }
 
@@ -62,7 +62,7 @@ contract CreateOrder {
         address _poolAddress,
         address _fromTokenAddress,
         address _toTokenAddress,
-        uint256 _fromTokenBalance,
+        uint256 _tokenBalance,
         uint256 _limitPrice,
         uint256 _slippage,
         bool _limitType,
@@ -70,16 +70,15 @@ contract CreateOrder {
     ) external {
         require(msg.sender == nocturnalFinance.orderManagerAddress(), "not OrderManager contract");
         require((_fromTokenAddress == WETH) || (_toTokenAddress == WETH), "pool must contain WETH");
-        require(IERC20(_fromTokenAddress).balanceOf(msg.sender) >= _fromTokenBalance);
+        require(IERC20(_fromTokenAddress).balanceOf(msg.sender) >= _tokenBalance);
         require((_settlementGratuity >= 0) && (_settlementGratuity < 10000));  
         Order nocturnalOrder = new Order("Nocturnal Order", "oNOCT", nocturnalFinanceAddress); 
         orderCounter.increment();
         
         OrderInterface(nocturnalFinance.orderAddress()).mint(msg.sender, orderCounter.current());
-        
+       
         // set order URI using NocturnalFinance contract's orderURI()
       	OrderInterface(address(nocturnalOrder))._setTokenURI(orderCounter.current(), nocturnalFinance.orderURI());
-
 
         // set order attributes
         _orders[orderCounter.current()] = Attributes({
@@ -87,27 +86,17 @@ contract CreateOrder {
             poolAddress: _poolAddress,
             fromTokenAddress: _fromTokenAddress,
             toTokenAddress: _toTokenAddress,
-            fromTokenBalance: _fromTokenBalance,
-            toTokenBalance: 0,
+            tokenBalance: _tokenBalance,
             fromTokenValueInETH: 0,
             limitPrice: _limitPrice,
             limitType: _limitType,
             slippage: _slippage, 
             settlementGratuity: _settlementGratuity,
+            depositedFlag: false,
             settledFlag: false
-        });
-   
-// ================== DepositOrder.sol =================== // 
-        // transfer fromTokenBalance to order
-        // requires orderOwner to approve CreateOrderTransfer.sol allowance 
-        require(IERC20(_fromTokenAddress).transferFrom(msg.sender, address(nocturnalOrder), _fromTokenBalance), "creator to order balance transfer failed");
-       
-        // get fromTokenBalance in ETH attribute
-        _orders[orderCounter.current()].fromTokenValueInETH = ValueInEthInterface(nocturnalFinance.valueInEthAddress()).getValueInEth(_fromTokenAddress, _fromTokenBalance, _poolAddress);
-
-        // emit events                                                
+        }); 
+        
         emit orderCreated(orderCounter.current());
-// ================== DepositOrder.sol =================== // 
     }
     
     function orderAttributes(uint256 _orderID) 
@@ -118,13 +107,13 @@ contract CreateOrder {
             address poolAddress,
             address fromTokenAddress,
             address toTokenAddress,
-            uint256 fromTokenBalance,
-            uint256 toTokenBalance,
+            uint256 tokenBalance,
             uint256 fromTokenValueInETH,
             uint256 limitPrice,
             bool limitType,
             uint256 slippage,
             uint256 settlementGratuity,
+            bool depositedFlag,
             bool settledFlag
         ) 
     {
@@ -134,25 +123,30 @@ contract CreateOrder {
             attributes.poolAddress,
             attributes.fromTokenAddress,
             attributes.toTokenAddress,
-            attributes.fromTokenBalance,
-            attributes.toTokenBalance,
+            attributes.tokenBalance,
             attributes.fromTokenValueInETH,
             attributes.limitPrice,
             attributes.limitType,
             attributes.slippage,
             attributes.settlementGratuity,
+            attributes.depositedFlag,
             attributes.settledFlag
         );
     }
-        
-    function setToTokenBalance(uint256 _orderID, uint256 _balance) public {
+    
+    function setTokenBalance(uint256 _orderID, uint256 _balance) public {
         require(msg.sender == nocturnalFinance.settleOrderAddress(), "not SettleOrder contract");
-        _orders[_orderID].toTokenBalance = _balance;
+        _orders[_orderID].tokenBalance = _balance;
     }
     
-    function setFromTokenBalance(uint256 _orderID, uint256 _balance) public {
-        require(msg.sender == nocturnalFinance.settleOrderAddress(), "not SettleOrder contract");
-        _orders[_orderID].fromTokenBalance = _balance;
+    function setFromTokenValueInETH(uint256 _orderID, uint256 _valueInETH) public {
+        require(msg.sender == nocturnalFinance.depositOrderAddress(), "not SettleOrder contract");
+        _orders[_orderID].fromTokenValueInETH = _valueInETH;
+    }
+    
+    function setDepositedFlag(uint256 _orderID, bool _flag) public {
+        require(msg.sender == nocturnalFinance.depositOrderAddress(), "not SettleOrder contract");
+        _orders[_orderID].depositedFlag = _flag;
     }
     
     function setSettledFlag(uint256 _orderID, bool _flag) public {

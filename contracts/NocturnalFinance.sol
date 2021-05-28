@@ -20,6 +20,7 @@ contract NocturnalFinance is Ownable {
     address public rewardsAddress;
     address public orderManagerAddress;
     address public createOrderAddress;
+    address public depositOrderAddress;
     address public settleOrderAddress;
     address public closeOrderAddress;
     address public modifyOrderAddress;
@@ -43,6 +44,7 @@ contract NocturnalFinance is Ownable {
             address _rewardsAddress,
             address _orderManagerAddress,
             address _createOrderAddress,
+            address _depositOrderAddress,
             address _settleOrderAddress,
             address _closeOrderAddress,
             address _modifyOrderAddress,
@@ -55,6 +57,7 @@ contract NocturnalFinance is Ownable {
 		require(_rewardsAddress != address(0));
 		require(_orderManagerAddress != address(0));
 		require(_createOrderAddress != address(0));
+		require(_depositOrderAddress != address(0));
 		require(_settleOrderAddress != address(0));
 		require(_closeOrderAddress != address(0));
 		require(_modifyOrderAddress != address(0));
@@ -67,6 +70,7 @@ contract NocturnalFinance is Ownable {
         rewardsAddress = _rewardsAddress;
         orderManagerAddress = _orderManagerAddress;
         createOrderAddress = _createOrderAddress;
+        depositOrderAddress = _depositOrderAddress;
         settleOrderAddress = _settleOrderAddress;
         closeOrderAddress = _closeOrderAddress;
         modifyOrderAddress = _modifyOrderAddress;

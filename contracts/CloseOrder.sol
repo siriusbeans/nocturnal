@@ -33,20 +33,19 @@ contract CloseOrder {
     
     function closeOrder(uint256 _orderID) external {
         require(msg.sender == nocturnalFinance.orderManagerAddress(), "caller is not order factory");
+        (,,,,,,,,,,bool depositedFlag,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         (,,,,,,,,,,,bool settledFlag) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         (,,,address toTokenAddress,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,,uint256 toTokenBalance,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        (,,,,uint256 tokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         (,,address fromTokenAddress,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        (,,,,uint256 fromTokenBalance,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
-        //(,,,,,,,,,uint256 slippage,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
+        //(,,,,,,,,uint256 slippage,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         (,address poolAddress,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         (address orderAddress,,,,,,,,,,,) = OrderManagerInterface(nocturnalFinance.orderManagerAddress()).getOrderAttributes(_orderID);
         address orderOwnerAddress = OrderInterface(orderAddress).ownerOf(_orderID);
         
-        uint256 dFee = toTokenBalance.mul(nocturnalFinance.platformRate()).div(bPDivisor);
-        
         if (settledFlag == true) {
             // deduct dfee from toTokenBalance and send staking.sol before transfering toTokenBalance to owner address
+            uint256 dFee = tokenBalance.mul(nocturnalFinance.platformRate()).div(bPDivisor);
             if (toTokenAddress == WETH) {
                 // if toTokenAddress == WETH, transferFrom order.sol dFee to staking.sol
                 OrderInterface(orderAddress).orderTransfer(toTokenAddress, nocturnalFinance.sNoctAddress(), dFee);
@@ -69,12 +68,15 @@ contract CloseOrder {
                 }
             }
             // transfer remaining toTokenBalance from order to order owner address
-            OrderInterface(orderAddress).orderTransfer(toTokenAddress, orderOwnerAddress, toTokenBalance.sub(dFee));
+            OrderInterface(orderAddress).orderTransfer(toTokenAddress, orderOwnerAddress, tokenBalance.sub(dFee));
+            // burn order
+            OrderInterface(orderAddress).burn(_orderID);  
+        } else if (depositedFlag == true) {
+            // transfer fromTokenBalance from order to order owner address
+            OrderInterface(orderAddress).orderTransfer(fromTokenAddress, orderOwnerAddress, tokenBalance);
             // burn order
             OrderInterface(orderAddress).burn(_orderID);  
         } else {
-            // transfer fromTokenBalance from order to order owner address
-            OrderInterface(orderAddress).orderTransfer(fromTokenAddress, orderOwnerAddress, fromTokenBalance);
             // burn order
             OrderInterface(orderAddress).burn(_orderID);  
         }

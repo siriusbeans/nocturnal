@@ -28,19 +28,19 @@ contract ValueInEth {
         WETH = _WETH;
     }
 
-    function getValueInEth(address _fromTokenAddress, uint256 _fromTokenBalance, address _poolAddress) external returns (uint256) {
+    function getValueInEth(address _fromTokenAddress, uint256 _tokenBalance, address _poolAddress) external returns (uint256) {
         require(msg.sender == nocturnalFinance.createOrderAddress());
         if (_fromTokenAddress == WETH) {
             // set fromTokenBalance value in ETH order attribute
-                tokenValueInETH = (_fromTokenBalance);         
+                tokenValueInETH = (_tokenBalance);         
         } else {
             // set fromTokenBalance value in ETH order attribute
             if (IUniswapV3Pool(_poolAddress).token0() == _fromTokenAddress) {
                 // use reciprocal of current price
-                tokenValueInETH = (_fromTokenBalance).mul(OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPriceReciprocal(_poolAddress));
+                tokenValueInETH = (_tokenBalance).mul(OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPriceReciprocal(_poolAddress));
             } else {           
                 // use current price    
-                tokenValueInETH = (_fromTokenBalance).mul(OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_poolAddress));
+                tokenValueInETH = (_tokenBalance).mul(OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(_poolAddress));
             }
         }
         return (tokenValueInETH);
