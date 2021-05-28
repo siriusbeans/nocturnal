@@ -4,16 +4,20 @@ const Noct = artifacts.require("./Noct.sol");
 const NoctStaking = artifacts.require("./NoctStaking.sol");
 const Oracle = artifacts.require("./Oracle.sol");
 const Order = artifacts.require("./Order.sol");
-const OrderFactory = artifacts.require("./OrderFactory.sol");
-const OrderCreator = artifacts.require("./OrderCreator.sol");
-const OrderSettler = artifacts.require("./OrderSettler.sol");
-const OrderCloser = artifacts.require("./OrderCloser.sol");
-const OrderModifier = artifacts.require("./OrderModifier.sol");
-const OrderTransfer = artifacts.require("./OrderTransfer.sol");
+const OrderManager = artifacts.require("./OrderManager.sol");
+const CreateOrder = artifacts.require("./CreateOrder.sol");
+const SettleOrder = artifacts.require("./SettleOrder.sol");
+const CloseOrder = artifacts.require("./CloseOrder.sol");
+const ModifyOrder = artifacts.require("./ModifyOrder.sol");
 const Rewards = artifacts.require("./Rewards.sol");
 const Treasury = artifacts.require("./Treasury.sol");
 const TokenMinter = artifacts.require("./Mocks/TokenMinter.sol");
 const TokenSwapper = artifacts.require("./Mocks/TokenSwapper.sol");
+const LinkToken = artifacts.require("./Mocks/LinkToken.sol");
+const WethToken = artifacts.require("./Mocks/WethToken.sol");
+const SettleOrderTransfer = artifacts.require("./SettleOrderTransfer.sol");
+const DistributeRewards = artifacts.require("./DistributeRewards.sol");
+const ValueInEth = artifacts.require("./ValueInEth.sol");
 
 contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     const owner = accounts[0];
@@ -22,46 +26,48 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     let NoctStakingInstance;
     let OracleInstance;
     let OrderInstance;
-    let OrderFactoryInstance;
-    let OrderCreatorInstance;
-    let OrderSettlerInstance;
-    let OrderCloserInstance;
-    let OrderModifierInstance;
-    let OrderTransferInstance;
+    let OrderManagerInstance;
+    let CreateOrderInstance;
+    let SettleOrderInstance;
+    let CloseOrderInstance;
+    let ModifyOrderInstance;
+    let SettleOrderTransferInstance;
     let RewardsInstance;
     let TreasuryInstance;
     let TokenMinterInstance;
     let TokenSwapperInstance;
+    let DistributeRewardsInstance;
+    let ValueInEthInstance;
     let orderID;
     let orderAddress;
+    const toWei = (value) => web3.utils.toWei(value.toString(), "ether");
     const testAddressCount = 3;  
     const orderURI = "";
     const depositRate = 200;  // 2% of fromToken (basis points)
     const treasuryFactor = 2000; // 20% of total rewards to treasury (basis points)
     const rewardsFactor = 8000;  // 80% of (total rewards - treasury allocation) to creators, 20% to settlers (basis points)
-    const swapPoolAddress = "0xEa9ab84751A2ef0db5f3601aE8EC0F1E4798728B"; // LINK/WETH pool address
-    const swapFromTokenAddress = "0x84fff9F8Bec0835494C4c9f43cfe32C7d37F82b5"; // WETH address
-    const swapToTokenAddress = "0x27E1A4409fa79E5380aDE99ED289DBF342613Ce6"; // LINK address
-    const swapFromTokenBalance = 100*(1e18); // 1 tokens in wei
-    const swapLimitPrice = 2*(1e18);  // price*(1e18)
-    const swapSlippage = 500; // 5% slippage (basis points)
-    const swapAbove = true;
+    const poolAddress = "0xEa9ab84751A2ef0db5f3601aE8EC0F1E4798728B"; // LINK/WETH pool address
+    const fromTokenAddress = "0x84fff9F8Bec0835494C4c9f43cfe32C7d37F82b5"; // WETH address
+    const toTokenAddress = "0x27E1A4409fa79E5380aDE99ED289DBF342613Ce6"; // LINK address
+    const fromTokenBalance = toWei(100); // 100 tokens in wei
+    const limitPrice = toWei(2);  // price in wei
+    const slippage = 500; // 5% slippage (basis points)
+    const limitType = true;
     const swapSettlementGratuity = 200; // 2% of fromToken (basis points)
-    
 //=============================================================================================//    
 //=============================================================================================//      
 
-    async function createLimitOrder() {
-    	it("creates a new limit order", () => {
-            let order = OrderFactoryInstance.createLimitOrder(
-            	swapPoolAddress,
-                swapFromTokenAddress,
-                swapToTokenAddress,
-                swapFromTokenBalance,
-                swapLimitPrice,
-                swapSlippage,
-                swapAbove,
-                swapSettlementGratuity);  
+    async function createOrder() {
+    	it("creates a new limit order", async () => {
+            let order = await OrderManagerInstance.createOrder(
+            	poolAddress,
+                fromTokenAddress,
+                toTokenAddress,
+                fromTokenBalance,
+                limitPrice,
+                slippage,
+                limitType,
+                settlementGratuity);     
         });
     };   
 
@@ -76,15 +82,17 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
         RewardsInstance = await Rewards.deployed();
         OracleInstance = await Oracle.deployed();
         OrderInstance = await Order.deployed();
-        OrderFactoryInstance = await OrderFactory.deployed();
-        OrderTransferInstance = await OrderTransfer.deployed();
-    	OrderCreatorInstance = await OrderCreator.deployed();
-    	OrderSettlerInstance = await OrderSettler.deployed();
-    	OrderCloserInstance = await OrderCloser.deployed();
-    	OrderModifierInstance = await OrderModifier.deployed();
+        OrderManagerInstance = await OrderManager.deployed();
+        SettleOrderTransferInstance = await SettleOrderTransfer.deployed();
+    	CreateOrderInstance = await CreateOrder.deployed();
+    	SettleOrderInstance = await SettleOrder.deployed();
+    	CloseOrderInstance = await CloseOrder.deployed();
+    	ModifyOrderInstance = await ModifyOrder.deployed();
     	RewardsInstance = await Rewards.deployed();
     	TokenMinterInstance = await TokenMinter.deployed();
     	TokenSwapperInstance = await TokenSwapper.deployed();
+    	DistributeRewardsInstance = await DistributeRewards.deployed();
+    	ValueInEthInstance = await ValueInEth.deployed();
     });
 
     describe("test new limit order creation", async () => {
@@ -106,14 +114,24 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
 
         before("seed addresses with MOCK0 and MOCK1 tokens", async () => {
             for (let i = 0; i < accounts.length-1; i++) {
-                await TokenMinterInstance.mintTokens(swapFromTokenAddress, swapToTokenAddress);
+                await TokenMinterInstance.mintTokens(fromTokenAddress, toTokenAddress);
             }
         });
         
+        before("approve orderCreator.sol allowance", async () => {
+            let WethTokenInstance = await WethToken.at(fromTokenAddress);
+            for (let i = 0; i < accounts.length-1; i++) {
+                await WethTokenInstance.approve(CreateOrderInstance.address, fromTokenBalance, { from : accounts[0] });
+            }
+        }); 
+        
         //create a new limit order
-        createLimitOrder();
+        createOrder();
         // get order address from orderCreated emitted event
         // check new order attributes
+        // check creator address balance
+        // check order address balance
+        // check staking contract balance
        
     });
 });
