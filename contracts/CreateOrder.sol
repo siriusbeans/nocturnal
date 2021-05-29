@@ -50,7 +50,6 @@ contract CreateOrder is CreateOrderInterface {
     
     function createOrder(CreateParams calldata params) external override {
         require((params.fromTokenAddress == WETH) || (params.toTokenAddress == WETH), "pool must contain WETH");
-        require(IERC20(params.fromTokenAddress).balanceOf(msg.sender) >= params.tokenBalance);
         require((params.settlementGratuity >= 0) && (params.settlementGratuity < 10000));  
         Order nocturnalOrder = new Order("Nocturnal Order", "oNOCT", nocturnalFinanceAddress); 
         orderCounter.increment();
