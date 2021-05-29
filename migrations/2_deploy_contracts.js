@@ -5,7 +5,6 @@ const NoctStaking = artifacts.require("./NoctStaking.sol");
 const NocturnalFinance = artifacts.require("./NocturnalFinance.sol");
 const Oracle = artifacts.require("./Oracle.sol");
 const Order = artifacts.require("./Order.sol");
-const OrderManager = artifacts.require("./OrderManager.sol");
 const CreateOrder = artifacts.require("./CreateOrder.sol");
 const DepositOrder = artifacts.require("./DepositOrder.sol");
 const SettleOrder = artifacts.require("./SettleOrder.sol");
@@ -36,7 +35,6 @@ module.exports = function(deployer, network, accounts) {
     let NocturnalFinanceInstance;
     let OracleInstance;
     let OrderInstance;
-    let OrderManagerInstance;
     let CreateOrderInstance;
     let DepositOrderInstance;
     let SettleOrderInstance;
@@ -64,16 +62,12 @@ module.exports = function(deployer, network, accounts) {
   
             return deployer.deploy(NoctStaking, NocturnalFinance.address, { from: ownerAddress }).then(instance => {
             NoctStakingInstance = instance;
-        
-            return deployer.deploy(OrderManager, NocturnalFinance.address, { from: ownerAddress });
-        }).then(instance => {
-            OrderManagerInstance = instance;
             
             return deployer.deploy(CreateOrder, NocturnalFinance.address, WETH, { from: ownerAddress });
         }).then(instance => {
             CreateOrderInstance = instance;
             
-            return deployer.deploy(DepositOrder, NocturnalFinance.address, { from: ownerAddress });
+            return deployer.deploy(DepositOrder, NocturnalFinance.address, WETH, { from: ownerAddress });
         }).then(instance => {
             DepositOrderInstance = instance;
             
@@ -97,10 +91,6 @@ module.exports = function(deployer, network, accounts) {
         }).then(instance => {
             OracleInstance = instance;
             
-            return deployer.deploy(ValueInEth, NocturnalFinance.address, WETH, { from: ownerAddress });
-        }).then(instance => {
-            ValueInEthInstance = instance;
-            
             return deployer.deploy(Order, orderName, orderSymbol, NocturnalFinance.address, { from: ownerAddress });
         }).then(instance => {
             OrderInstance = instance;
@@ -120,19 +110,37 @@ module.exports = function(deployer, network, accounts) {
         });
     }).then(function() {
 
-        return NocturnalFinanceInstance.initNocturnal(OracleInstance.address, 
-                        RewardsInstance.address, 
-                        OrderManagerInstance.address,
-                        CreateOrderInstance.address,
-                        DepositOrderInstance.address,
-                        SettleOrderInstance.address, 
-                        CloseOrderInstance.address, 
-                        ModifyOrderInstance.address, 
-                        SettleOrderTransferInstance.address, 
-                        OrderInstance.address,
-                        TreasuryInstance.address,
-                        DistributeRewardsInstance.address,
-                        ValueInEthInstance.address);
+        return NocturnalFinanceInstance.initNocturnal(1, CreateOrderInstance.address);
+    }).then(function() {
+
+        return NocturnalFinanceInstance.initNocturnal(2, DepositOrderInstance.address);
+    }).then(function() {
+
+        return NocturnalFinanceInstance.initNocturnal(3, SettleOrderInstance.address);
+    }).then(function() {
+
+        return NocturnalFinanceInstance.initNocturnal(4, CloseOrderInstance.address);
+    }).then(function() {
+
+        return NocturnalFinanceInstance.initNocturnal(5, ModifyOrderInstance.address);
+    }).then(function() {
+
+        return NocturnalFinanceInstance.initNocturnal(6, SettleOrderTransferInstance.address);
+    }).then(function() {
+
+        return NocturnalFinanceInstance.initNocturnal(7, OracleInstance.address);
+    }).then(function() {
+
+        return NocturnalFinanceInstance.initNocturnal(8, OrderInstance.address);
+    }).then(function() {
+
+        return NocturnalFinanceInstance.initNocturnal(9, RewardsInstance.address);
+    }).then(function() {
+
+        return NocturnalFinanceInstance.initNocturnal(10, TreasuryInstance.address);
+    }).then(function() {
+
+        return NocturnalFinanceInstance.initNocturnal(11, DistributeRewardsInstance.address);
     }).then(function() {
     
         return deployer.deploy(Noct, NocturnalFinance.address, rewardsSupply, initialSupply, { from: ownerAddress }).then(instance => {
@@ -140,16 +148,16 @@ module.exports = function(deployer, network, accounts) {
         });
     }).then(function() {
     
-        return NocturnalFinanceInstance.initNoct(NoctInstance.address);
+        return NocturnalFinanceInstance.initNocturnal(12, NoctInstance.address);
     }).then(function() {
 
-        return NocturnalFinanceInstance.initsNoct(NoctStakingInstance.address);    
+        return NocturnalFinanceInstance.initNocturnal(0, NoctStakingInstance.address);    
     }).then(function() {
     
         return NocturnalFinanceInstance.rewardsApproval();
     }).then(function() {
     
-        return NocturnalFinanceInstance.treasuryApproval(); /*
+        return NocturnalFinanceInstance.treasuryApproval(); 
     }).then(function() {
     
         return NocturnalFinanceInstance.setPlatformRate(pRate);
@@ -161,6 +169,6 @@ module.exports = function(deployer, network, accounts) {
         return NocturnalFinanceInstance.setTreasuryFactor(tFactor);
     }).then(function() {
 
-        return NocturnalFinanceInstance.setOrderURI(uri); */
+        return NocturnalFinanceInstance.setOrderURI(uri); 
     });
 });});};
