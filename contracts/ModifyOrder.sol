@@ -11,7 +11,6 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 pragma solidity ^0.8.0;
 
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
-import {OrderManagerInterface} from "./Interfaces/OrderManagerInterface.sol";
 import {CreateOrderInterface} from "./Interfaces/CreateOrderInterface.sol";
 
 contract ModifyOrder {
@@ -25,14 +24,14 @@ contract ModifyOrder {
     }
     
     function modifySlippage(uint256 _orderID, uint256 _slippage) external {
-        require(msg.sender == nocturnalFinance.orderManagerAddress(), "not order manager");
-        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setSlippage(_orderID, _slippage);
+        require(msg.sender == nocturnalFinance._contract(1), "not order manager");
+        CreateOrderInterface(nocturnalFinance._contract(1)).setSlippage(_orderID, _slippage);
         emit orderModified(_orderID);      
     }
     
     function modifySettlementGratuity(uint256 _orderID, uint256 _gratuity) external {
-        require(msg.sender == nocturnalFinance.orderManagerAddress(), "not order manager");
-        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setSettlementGratuity(_orderID, _gratuity);      
+        require(msg.sender == nocturnalFinance._contract(1), "not order manager");
+        CreateOrderInterface(nocturnalFinance._contract(1)).setSettlementGratuity(_orderID, _gratuity);      
         emit orderModified(_orderID);      
     }
 }

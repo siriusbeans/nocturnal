@@ -16,21 +16,22 @@ import {TreasuryInterface} from "./Interfaces/TreasuryInterface.sol";
 
 contract NocturnalFinance is Ownable {
     
-    address public oracleAddress;
-    address public rewardsAddress;
-    address public orderManagerAddress;
-    address public createOrderAddress;
-    address public depositOrderAddress;
-    address public settleOrderAddress;
-    address public closeOrderAddress;
-    address public modifyOrderAddress;
-    address public settleOrderTransferAddress;
-    address public noctAddress;
-    address public sNoctAddress;
-    address public orderAddress;
-    address public treasuryAddress;
-    address public distributeRewardsAddress;
-    address public valueInEthAddress;
+    mapping (uint256 => address) public _contract;
+    
+    // 0: sNoctAddress;
+    // 1: createOrderAddress;
+    // 2: depositOrderAddress;
+    // 3: settleOrderAddress;
+    // 4: closeOrderAddress;
+    // 5: modifyOrderAddress;
+    // 6: settleOrderTransferAddress;
+    // 7: oracleAddress;
+    // 8: orderAddress;
+    // 9: rewardsAddress;
+    // 10: treasuryAddress;
+    // 11: distributeRewardsAddress;
+    // 12: noctAddress;
+
     uint256 public platformRate;
     uint256 public rewardsRatioFactor;
     uint256 public treasuryFactor;
@@ -39,66 +40,18 @@ contract NocturnalFinance is Ownable {
     constructor() {
     }
     
-    function initNocturnal( 
-            address _oracleAddress, 
-            address _rewardsAddress,
-            address _orderManagerAddress,
-            address _createOrderAddress,
-            address _depositOrderAddress,
-            address _settleOrderAddress,
-            address _closeOrderAddress,
-            address _modifyOrderAddress,
-            address _settleOrderTransferAddress,
-            address _orderAddress,
-            address _treasuryAddress,
-            address _distributeRewardsAddress,
-            address _valueInEthAddress) external onlyOwner {
-		require(_oracleAddress != address(0));
-		require(_rewardsAddress != address(0));
-		require(_orderManagerAddress != address(0));
-		require(_createOrderAddress != address(0));
-		require(_depositOrderAddress != address(0));
-		require(_settleOrderAddress != address(0));
-		require(_closeOrderAddress != address(0));
-		require(_modifyOrderAddress != address(0));
-		require(_settleOrderTransferAddress != address(0));
-		require(_orderAddress != address(0));
-		require(_treasuryAddress != address(0));
-		require(_distributeRewardsAddress != address(0));
-		require(_valueInEthAddress != address(0));
-        oracleAddress = _oracleAddress;
-        rewardsAddress = _rewardsAddress;
-        orderManagerAddress = _orderManagerAddress;
-        createOrderAddress = _createOrderAddress;
-        depositOrderAddress = _depositOrderAddress;
-        settleOrderAddress = _settleOrderAddress;
-        closeOrderAddress = _closeOrderAddress;
-        modifyOrderAddress = _modifyOrderAddress;
-        settleOrderTransferAddress = _settleOrderTransferAddress;
-        orderAddress = _orderAddress;
-        treasuryAddress = _treasuryAddress;
-        distributeRewardsAddress = _distributeRewardsAddress;
-        valueInEthAddress = _valueInEthAddress;
-    }
-    
-    function initNoct(address _noctAddress) external onlyOwner {
-        require(_noctAddress != address(0));
-        noctAddress = _noctAddress;
-    }
-    
-    function initsNoct(address _sNoctAddress) external onlyOwner {
-        require(_sNoctAddress != address(0));
-        sNoctAddress = _sNoctAddress;
+    function initNocturnal(uint256 _index, address _address) external onlyOwner {
+		_contract[_index] = _address;
     }
     
     function rewardsApproval() external onlyOwner {
-        RewardsInterface(rewardsAddress).approveStaking();
+        RewardsInterface(_contract[9]).approveStaking();
     }
     
     function treasuryApproval() external onlyOwner {
-        TreasuryInterface(treasuryAddress).approveStaking();
+        TreasuryInterface(_contract[10]).approveStaking();
     }
-    
+  
     function setPlatformRate(uint256 _pRateBasisPoints) external onlyOwner {
         platformRate = _pRateBasisPoints;
     }

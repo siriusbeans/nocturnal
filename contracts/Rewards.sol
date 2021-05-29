@@ -36,26 +36,26 @@ contract Rewards {
     
     function approveStaking() external {
         require(msg.sender == nocturnalFinanceAddress, "not Nocturnal Finance");
-        IERC20(nocturnalFinance.noctAddress()).approve(nocturnalFinance.sNoctAddress(), rewardsSupply);
+        IERC20(nocturnalFinance._contract(12)).approve(nocturnalFinance._contract(0), rewardsSupply);
     }
     
     function claimRewards(uint256 _amount) public {
         uint256 rBalance = unclaimedRewards[msg.sender];
         require(rBalance >= _amount, "insufficient rewards balance");
-        require(NoctInterface(nocturnalFinance.noctAddress()).transfer(msg.sender, _amount), "rewards transfer failed");
+        require(NoctInterface(nocturnalFinance._contract(12)).transfer(msg.sender, _amount), "rewards transfer failed");
         unclaimedRewards[msg.sender] = rBalance.sub(_amount);
     }
     
     function stakeRewards(uint256 _amount) public {
         uint256 rBalance = unclaimedRewards[msg.sender];
         require(rBalance >= _amount, "insufficient rewards balance");
-        NoctStakingInterface(nocturnalFinance.sNoctAddress()).autoStake(msg.sender, _amount);
+        NoctStakingInterface(nocturnalFinance._contract(0)).autoStake(msg.sender, _amount);
         unclaimedRewards[msg.sender] = rBalance.sub(_amount);
     }
     
     function calcRewards(uint256 _valueETH) external view returns (uint256) {
-        require(msg.sender == nocturnalFinance.settleOrderAddress(), "only order settler calls calcRewards");
-        uint256 totalSupply = NoctInterface(nocturnalFinance.noctAddress()).totalSupply();
+        require(msg.sender == nocturnalFinance._contract(3), "only order settler calls calcRewards");
+        uint256 totalSupply = NoctInterface(nocturnalFinance._contract(12)).totalSupply();
         uint256 supplyDiff = totalSupply.sub(totalRewards);
         uint256 rewardsRate = _valueETH.div(rewardsRateDivisor); // equal to value in ETH / 1000000
         return (rewardsRate.mul(supplyDiff)); 

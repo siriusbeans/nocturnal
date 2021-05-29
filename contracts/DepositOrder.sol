@@ -11,37 +11,54 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import "./Interfaces/DepositOrderInterface.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
-import {OrderManagerInterface} from "./Interfaces/OrderManagerInterface.sol";
 import {OrderInterface} from "./Interfaces/OrderInterface.sol";
-import {ValueInEthInterface} from "./Interfaces/ValueInEthInterface.sol";
 import {CreateOrderInterface} from "./Interfaces/CreateOrderInterface.sol";
+import {OracleInterface} from "./Interfaces/OracleInterface.sol";
 
-contract CreateOrder {
+contract DepositOrder is DepositOrderInterface {
+    using SafeMath for uint256;
+
+    address WETH;
 
     event orderDeposited(uint256 _orderID);
     
     NocturnalFinanceInterface public nocturnalFinance;
     
-    constructor(address _nocturnalFinance) {
+    constructor(address _nocturnalFinance, address _WETH) {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
+        WETH = _WETH;
     }
 
-    function depositOrder(uint256 _orderID) public {
-        require(msg.sender == nocturnalFinance.orderManagerAddress());
-        (address orderAddress,address poolAddress,address fromTokenAddress,,uint256 tokenBalance,,,,,,bool depositedFlag,) = CreateOrderInterface(nocturnalFinance.createOrderAddress()).orderAttributes(_orderID);
-        require(depositedFlag == false, "deposit filled");
-        address orderOwnerAddress = OrderInterface(orderAddress).ownerOf(_orderID);
+    function depositOrder(uint256 _orderID, DepositParams calldata params) public override {
+        require(msg.sender == nocturnalFinance._contract(1));
+        require(params.depositedFlag == false, "deposit filled");
+        address orderOwnerAddress = OrderInterface(params.orderAddress).ownerOf(_orderID);
        
         // transfer fromTokenBalance to order
         // requires orderOwner to approve DepositOrder.sol trasnferFrom allowance 
-        require(IERC20(fromTokenAddress).transferFrom(orderOwnerAddress, orderAddress, tokenBalance), "owner to order balance transfer failed");
+        require(IERC20(params.fromTokenAddress).transferFrom(orderOwnerAddress, params.orderAddress, params.tokenBalance), "owner to order balance transfer failed");
        
         // set fromTokenBalance in ETH attribute
-        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setFromTokenValueInETH(_orderID, ValueInEthInterface(nocturnalFinance.valueInEthAddress()).getValueInEth(fromTokenAddress, tokenBalance, poolAddress));
+        if (params.fromTokenAddress == WETH) {
+            // set fromTokenBalance value in ETH order attribute
+                CreateOrderInterface(nocturnalFinance._contract(1)).setFromTokenValueInETH(_orderID, params.tokenBalance);         
+        } else {
+            // set fromTokenBalance value in ETH order attribute
+            if (IUniswapV3Pool(params.poolAddress).token0() == params.fromTokenAddress) {
+                // use reciprocal of current price
+                CreateOrderInterface(nocturnalFinance._contract(1)).setFromTokenValueInETH(_orderID, (params.tokenBalance).mul(OracleInterface(nocturnalFinance._contract(7)).getCurrentPriceReciprocal(params.poolAddress)));
+            } else {           
+                // use current price    
+                CreateOrderInterface(nocturnalFinance._contract(1)).setFromTokenValueInETH(_orderID, (params.tokenBalance).mul(OracleInterface(nocturnalFinance._contract(7)).getCurrentPrice(params.poolAddress)));
+            }
+        }
 
         // set depositedFlag
-        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setSettledFlag(_orderID, true);
+        CreateOrderInterface(nocturnalFinance._contract(1)).setSettledFlag(_orderID, true);
 
         // emit events                                                
         emit orderDeposited(_orderID);

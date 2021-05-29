@@ -150,7 +150,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
      * - `tokenId` must exist.
      */
     function _setTokenURI(uint256 tokenId, string memory _tokenURI) external virtual {
-        require(msg.sender == nocturnalFinance.createOrderAddress(), "not CreateOrder contract");
+        require(msg.sender == nocturnalFinance._contract(1), "not CreateOrder contract");
         require(_exists(tokenId), "ERC721URIStorage: URI set of nonexistent token");
         _tokenURIs[tokenId] = _tokenURI;
     }
@@ -412,17 +412,17 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     }
     
     function burn(uint256 tokenId) public {
-        require(_msgSender() == nocturnalFinance.closeOrderAddress(), "not CloseOrder contract");
+        require(_msgSender() == nocturnalFinance._contract(4), "not CloseOrder contract");
         _burn(tokenId);
     }
     
     function mint(address to, uint256 tokenId) public {
-        require(_msgSender() == nocturnalFinance.createOrderAddress(), "not CreateOrder contract");
+        require(_msgSender() == nocturnalFinance._contract(1), "not CreateOrder contract");
         _mint(to, tokenId);
     }
     
     function getExactInputSingle(address _tokenIn, address _tokenOut, uint24 _fee, address _recipient, uint256 _amount) public {
-        require(_msgSender() == nocturnalFinance.closeOrderAddress() || _msgSender() == nocturnalFinance.settleOrderTransferAddress(), "caller is not a nocturnal contract");
+        require(_msgSender() == nocturnalFinance._contract(4) || _msgSender() == nocturnalFinance._contract(6), "caller is not a nocturnal contract");
         require(IERC20(_tokenIn).approve(UniswapV3SwapRouter, _amount), "approve failed");
 		swapRouter.exactInputSingle(
 		    ISwapRouter.ExactInputSingleParams({
@@ -439,7 +439,7 @@ contract Order is Context, ERC165, IERC721, IERC721Metadata {
     }
     
     function orderTransfer(address _tokenAddress, address _recipientAddress, uint256 _amount) public {
-        require(_msgSender() == nocturnalFinance.closeOrderAddress() || _msgSender() == nocturnalFinance.settleOrderTransferAddress(), "caller is not a nocturnal contract");
+        require(_msgSender() == nocturnalFinance._contract(4) || _msgSender() == nocturnalFinance._contract(6), "caller is not a nocturnal contract");
         require(ERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
     }  
     

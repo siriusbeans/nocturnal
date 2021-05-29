@@ -9,19 +9,24 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 */
 
 pragma solidity ^0.8.0;
+pragma abicoder v2;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import "./Interfaces/CreateOrderInterface.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
-import {OracleInterface} from "./Interfaces/OracleInterface.sol";
 import {OrderInterface} from "./Interfaces/OrderInterface.sol";
-import {OrderManagerInterface} from "./Interfaces/OrderManagerInterface.sol";
+import {CreateOrderInterface} from "./Interfaces/CreateOrderInterface.sol";
+import {SettleOrderInterface} from "./Interfaces/SettleOrderInterface.sol";
+import {CloseOrderInterface} from "./Interfaces/CloseOrderInterface.sol";
+import {ModifyOrderInterface} from "./Interfaces/ModifyOrderInterface.sol";
+import {DepositOrderInterface} from "./Interfaces/DepositOrderInterface.sol";
+import {CreateOrder} from "./CreateOrder.sol";
 import {Order} from "./Order.sol";
-import {ValueInEthInterface} from "./Interfaces/ValueInEthInterface.sol";
 
-contract CreateOrder {
+contract CreateOrder is CreateOrderInterface {
     using SafeMath for uint256;
     using Counters for Counters.Counter;
     
@@ -30,21 +35,6 @@ contract CreateOrder {
     uint256 public platformVolume;
     address nocturnalFinanceAddress;
     address WETH; 
-    
-    struct Attributes {
-        address orderAddress;
-        address poolAddress;
-        address fromTokenAddress;
-        address toTokenAddress;
-        uint256 tokenBalance;
-        uint256 fromTokenValueInETH;
-        uint256 limitPrice;
-        bool limitType;
-        uint256 slippage;
-        uint256 settlementGratuity;
-        bool depositedFlag;
-        bool settledFlag;
-    }
 
     mapping(uint256 => Attributes) public _orders;
    
@@ -58,24 +48,14 @@ contract CreateOrder {
         WETH = _WETH;
     }
     
-    function createOrder(
-        address _poolAddress,
-        address _fromTokenAddress,
-        address _toTokenAddress,
-        uint256 _tokenBalance,
-        uint256 _limitPrice,
-        uint256 _slippage,
-        bool _limitType,
-        uint256 _settlementGratuity
-    ) external {
-        require(msg.sender == nocturnalFinance.orderManagerAddress(), "not OrderManager contract");
-        require((_fromTokenAddress == WETH) || (_toTokenAddress == WETH), "pool must contain WETH");
-        require(IERC20(_fromTokenAddress).balanceOf(msg.sender) >= _tokenBalance);
-        require((_settlementGratuity >= 0) && (_settlementGratuity < 10000));  
+    function createOrder(CreateParams calldata params) external override {
+        require((params.fromTokenAddress == WETH) || (params.toTokenAddress == WETH), "pool must contain WETH");
+        require(IERC20(params.fromTokenAddress).balanceOf(msg.sender) >= params.tokenBalance);
+        require((params.settlementGratuity >= 0) && (params.settlementGratuity < 10000));  
         Order nocturnalOrder = new Order("Nocturnal Order", "oNOCT", nocturnalFinanceAddress); 
         orderCounter.increment();
         
-        OrderInterface(nocturnalFinance.orderAddress()).mint(msg.sender, orderCounter.current());
+        OrderInterface(nocturnalFinance._contract(8)).mint(msg.sender, orderCounter.current());
        
         // set order URI using NocturnalFinance contract's orderURI()
       	OrderInterface(address(nocturnalOrder))._setTokenURI(orderCounter.current(), nocturnalFinance.orderURI());
@@ -83,25 +63,66 @@ contract CreateOrder {
         // set order attributes
         _orders[orderCounter.current()] = Attributes({
             orderAddress: address(nocturnalOrder),
-            poolAddress: _poolAddress,
-            fromTokenAddress: _fromTokenAddress,
-            toTokenAddress: _toTokenAddress,
-            tokenBalance: _tokenBalance,
+            poolAddress: params.poolAddress,
+            fromTokenAddress: params.fromTokenAddress,
+            toTokenAddress: params.toTokenAddress,
+            tokenBalance: params.tokenBalance,
             fromTokenValueInETH: 0,
-            limitPrice: _limitPrice,
-            limitType: _limitType,
-            slippage: _slippage, 
-            settlementGratuity: _settlementGratuity,
+            limitPrice: params.limitPrice,
+            limitType: params.limitType,
+            slippage: params.slippage, 
+            settlementGratuity: params.settlementGratuity,
             depositedFlag: false,
             settledFlag: false
         }); 
         
         emit orderCreated(orderCounter.current());
     }
+       
+    function depositOrder(uint256 _orderID) public override {
+        DepositOrderInterface.DepositParams memory depositParams = DepositOrderInterface.DepositParams({
+            orderAddress: _orders[_orderID].orderAddress,
+            poolAddress: _orders[_orderID].poolAddress,
+            fromTokenAddress: _orders[_orderID].fromTokenAddress,
+            tokenBalance: _orders[_orderID].tokenBalance,
+            depositedFlag: _orders[_orderID].depositedFlag
+        });
+        DepositOrderInterface(nocturnalFinance._contract(2)).depositOrder(_orderID, depositParams);
+    }
+    
+    function settleOrder(uint256 _orderID) public override {
+        SettleOrderInterface.SettleParams memory settleParams = SettleOrderInterface.SettleParams({
+            orderAddress: _orders[_orderID].orderAddress,
+            poolAddress: _orders[_orderID].poolAddress,
+            fromTokenAddress: _orders[_orderID].fromTokenAddress,              
+            tokenBalance: _orders[_orderID].tokenBalance,
+            fromTokenValueInETH: _orders[_orderID].fromTokenValueInETH,
+            limitPrice: _orders[_orderID].limitPrice,
+            limitType: _orders[_orderID].limitType,
+            settlementGratuity: _orders[_orderID].settlementGratuity,
+            depositedFlag: _orders[_orderID].depositedFlag,
+            settledFlag: _orders[_orderID].settledFlag
+        });
+        SettleOrderInterface(nocturnalFinance._contract(3)).settleOrder(_orderID, settleParams);
+    }
+    
+    function closeOrder(uint256 _orderID) public override {
+        require(msg.sender == OrderInterface(_orders[_orderID].orderAddress).ownerOf(_orderID), "not order owner");
+        CloseOrderInterface.CloseParams memory closeParams = CloseOrderInterface.CloseParams({
+            orderAddress: _orders[_orderID].orderAddress,
+            poolAddress: _orders[_orderID].poolAddress,
+            fromTokenAddress: _orders[_orderID].fromTokenAddress,
+            toTokenAddress: _orders[_orderID].toTokenAddress,
+            tokenBalance: _orders[_orderID].tokenBalance,
+            depositedFlag: _orders[_orderID].depositedFlag,
+            settledFlag: _orders[_orderID].settledFlag
+        });
+        CloseOrderInterface(nocturnalFinance._contract(4)).closeOrder(_orderID, closeParams);
+    }
     
     function orderAttributes(uint256 _orderID) 
         public
-        view
+        view override
         returns (
             address orderAddress,
             address poolAddress,
@@ -132,35 +153,47 @@ contract CreateOrder {
             attributes.depositedFlag,
             attributes.settledFlag
         );
+    }  
+    
+    function modifyOrderSlippage(uint256 _orderID, uint256 _slippage) public override {
+        require(msg.sender == OrderInterface(_orders[_orderID].orderAddress).ownerOf(_orderID), "not order owner");
+        ModifyOrderInterface(nocturnalFinance._contract(5)).modifySlippage(_orderID, _slippage);
     }
     
-    function setTokenBalance(uint256 _orderID, uint256 _balance) public {
-        require(msg.sender == nocturnalFinance.settleOrderAddress(), "not SettleOrder contract");
+    function modifyOrderSettlementGratuity(uint256 _orderID, uint256 _gratuity) public override {
+        require(msg.sender == OrderInterface(_orders[_orderID].orderAddress).ownerOf(_orderID), "not order owner");
+        ModifyOrderInterface(nocturnalFinance._contract(5)).modifySettlementGratuity(_orderID, _gratuity);
+    }
+    
+    function setTokenBalance(uint256 _orderID, uint256 _balance) public override {
+        require(msg.sender == nocturnalFinance._contract(3), "not SettleOrder contract");
         _orders[_orderID].tokenBalance = _balance;
     }
     
-    function setFromTokenValueInETH(uint256 _orderID, uint256 _valueInETH) public {
-        require(msg.sender == nocturnalFinance.depositOrderAddress(), "not SettleOrder contract");
+    function setFromTokenValueInETH(uint256 _orderID, uint256 _valueInETH) public override {
+        require(msg.sender == nocturnalFinance._contract(2), "not SettleOrder contract");
         _orders[_orderID].fromTokenValueInETH = _valueInETH;
     }
     
-    function setDepositedFlag(uint256 _orderID, bool _flag) public {
-        require(msg.sender == nocturnalFinance.depositOrderAddress(), "not SettleOrder contract");
+    function setDepositedFlag(uint256 _orderID, bool _flag) public override {
+        require(msg.sender == nocturnalFinance._contract(2), "not SettleOrder contract");
         _orders[_orderID].depositedFlag = _flag;
     }
     
-    function setSettledFlag(uint256 _orderID, bool _flag) public {
-        require(msg.sender == nocturnalFinance.settleOrderAddress(), "not SettleOrder contract");
+    function setSettledFlag(uint256 _orderID, bool _flag) public override {
+        require(msg.sender == nocturnalFinance._contract(3), "not SettleOrder contract");
         _orders[_orderID].settledFlag =  _flag;
     }
     
-    function setSlippage(uint256 _orderID, uint256 _slippage) public {
-        require(msg.sender == nocturnalFinance.modifyOrderAddress(), "not ModifyOrder contract");
+    function setSlippage(uint256 _orderID, uint256 _slippage) public override {
+        require(msg.sender == nocturnalFinance._contract(5), "not ModifyOrder contract");
         _orders[_orderID].slippage = _slippage;
     }
     
-    function setSettlementGratuity(uint256 _orderID, uint256 _gratuity) public {
-        require(msg.sender == nocturnalFinance.modifyOrderAddress(), "not ModifyOrder contract");
+    function setSettlementGratuity(uint256 _orderID, uint256 _gratuity) public override {
+        require(msg.sender == nocturnalFinance._contract(5), "not ModifyOrder contract");
         _orders[_orderID].settlementGratuity = _gratuity;
     }  
+    
+    
 }

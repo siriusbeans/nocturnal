@@ -28,7 +28,7 @@ contract NoctStaking {
 
     constructor (address _nocturnalFinance) {
       nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
-      tA = nocturnalFinance.noctAddress();
+      tA = nocturnalFinance._contract(12);
     }
 
     event Stake(uint256 amount, uint256 total);
@@ -52,7 +52,7 @@ contract NoctStaking {
     }
     
     function autoStake(address _claimantAddress, uint256 amount) public {
-        require(msg.sender == nocturnalFinance.rewardsAddress() || msg.sender == nocturnalFinance.treasuryAddress(), "address not permitted");
+        require(msg.sender == nocturnalFinance._contract(9) || msg.sender == nocturnalFinance._contract(10), "address not permitted");
         require(amount > 0, "invalid amount");
         ERC20 token = ERC20(tA);
         require(token.balanceOf(msg.sender) >= amount, "insufficent NOCT balance");

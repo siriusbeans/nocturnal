@@ -12,16 +12,16 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import "./Interfaces/SettleOrderInterface.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 import {OracleInterface} from "./Interfaces/OracleInterface.sol";
 import {OrderInterface} from "./Interfaces/OrderInterface.sol";
-import {OrderManagerInterface} from "./Interfaces/OrderManagerInterface.sol";
 import {CreateOrderInterface} from "./Interfaces/CreateOrderInterface.sol";
 import {SettleOrderTransferInterface} from "./Interfaces/SettleOrderTransferInterface.sol";
 import {DistributeRewardsInterface} from "./Interfaces/DistributeRewardsInterface.sol";
 
-contract SettleOrder {
+contract SettleOrder is SettleOrderInterface {
     using SafeMath for uint256;
     
     uint256 public platformVolume;
@@ -39,44 +39,52 @@ contract SettleOrder {
         WETH = _WETH;
     }
     
-    function settleOrder(uint256 _orderID) external {
-        require(msg.sender == nocturnalFinance.orderManagerAddress(), "caller is not order manager address");
-        (address orderAddress,address poolAddress,address fromTokenAddress,,uint256 tokenBalance,uint256 sFTVIE,uint256 limitPrice,bool limitType,,uint256 settlementGratuity,bool depositedFlag,bool settledFlag) = CreateOrderInterface(nocturnalFinance.createOrderAddress()).orderAttributes(_orderID);
-        require(depositedFlag == true, "deposit filled");
-        require(settledFlag == false, "order settled");
+    function settleOrder(uint256 _orderID, SettleParams calldata params) external override {
+        require(msg.sender == nocturnalFinance._contract(1), "caller is not order manager address");
+        require(params.depositedFlag == true, "deposit filled");
+        require(params.settledFlag == false, "order settled");
         uint256 currentPrice;
         
         // the value of the limit returned by front end 
         // is a function of token0 (fromToken or toToken)
-        if (IUniswapV3Pool(poolAddress).token0() == fromTokenAddress) {
-            currentPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPrice(poolAddress);
+        if (IUniswapV3Pool(params.poolAddress).token0() == params.fromTokenAddress) {
+            currentPrice = OracleInterface(nocturnalFinance._contract(7)).getCurrentPrice(params.poolAddress);
         } else {
             // obtain the reciprocal of below value
-            currentPrice = OracleInterface(nocturnalFinance.oracleAddress()).getCurrentPriceReciprocal(poolAddress);
+            currentPrice = OracleInterface(nocturnalFinance._contract(7)).getCurrentPriceReciprocal(params.poolAddress);
         }
         
-        if (limitType == true) {
-            require(currentPrice >= limitPrice, "limit not met");
-        } else if (limitType == false) {
-            require(currentPrice <= limitPrice, "limit not met");
-        }
-
-        // if fromToken is WETH, deduct gratuity from WETH and send to settler before performing the swap
-        if (fromTokenAddress == WETH) {
-            SettleOrderTransferInterface(nocturnalFinance.settleOrderTransferAddress()).fromWETHSettle(_orderID);        
-        // if toToken is WETH, perform the swap and then deduct gratuity from WETH and send to settler
+        if (params.limitType == true) {
+            require(currentPrice >= params.limitPrice, "limit not met");
         } else {
-            SettleOrderTransferInterface(nocturnalFinance.settleOrderTransferAddress()).toWETHSettle(_orderID);
+            require(currentPrice <= params.limitPrice, "limit not met");
         }
+        
+        SettleOrderTransferInterface.SettleTransferParams memory settleTransferParams = SettleOrderTransferInterface.SettleTransferParams({
+            orderAddress: params.orderAddress,
+            poolAddress: params.poolAddress,
+            fromTokenAddress: params.fromTokenAddress,
+            tokenBalance: params.tokenBalance,
+            settlementGratuity: params.settlementGratuity
+        });
+        
+        // deduct gratuity and transfer to settler
+        // perform swap
+        if (params.fromTokenAddress == WETH) {
+            SettleOrderTransferInterface(nocturnalFinance._contract(6)).fromWETHSettle(_orderID, settleTransferParams);        
+        } else {
+            SettleOrderTransferInterface(nocturnalFinance._contract(6)).toWETHSettle(_orderID, settleTransferParams);
+        }
+        
         // set swap settle flag to true
-        CreateOrderInterface(nocturnalFinance.createOrderAddress()).setSettledFlag(_orderID, true); 
+        CreateOrderInterface(nocturnalFinance._contract(1)).setSettledFlag(_orderID, true); 
                    
         // distribute the NOCT rewards to the settler and the creator 
-        address orderOwnerAddress = OrderInterface(orderAddress).ownerOf(_orderID);
-        DistributeRewardsInterface(nocturnalFinance.distributeRewardsAddress()).distributeNOCT(sFTVIE, orderOwnerAddress);
+        address orderOwnerAddress = OrderInterface(params.orderAddress).ownerOf(_orderID);
+        DistributeRewardsInterface(nocturnalFinance._contract(11)).distributeNOCT(params.fromTokenValueInETH, orderOwnerAddress);
         
         // increment platform volume tracker counter
-        platformVolume.add(sFTVIE);
+        platformVolume.add(params.fromTokenValueInETH);
         
         // emit events
         emit orderSettled(_orderID);

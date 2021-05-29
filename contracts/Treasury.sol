@@ -37,7 +37,7 @@ contract Treasury is Ownable {
     
     function approveStaking() external {
         require(msg.sender == nocturnalFinanceAddress, "not Nocturnal Finance");
-        IERC20(nocturnalFinance.noctAddress()).approve(nocturnalFinance.sNoctAddress(), rewardsSupply.add(initialSupply));
+        IERC20(nocturnalFinance._contract(12)).approve(nocturnalFinance._contract(0), rewardsSupply.add(initialSupply));
     }
     
     function setClaimantBalance(address _claimant, uint _balance) external onlyOwner {
@@ -46,13 +46,13 @@ contract Treasury is Ownable {
     
     function claimTreasuryBalance() external {
         require(treasuryBalance[msg.sender] > 0, "insufficient treasury balance");
-        require(NoctInterface(nocturnalFinance.noctAddress()).transfer(msg.sender, treasuryBalance[msg.sender]), "transfer failed");
+        require(NoctInterface(nocturnalFinance._contract(12)).transfer(msg.sender, treasuryBalance[msg.sender]), "transfer failed");
         treasuryBalance[msg.sender] = 0;
     }    
     
     function stakeTreasuryBalance() external {
         require(treasuryBalance[msg.sender] > 0, "insufficient treasury balance");
-        NoctStakingInterface(nocturnalFinance.sNoctAddress()).autoStake(msg.sender, treasuryBalance[msg.sender]);
+        NoctStakingInterface(nocturnalFinance._contract(0)).autoStake(msg.sender, treasuryBalance[msg.sender]);
         treasuryBalance[msg.sender] = 0;
     }   
 }
