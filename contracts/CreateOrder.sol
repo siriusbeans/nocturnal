@@ -79,6 +79,7 @@ contract CreateOrder is CreateOrderInterface {
     }
        
     function depositOrder(uint256 _orderID) public override {
+        require(IERC20(_orders[_orderID].fromTokenAddress).balanceOf(msg.sender) >= _orders[_orderID].tokenBalance);
         DepositOrderInterface.DepositParams memory depositParams = DepositOrderInterface.DepositParams({
             orderAddress: _orders[_orderID].orderAddress,
             poolAddress: _orders[_orderID].poolAddress,
