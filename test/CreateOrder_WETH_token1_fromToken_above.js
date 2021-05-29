@@ -4,7 +4,6 @@ const Noct = artifacts.require("./Noct.sol");
 const NoctStaking = artifacts.require("./NoctStaking.sol");
 const Oracle = artifacts.require("./Oracle.sol");
 const Order = artifacts.require("./Order.sol");
-const OrderManager = artifacts.require("./OrderManager.sol");
 const CreateOrder = artifacts.require("./CreateOrder.sol");
 const SettleOrder = artifacts.require("./SettleOrder.sol");
 const CloseOrder = artifacts.require("./CloseOrder.sol");
@@ -26,7 +25,6 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     let NoctStakingInstance;
     let OracleInstance;
     let OrderInstance;
-    let OrderManagerInstance;
     let CreateOrderInstance;
     let SettleOrderInstance;
     let CloseOrderInstance;
@@ -59,7 +57,8 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
 
     async function createOrder() {
     	it("creates a new limit order", async () => {
-            let order = await OrderManagerInstance.createOrder(
+            let order = await createOrderInstance.createOrder(
+            /*  // send struct...
             	poolAddress,
                 fromTokenAddress,
                 toTokenAddress,
@@ -67,7 +66,9 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
                 limitPrice,
                 slippage,
                 limitType,
-                settlementGratuity);     
+                settlementGratuity
+                */
+            );     
         });
     };   
 
@@ -82,7 +83,6 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
         RewardsInstance = await Rewards.deployed();
         OracleInstance = await Oracle.deployed();
         OrderInstance = await Order.deployed();
-        OrderManagerInstance = await OrderManager.deployed();
         SettleOrderTransferInstance = await SettleOrderTransfer.deployed();
     	CreateOrderInstance = await CreateOrder.deployed();
     	SettleOrderInstance = await SettleOrder.deployed();
@@ -92,7 +92,6 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     	TokenMinterInstance = await TokenMinter.deployed();
     	TokenSwapperInstance = await TokenSwapper.deployed();
     	DistributeRewardsInstance = await DistributeRewards.deployed();
-    	ValueInEthInstance = await ValueInEth.deployed();
     });
 
     describe("test new limit order creation", async () => {
