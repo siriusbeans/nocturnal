@@ -11,8 +11,15 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 pragma solidity ^0.8.0;
 
 interface DepositOrderInterface {
-    
-    function depositOrder(uint256) external;
 
-    event orderDeposited(uint256);
+    struct DepositParams {
+        address orderAddress;
+        address poolAddress;
+        address fromTokenAddress;
+        uint256 tokenBalance;
+        bool depositedFlag;
+    }
+    
+    function depositOrder(uint256, DepositParams calldata params) external;
+
 }

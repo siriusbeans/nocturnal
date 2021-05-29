@@ -12,8 +12,19 @@ pragma solidity ^0.8.0;
 
 interface SettleOrderInterface {
 
-    function settleOrder(uint256) external;
+    struct SettleParams {
+        address orderAddress;
+        address poolAddress;
+        address fromTokenAddress;
+        uint256 tokenBalance;
+        uint256 fromTokenValueInETH;
+        uint256 limitPrice;
+        bool limitType;
+        uint256 settlementGratuity;
+        bool depositedFlag;
+        bool settledFlag;
+    }
     
-    event orderSettled(uint256 orderID, address orderAddress, uint256 settlementGratuity);
-    event platformVolumeUpdate(uint256 volume);
+    function settleOrder(uint256, SettleParams calldata params) external;
+    
 }

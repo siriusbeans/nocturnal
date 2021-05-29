@@ -12,6 +12,14 @@ pragma solidity ^0.8.0;
 
 interface SettleOrderTransferInterface {
 
-    function fromWETHSettle(uint256) external;
-    function toWETHSettle(uint256) external;
+    struct SettleTransferParams {
+        address orderAddress;
+        address poolAddress;
+        address fromTokenAddress;
+        uint256 tokenBalance;
+        uint256 settlementGratuity;
+    }
+
+    function fromWETHSettle(uint256, SettleTransferParams calldata params) external;
+    function toWETHSettle(uint256, SettleTransferParams calldata params) external;
 }

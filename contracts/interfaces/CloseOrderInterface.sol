@@ -12,7 +12,16 @@ pragma solidity ^0.8.0;
 
 interface CloseOrderInterface {
 
-    function closeOrder(uint256) external;
-    
-    event orderClosed(uint256);
+    struct CloseParams {
+        address orderAddress;
+        address poolAddress;
+        address fromTokenAddress;
+        address toTokenAddress;
+        uint256 tokenBalance;
+        bool depositedFlag;
+        bool settledFlag;
+    }
+
+    function closeOrder(uint256, CloseParams calldata params) external;
+
 }
