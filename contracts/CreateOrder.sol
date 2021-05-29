@@ -170,12 +170,12 @@ contract CreateOrder is CreateOrderInterface {
     }
     
     function setFromTokenValueInETH(uint256 _orderID, uint256 _valueInETH) public override {
-        require(msg.sender == nocturnalFinance._contract(2), "not SettleOrder contract");
+        require(msg.sender == nocturnalFinance._contract(2), "not DepositOrder contract");
         _orders[_orderID].fromTokenValueInETH = _valueInETH;
     }
     
     function setDepositedFlag(uint256 _orderID, bool _flag) public override {
-        require(msg.sender == nocturnalFinance._contract(2), "not SettleOrder contract");
+        require(msg.sender == nocturnalFinance._contract(2), "not DepositOrder contract");
         _orders[_orderID].depositedFlag = _flag;
     }
     
