@@ -5,6 +5,7 @@ const NoctStaking = artifacts.require("./NoctStaking.sol");
 const NocturnalFinance = artifacts.require("./NocturnalFinance.sol");
 const Oracle = artifacts.require("./Oracle.sol");
 const Order = artifacts.require("./Order.sol");
+const OrderSlippage = artifacts.require("./OrderSlippage.sol");
 const CreateOrder = artifacts.require("./CreateOrder.sol");
 const DepositOrder = artifacts.require("./DepositOrder.sol");
 const SettleOrder = artifacts.require("./SettleOrder.sol");
@@ -35,6 +36,7 @@ module.exports = function(deployer, network, accounts) {
     let NocturnalFinanceInstance;
     let OracleInstance;
     let OrderInstance;
+    let OrderSlippageInstance;
     let CreateOrderInstance;
     let DepositOrderInstance;
     let SettleOrderInstance;
@@ -91,9 +93,13 @@ module.exports = function(deployer, network, accounts) {
         }).then(instance => {
             OracleInstance = instance;
             
-            return deployer.deploy(Order, orderName, orderSymbol, NocturnalFinance.address, { from: ownerAddress });
+            return deployer.deploy(Order, NocturnalFinance.address, { from: ownerAddress });
         }).then(instance => {
             OrderInstance = instance;
+            
+            return deployer.deploy(OrderSlippage, NocturnalFinance.address, { from: ownerAddress });
+        }).then(instance => {
+            OrderSlippageInstance = instance;
             
             return deployer.deploy(Rewards, NocturnalFinance.address, rewardsSupply, { from: ownerAddress });
         }).then(instance => {
@@ -141,6 +147,9 @@ module.exports = function(deployer, network, accounts) {
     }).then(function() {
 
         return NocturnalFinanceInstance.initNocturnal(11, DistributeRewardsInstance.address);
+    }).then(function() {
+    
+        return NocturnalFinanceInstance.initNocturnal(13, OrderSlippageInstance.address);
     }).then(function() {
     
         return deployer.deploy(Noct, NocturnalFinance.address, rewardsSupply, initialSupply, { from: ownerAddress }).then(instance => {
