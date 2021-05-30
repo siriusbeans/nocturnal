@@ -10,12 +10,10 @@ const CreateOrder = artifacts.require("./CreateOrder.sol");
 const DepositOrder = artifacts.require("./DepositOrder.sol");
 const SettleOrder = artifacts.require("./SettleOrder.sol");
 const CloseOrder = artifacts.require("./CloseOrder.sol");
-const ModifyOrder = artifacts.require("./ModifyOrder.sol");
 const SettleOrderTransfer = artifacts.require("./SettleOrderTransfer.sol");
 const Rewards = artifacts.require("./Rewards.sol");
 const Treasury = artifacts.require("./Treasury.sol");
 const DistributeRewards = artifacts.require("./DistributeRewards.sol");
-const ValueInEth = artifacts.require("./ValueInEth.sol");
 const TokenMinter = artifacts.require("./Mocks/TokenMinter.sol");
 const TokenSwapper = artifacts.require("./Mocks/TokenSwapper.sol");
 
@@ -41,11 +39,9 @@ module.exports = function(deployer, network, accounts) {
     let DepositOrderInstance;
     let SettleOrderInstance;
     let CloseOrderInstance;
-    let ModifyOrderInstance;
     let SettleOrderTransferInstance;
     let RewardsInstance;
     let DistributeRewardsInstance;
-    let ValueInEthInstance;
     let TreasuryInstance;
     let TokenMinterInstance;
     let TokenSwapperInstance;
@@ -80,10 +76,6 @@ module.exports = function(deployer, network, accounts) {
             return deployer.deploy(CloseOrder, NocturnalFinance.address, WETH, { from: ownerAddress });
         }).then(instance => {
             CloseOrderInstance = instance;
-            
-            return deployer.deploy(ModifyOrder, NocturnalFinance.address, { from: ownerAddress });
-        }).then(instance => {
-            ModifyOrderInstance = instance;
             
             return deployer.deploy(SettleOrderTransfer, NocturnalFinance.address, { from: ownerAddress });
         }).then(instance => {
@@ -126,9 +118,6 @@ module.exports = function(deployer, network, accounts) {
     }).then(function() {
 
         return NocturnalFinanceInstance.initNocturnal(4, CloseOrderInstance.address);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.initNocturnal(5, ModifyOrderInstance.address);
     }).then(function() {
 
         return NocturnalFinanceInstance.initNocturnal(6, SettleOrderTransferInstance.address);
