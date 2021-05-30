@@ -7,7 +7,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-contract Mock1 is ERC20 ("Mock1 Token", "MOCK1") {
+contract WethToken is ERC20 ("Mock1 Token", "MOCK1") {
     using SafeMath for uint256;
 
     constructor () {
