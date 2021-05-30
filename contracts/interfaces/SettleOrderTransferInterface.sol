@@ -17,6 +17,7 @@ interface SettleOrderTransferInterface {
         address poolAddress;
         address fromTokenAddress;
         uint256 tokenBalance;
+        uint256 slippage;
         uint256 settlementGratuity;
     }
 

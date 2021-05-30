@@ -55,6 +55,7 @@ interface CreateOrderInterface {
         uint256 fromTokenValueInETH;
         uint256 limitPrice;
         bool limitType;
+        uint256 slippage;
         uint256 settlementGratuity;
         bool depositedFlag;
         bool settledFlag;
@@ -66,6 +67,7 @@ interface CreateOrderInterface {
         address fromTokenAddress;
         address toTokenAddress;
         uint256 tokenBalance;
+        uint256 slippage;
         bool depositedFlag;
         bool settledFlag;
     }
