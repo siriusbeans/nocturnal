@@ -17,6 +17,7 @@ import "./Interfaces/CloseOrderInterface.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {OrderInterface} from "./Interfaces/OrderInterface.sol";
 import {CreateOrderInterface} from "./Interfaces/CreateOrderInterface.sol";
+import {OrderSlippageInterface} from "./Interfaces/OrderSlippageInterface.sol";
 
 contract CloseOrder is CloseOrderInterface {
     using SafeMath for uint256;
@@ -38,30 +39,33 @@ contract CloseOrder is CloseOrderInterface {
         
         if (params.settledFlag == true) {
             // deduct dfee from toTokenBalance and send staking.sol before transfering toTokenBalance to owner address
-            //uint256 dFee = tokenBalance.mul(nocturnalFinance.platformRate()).div(bPDivisor);
+            uint256 dFee = (params.tokenBalance).mul(nocturnalFinance.platformRate()).div(10000);
             if (params.toTokenAddress == WETH) {
                 // if toTokenAddress == WETH, transferFrom order.sol dFee to staking.sol
-                OrderInterface(params.orderAddress).orderTransfer(params.toTokenAddress, nocturnalFinance._contract(0), (params.tokenBalance).mul(nocturnalFinance.platformRate()).div(10000));
+                OrderInterface(params.orderAddress).orderTransfer(params.toTokenAddress, nocturnalFinance._contract(0), dFee);
             } else {
                 // else swap dFee to WETH and send it to staking.sol
+                uint256 minOut = OrderSlippageInterface(nocturnalFinance._contract(13)).minOut(params.poolAddress, params.fromTokenAddress, dFee);
                 if (IUniswapV3Pool(params.poolAddress).token0() == params.fromTokenAddress) {
                     OrderInterface(params.orderAddress).getExactInputSingle(
                         IUniswapV3Pool(params.poolAddress).token0(),
                         IUniswapV3Pool(params.poolAddress).token1(), 
                         IUniswapV3Pool(params.poolAddress).fee(), 
                         nocturnalFinance._contract(0), 
-                        (params.tokenBalance).mul(nocturnalFinance.platformRate()).div(10000));
+                        minOut,
+                        dFee);
                 } else {
                     OrderInterface(params.orderAddress).getExactInputSingle(
                         IUniswapV3Pool(params.poolAddress).token1(),
                         IUniswapV3Pool(params.poolAddress).token0(), 
                         IUniswapV3Pool(params.poolAddress).fee(), 
                         nocturnalFinance._contract(0), 
-                        (params.tokenBalance).mul(nocturnalFinance.platformRate()).div(10000));
+                        minOut,
+                        dFee);
                 }
             }
             // transfer remaining toTokenBalance from order to order owner address
-            OrderInterface(params.orderAddress).orderTransfer(params.toTokenAddress, orderOwnerAddress, (params.tokenBalance).sub((params.tokenBalance).mul(nocturnalFinance.platformRate()).div(10000)));
+            OrderInterface(params.orderAddress).orderTransfer(params.toTokenAddress, orderOwnerAddress, (params.tokenBalance).sub(dFee));
             // burn order
             OrderInterface(params.orderAddress).burn(_orderID);  
         } else if (params.depositedFlag == true) {

@@ -18,6 +18,7 @@ import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.
 import {OrderInterface} from "./Interfaces/OrderInterface.sol";
 import {SettleOrderInterface} from "./Interfaces/SettleOrderInterface.sol";
 import {CreateOrderInterface} from "./Interfaces/CreateOrderInterface.sol";
+import {OrderSlippageInterface} from "./Interfaces/OrderSlippageInterface.sol";
 
 contract SettleOrderTransfer is SettleOrderTransferInterface {
     using SafeMath for uint256;
@@ -33,7 +34,8 @@ contract SettleOrderTransfer is SettleOrderTransferInterface {
     function fromWETHSettle(uint256 _orderID, SettleTransferParams calldata params) external override {
         require(msg.sender == nocturnalFinance._contract(3), "not SettleOrder contract");
         uint256 gratuity = (params.tokenBalance).mul(params.settlementGratuity).div(10000);
-
+        uint256 remainder = (params.tokenBalance).sub(gratuity);
+        uint256 minOut = OrderSlippageInterface(nocturnalFinance._contract(13)).minOut(params.poolAddress, params.fromTokenAddress, remainder);
         OrderInterface(params.orderAddress).orderTransfer(params.fromTokenAddress, msg.sender, gratuity);        
         if (IUniswapV3Pool(params.poolAddress).token0() == params.fromTokenAddress) {
             OrderInterface(params.orderAddress).getExactInputSingle(
@@ -41,14 +43,16 @@ contract SettleOrderTransfer is SettleOrderTransferInterface {
                 IUniswapV3Pool(params.poolAddress).token1(), 
                 IUniswapV3Pool(params.poolAddress).fee(), 
                 params.orderAddress, 
-                (params.tokenBalance).sub(gratuity));
+                minOut,
+                remainder);
         } else {
             OrderInterface(params.orderAddress).getExactInputSingle(
                 IUniswapV3Pool(params.poolAddress).token1(),
                 IUniswapV3Pool(params.poolAddress).token0(), 
                 IUniswapV3Pool(params.poolAddress).fee(), 
                 params.orderAddress, 
-                (params.tokenBalance).sub(gratuity));  
+                minOut,
+                remainder);  
         }
         // update Order toTokenBalance attribute for order closure
         CreateOrderInterface(nocturnalFinance._contract(1)).setTokenBalance(_orderID, params.tokenBalance);
@@ -57,33 +61,39 @@ contract SettleOrderTransfer is SettleOrderTransferInterface {
     function toWETHSettle(uint256 _orderID, SettleTransferParams calldata params) external override {
         require(msg.sender == nocturnalFinance._contract(3), "not SettleOrder contract");
         uint256 gratuity = (params.tokenBalance).mul(params.settlementGratuity).div(10000);
-        
+        uint256 gratuityMinOut = OrderSlippageInterface(nocturnalFinance._contract(13)).minOut(params.poolAddress, params.fromTokenAddress, gratuity);
+        uint256 remainder = (params.tokenBalance).sub(gratuity);
+        uint256 remainderMinOut = OrderSlippageInterface(nocturnalFinance._contract(13)).minOut(params.poolAddress, params.fromTokenAddress, remainder);
         if (IUniswapV3Pool(params.poolAddress).token0() == params.fromTokenAddress) {
             OrderInterface(params.orderAddress).getExactInputSingle(
                 IUniswapV3Pool(params.poolAddress).token0(),
                 IUniswapV3Pool(params.poolAddress).token1(), 
                 IUniswapV3Pool(params.poolAddress).fee(), 
-                msg.sender, 
+                msg.sender,
+                gratuityMinOut,
                 gratuity);
             OrderInterface(params.orderAddress).getExactInputSingle(                 
                 IUniswapV3Pool(params.poolAddress).token0(),
                 IUniswapV3Pool(params.poolAddress).token1(), 
                 IUniswapV3Pool(params.poolAddress).fee(), 
                 params.orderAddress, 
-                (params.tokenBalance).sub(gratuity));
+                remainderMinOut,
+                remainder);
         } else {
             OrderInterface(params.orderAddress).getExactInputSingle(
                 IUniswapV3Pool(params.poolAddress).token1(),
                 IUniswapV3Pool(params.poolAddress).token0(), 
                 IUniswapV3Pool(params.poolAddress).fee(), 
                 msg.sender, 
+                gratuityMinOut,
                 gratuity);  
             OrderInterface(params.orderAddress).getExactInputSingle(
                 IUniswapV3Pool(params.poolAddress).token1(),
                 IUniswapV3Pool(params.poolAddress).token0(), 
                 IUniswapV3Pool(params.poolAddress).fee(), 
                 params.orderAddress, 
-                (params.tokenBalance).sub(gratuity));
+                remainderMinOut,
+                remainder);
         }
         // update Order toTokenBalance attribute for order closure
         CreateOrderInterface(nocturnalFinance._contract(1)).setTokenBalance(_orderID, params.tokenBalance);

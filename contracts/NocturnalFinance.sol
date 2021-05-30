@@ -31,6 +31,7 @@ contract NocturnalFinance is Ownable {
     // 10: treasuryAddress;
     // 11: distributeRewardsAddress;
     // 12: noctAddress;
+    // 13: orderSlippageAddress;
 
     uint256 public platformRate;
     uint256 public rewardsRatioFactor;

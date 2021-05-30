@@ -13,6 +13,7 @@ pragma abicoder v2;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "./Interfaces/CreateOrderInterface.sol";
@@ -51,7 +52,7 @@ contract CreateOrder is CreateOrderInterface {
     function createOrder(CreateParams calldata params) external override {
         require((params.fromTokenAddress == WETH) || (params.toTokenAddress == WETH), "pool must contain WETH");
         require((params.settlementGratuity >= 0) && (params.settlementGratuity < 10000));  
-        Order nocturnalOrder = new Order("Nocturnal Order", "oNOCT", nocturnalFinanceAddress); 
+        Order nocturnalOrder = new Order(nocturnalFinanceAddress); 
         orderCounter.increment();
         
         OrderInterface(nocturnalFinance._contract(8)).mint(msg.sender, orderCounter.current());
@@ -99,6 +100,7 @@ contract CreateOrder is CreateOrderInterface {
             fromTokenValueInETH: _orders[_orderID].fromTokenValueInETH,
             limitPrice: _orders[_orderID].limitPrice,
             limitType: _orders[_orderID].limitType,
+            slippage: _orders[_orderID].slippage,
             settlementGratuity: _orders[_orderID].settlementGratuity,
             depositedFlag: _orders[_orderID].depositedFlag,
             settledFlag: _orders[_orderID].settledFlag
@@ -114,6 +116,7 @@ contract CreateOrder is CreateOrderInterface {
             fromTokenAddress: _orders[_orderID].fromTokenAddress,
             toTokenAddress: _orders[_orderID].toTokenAddress,
             tokenBalance: _orders[_orderID].tokenBalance,
+            slippage: _orders[_orderID].slippage,
             depositedFlag: _orders[_orderID].depositedFlag,
             settledFlag: _orders[_orderID].settledFlag
         });

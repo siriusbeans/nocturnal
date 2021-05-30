@@ -19,7 +19,7 @@ contract Oracle {
 
     uint256 internal constant multiplicand = 1e18;
     address internal constant UniswapV3Factory = 0x7046f9311663DB8B7cf218BC7B6F3f17B0Ea1047;
-
+  
     IUniswapV3Pool public pool;
     
     constructor() {
@@ -40,6 +40,14 @@ contract Oracle {
         address token0 = IUniswapV3Pool(_pool).token0();
         address token1 = IUniswapV3Pool(_pool).token1();
         return(token0, token1);
+    }
+    
+    function isToken0(address _pool, address _token) external view returns (bool) {
+        if (_token == IUniswapV3Pool(_pool).token0()) {
+            return true;
+        } else {
+            return false;
+        }
     }
     
     function isV3(address _pool) external view returns (bool) {

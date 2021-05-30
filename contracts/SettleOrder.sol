@@ -45,13 +45,12 @@ contract SettleOrder is SettleOrderInterface {
         require(params.settledFlag == false, "order settled");
         uint256 currentPrice;
         
-        // the value of the limit returned by front end 
-        // is a function of token0 (fromToken or toToken)
-        if (IUniswapV3Pool(params.poolAddress).token0() == params.fromTokenAddress) {
-            currentPrice = OracleInterface(nocturnalFinance._contract(7)).getCurrentPrice(params.poolAddress);
-        } else {
-            // obtain the reciprocal of below value
+        // the limit price value returned by the front end is denominated by ETH
+        // so choose current pool price with WETH in denominator
+        if (IUniswapV3Pool(params.poolAddress).token0() == WETH) {
             currentPrice = OracleInterface(nocturnalFinance._contract(7)).getCurrentPriceReciprocal(params.poolAddress);
+        } else {
+            currentPrice = OracleInterface(nocturnalFinance._contract(7)).getCurrentPrice(params.poolAddress);
         }
         
         if (params.limitType == true) {
@@ -65,6 +64,7 @@ contract SettleOrder is SettleOrderInterface {
             poolAddress: params.poolAddress,
             fromTokenAddress: params.fromTokenAddress,
             tokenBalance: params.tokenBalance,
+            slippage: params.slippage,
             settlementGratuity: params.settlementGratuity
         });
         
