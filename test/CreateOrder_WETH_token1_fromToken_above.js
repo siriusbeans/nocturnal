@@ -4,10 +4,10 @@ const Noct = artifacts.require("./Noct.sol");
 const NoctStaking = artifacts.require("./NoctStaking.sol");
 const Oracle = artifacts.require("./Oracle.sol");
 const Order = artifacts.require("./Order.sol");
+const OrderSlippage = artifacts.require("./OrderSlippage.sol");
 const CreateOrder = artifacts.require("./CreateOrder.sol");
 const SettleOrder = artifacts.require("./SettleOrder.sol");
 const CloseOrder = artifacts.require("./CloseOrder.sol");
-const ModifyOrder = artifacts.require("./ModifyOrder.sol");
 const Rewards = artifacts.require("./Rewards.sol");
 const Treasury = artifacts.require("./Treasury.sol");
 const TokenMinter = artifacts.require("./Mocks/TokenMinter.sol");
@@ -16,7 +16,6 @@ const LinkToken = artifacts.require("./Mocks/LinkToken.sol");
 const WethToken = artifacts.require("./Mocks/WethToken.sol");
 const SettleOrderTransfer = artifacts.require("./SettleOrderTransfer.sol");
 const DistributeRewards = artifacts.require("./DistributeRewards.sol");
-const ValueInEth = artifacts.require("./ValueInEth.sol");
 
 contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     const owner = accounts[0];
@@ -25,17 +24,16 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     let NoctStakingInstance;
     let OracleInstance;
     let OrderInstance;
+    let OrderSlippageInstance;
     let CreateOrderInstance;
     let SettleOrderInstance;
     let CloseOrderInstance;
-    let ModifyOrderInstance;
     let SettleOrderTransferInstance;
     let RewardsInstance;
     let TreasuryInstance;
     let TokenMinterInstance;
     let TokenSwapperInstance;
     let DistributeRewardsInstance;
-    let ValueInEthInstance;
     let orderID;
     let orderAddress;
     const toWei = (value) => web3.utils.toWei(value.toString(), "ether");
@@ -58,16 +56,14 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     async function createOrder() {
     	it("creates a new limit order", async () => {
             let order = await createOrderInstance.createOrder(
-            /*  // send struct...
-            	poolAddress,
+            	[poolAddress,
                 fromTokenAddress,
                 toTokenAddress,
                 fromTokenBalance,
                 limitPrice,
                 slippage,
                 limitType,
-                settlementGratuity
-                */
+                settlementGratuity]
             );     
         });
     };   
@@ -83,11 +79,11 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
         RewardsInstance = await Rewards.deployed();
         OracleInstance = await Oracle.deployed();
         OrderInstance = await Order.deployed();
+        OrderSlippageInstance = await OrderSlippage.deployed();
         SettleOrderTransferInstance = await SettleOrderTransfer.deployed();
     	CreateOrderInstance = await CreateOrder.deployed();
     	SettleOrderInstance = await SettleOrder.deployed();
     	CloseOrderInstance = await CloseOrder.deployed();
-    	ModifyOrderInstance = await ModifyOrder.deployed();
     	RewardsInstance = await Rewards.deployed();
     	TokenMinterInstance = await TokenMinter.deployed();
     	TokenSwapperInstance = await TokenSwapper.deployed();
