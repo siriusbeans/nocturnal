@@ -11,5 +11,5 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 pragma solidity ^0.8.0;
 
 interface OrderSlippageInterface {
-    function minOut(address, address, uint256) external view returns (uint256);
+    function minOut(address, address, uint256, uint24) external view returns (uint256);
 }

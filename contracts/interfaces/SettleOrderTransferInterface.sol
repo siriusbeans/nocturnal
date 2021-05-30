@@ -17,8 +17,10 @@ interface SettleOrderTransferInterface {
         address poolAddress;
         address fromTokenAddress;
         uint256 tokenBalance;
-        uint256 slippage;
-        uint256 settlementGratuity;
+        uint256 fromTokenValueInETH;
+        uint24 slippage;
+        uint24 settlementGratuity;
+        bool depositedFlag;
     }
 
     function fromWETHSettle(uint256, SettleTransferParams calldata params) external;

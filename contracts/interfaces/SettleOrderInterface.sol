@@ -20,8 +20,8 @@ interface SettleOrderInterface {
         uint256 fromTokenValueInETH;
         uint256 limitPrice;
         bool limitType;
-        uint256 slippage;
-        uint256 settlementGratuity;
+        uint24 slippage;
+        uint24 settlementGratuity;
         bool depositedFlag;
         bool settledFlag;
     }

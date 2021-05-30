@@ -22,8 +22,8 @@ interface CreateOrderInterface {
         uint256 fromTokenValueInETH;
         uint256 limitPrice;
         bool limitType;
-        uint256 slippage;
-        uint256 settlementGratuity;
+        uint24 slippage;
+        uint24 settlementGratuity;
         bool depositedFlag;
         bool settledFlag;
     }
@@ -34,9 +34,9 @@ interface CreateOrderInterface {
         address toTokenAddress;
         uint256 tokenBalance;
         uint256 limitPrice;
-        uint256 slippage;
+        uint24 slippage;
         bool limitType;
-        uint256 settlementGratuity;
+        uint24 settlementGratuity;
     }
     
     struct DepositParams {
@@ -55,8 +55,8 @@ interface CreateOrderInterface {
         uint256 fromTokenValueInETH;
         uint256 limitPrice;
         bool limitType;
-        uint256 slippage;
-        uint256 settlementGratuity;
+        uint24 slippage;
+        uint24 settlementGratuity;
         bool depositedFlag;
         bool settledFlag;
     }
@@ -67,31 +67,20 @@ interface CreateOrderInterface {
         address fromTokenAddress;
         address toTokenAddress;
         uint256 tokenBalance;
-        uint256 slippage;
+        uint24 slippage;
         bool depositedFlag;
         bool settledFlag;
     }
     
     function createOrder(CreateParams calldata params) external;
-    
     function depositOrder(uint256) external;
-    
     function settleOrder(uint256) external;
-    
     function closeOrder(uint256) external;
-
-    function modifyOrderSlippage(uint256, uint256) external;
-    
-    function modifyOrderSettlementGratuity(uint256, uint256) external;
-
+   
     function orderAttributes(uint256) external view 
-        returns (address, address, address, address, uint256, uint256, uint256, bool, uint256, uint256, bool, bool);
+        returns (address, address, address, address, uint256, uint256, uint256, bool, uint24, uint24, bool, bool); 
+        
+    function setAttributes(uint256, uint256) external; 
 
-    function setTokenBalance(uint256, uint256) external;
-    function setFromTokenValueInETH(uint256, uint256) external;
-    function setDepositedFlag(uint256, bool) external;
-    function setSettledFlag(uint256, bool) external;
-    function setSlippage(uint256, uint256) external;
-    function setSettlementGratuity(uint256, uint256) external;
 
 }

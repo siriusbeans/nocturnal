@@ -18,7 +18,7 @@ interface CloseOrderInterface {
         address fromTokenAddress;
         address toTokenAddress;
         uint256 tokenBalance;
-        uint256 slippage; 
+        uint24 slippage; 
         bool depositedFlag;
         bool settledFlag;
     }
