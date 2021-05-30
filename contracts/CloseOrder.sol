@@ -45,7 +45,7 @@ contract CloseOrder is CloseOrderInterface {
                 OrderInterface(params.orderAddress).orderTransfer(params.toTokenAddress, nocturnalFinance._contract(0), dFee);
             } else {
                 // else swap dFee to WETH and send it to staking.sol
-                uint256 minOut = OrderSlippageInterface(nocturnalFinance._contract(13)).minOut(params.poolAddress, params.fromTokenAddress, dFee);
+                uint256 minOut = OrderSlippageInterface(nocturnalFinance._contract(13)).minOut(params.poolAddress, params.fromTokenAddress, dFee, params.slippage);
                 if (IUniswapV3Pool(params.poolAddress).token0() == params.fromTokenAddress) {
                     OrderInterface(params.orderAddress).getExactInputSingle(
                         IUniswapV3Pool(params.poolAddress).token0(),

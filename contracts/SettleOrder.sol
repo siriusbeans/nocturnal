@@ -64,8 +64,10 @@ contract SettleOrder is SettleOrderInterface {
             poolAddress: params.poolAddress,
             fromTokenAddress: params.fromTokenAddress,
             tokenBalance: params.tokenBalance,
+            fromTokenValueInETH: params.fromTokenValueInETH,
             slippage: params.slippage,
-            settlementGratuity: params.settlementGratuity
+            settlementGratuity: params.settlementGratuity,
+            depositedFlag: params.depositedFlag
         });
         
         // deduct gratuity and transfer to settler
@@ -75,9 +77,6 @@ contract SettleOrder is SettleOrderInterface {
         } else {
             SettleOrderTransferInterface(nocturnalFinance._contract(6)).toWETHSettle(_orderID, settleTransferParams);
         }
-        
-        // set swap settle flag to true
-        CreateOrderInterface(nocturnalFinance._contract(1)).setSettledFlag(_orderID, true); 
                    
         // distribute the NOCT rewards to the settler and the creator 
         address orderOwnerAddress = OrderInterface(params.orderAddress).ownerOf(_orderID);

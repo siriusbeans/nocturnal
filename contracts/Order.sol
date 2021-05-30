@@ -16,7 +16,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
-
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {OracleInterface} from "./Interfaces/OracleInterface.sol";
 
@@ -67,10 +66,10 @@ contract Order is ERC721Enumerable {
         _mint(to, tokenId);
     }
     
-    function getExactInputSingle(address _tokenIn, address _tokenOut, uint24 _fee, address _recipient, uint256 minOut, uint256 _amount) public {
+    function getExactInputSingle(address _tokenIn, address _tokenOut, uint24 _fee, address _recipient, uint256 minOut, uint256 _amount) public returns (uint256){
         require(_msgSender() == nocturnalFinance._contract(4) || _msgSender() == nocturnalFinance._contract(6), "caller is not a nocturnal contract");
         require(IERC20(_tokenIn).approve(UniswapV3SwapRouter, _amount), "approve failed");
-		swapRouter.exactInputSingle(
+		return swapRouter.exactInputSingle(
 		    ISwapRouter.ExactInputSingleParams({
 		        tokenIn: _tokenIn,
 		        tokenOut: _tokenOut,

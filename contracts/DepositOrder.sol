@@ -44,22 +44,19 @@ contract DepositOrder is DepositOrderInterface {
        
         // set fromTokenBalance in ETH attribute
         if (params.fromTokenAddress == WETH) {
-            // set fromTokenBalance value in ETH order attribute
-                CreateOrderInterface(nocturnalFinance._contract(1)).setFromTokenValueInETH(_orderID, params.tokenBalance);         
+            // set fromTokenBalanceValueInETH and depositedFlag
+                CreateOrderInterface(nocturnalFinance._contract(1)).setAttributes(_orderID, params.tokenBalance);  
+                       
         } else {
             // set fromTokenBalance value in ETH order attribute
             if (IUniswapV3Pool(params.poolAddress).token0() == params.fromTokenAddress) {
                 // use reciprocal of current price
-                CreateOrderInterface(nocturnalFinance._contract(1)).setFromTokenValueInETH(_orderID, (params.tokenBalance).mul(OracleInterface(nocturnalFinance._contract(7)).getCurrentPriceReciprocal(params.poolAddress)));
+                CreateOrderInterface(nocturnalFinance._contract(1)).setAttributes(_orderID, (params.tokenBalance).mul(OracleInterface(nocturnalFinance._contract(7)).getCurrentPriceReciprocal(params.poolAddress)));  
             } else {           
                 // use current price    
-                CreateOrderInterface(nocturnalFinance._contract(1)).setFromTokenValueInETH(_orderID, (params.tokenBalance).mul(OracleInterface(nocturnalFinance._contract(7)).getCurrentPrice(params.poolAddress)));
+                CreateOrderInterface(nocturnalFinance._contract(1)).setAttributes(_orderID, (params.tokenBalance).mul(OracleInterface(nocturnalFinance._contract(7)).getCurrentPrice(params.poolAddress)));  
             }
         }
-
-        // set depositedFlag
-        CreateOrderInterface(nocturnalFinance._contract(1)).setSettledFlag(_orderID, true);
-
         // emit events                                                
         emit orderDeposited(_orderID);
     }
