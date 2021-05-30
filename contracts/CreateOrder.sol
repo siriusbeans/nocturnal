@@ -56,9 +56,6 @@ contract CreateOrder is CreateOrderInterface {
         orderCounter.increment();
         
         OrderInterface(nocturnalFinance._contract(8)).mint(msg.sender, orderCounter.current());
-       
-        // set order URI using NocturnalFinance contract's orderURI()
-      	OrderInterface(address(nocturnalOrder))._setTokenURI(orderCounter.current(), nocturnalFinance.orderURI());
 
         // set order attributes
         _orders[orderCounter.current()] = Attributes({
