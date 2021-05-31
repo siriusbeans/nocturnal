@@ -52,7 +52,6 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     const settlementGratuity = 200; // 2% of fromToken (basis points)
 //=============================================================================================//    
 //=============================================================================================//      
-
     async function createOrder() {
     	it("creates a new order", async () => {
             let order = await CreateOrderInstance.createOrder(
@@ -67,10 +66,8 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
             );     
         });
     };   
-
 //=============================================================================================//
 //=============================================================================================//    
-
     before("setup", async () => {
         NocturnalFinanceInstance = await NocturnalFinance.deployed();
         NoctInstance = await Noct.deployed();
