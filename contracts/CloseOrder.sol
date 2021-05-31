@@ -22,7 +22,6 @@ import {OrderSlippageInterface} from "./Interfaces/OrderSlippageInterface.sol";
 contract CloseOrder is CloseOrderInterface {
     using SafeMath for uint256;
 
-    //uint256 internal constant bPDivisor = 10000;  // 100th of a bip
     event orderClosed(uint256 _orderID);
     address WETH;
     
@@ -35,7 +34,8 @@ contract CloseOrder is CloseOrderInterface {
     
     function closeOrder(uint256 _orderID, CloseParams calldata params) external override {
         require(msg.sender == nocturnalFinance._contract(1), "caller is not order factory");
-        address orderOwnerAddress = OrderInterface(params.orderAddress).ownerOf(_orderID);
+        require(params.closedFlag == false);
+        address orderOwnerAddress = OrderInterface(nocturnalFinance._contract(8)).ownerOf(_orderID);
         
         if (params.settledFlag == true) {
             // deduct dfee from toTokenBalance and send staking.sol before transfering toTokenBalance to owner address
@@ -67,16 +67,18 @@ contract CloseOrder is CloseOrderInterface {
             // transfer remaining toTokenBalance from order to order owner address
             OrderInterface(params.orderAddress).orderTransfer(params.toTokenAddress, orderOwnerAddress, (params.tokenBalance).sub(dFee));
             // burn order
-            OrderInterface(params.orderAddress).burn(_orderID);  
+            OrderInterface(nocturnalFinance._contract(8)).burn(_orderID);  
         } else if (params.depositedFlag == true) {
             // transfer fromTokenBalance from order to order owner address
             OrderInterface(params.orderAddress).orderTransfer(params.fromTokenAddress, orderOwnerAddress, params.tokenBalance);
             // burn order
-            OrderInterface(params.orderAddress).burn(_orderID);  
+            OrderInterface(nocturnalFinance._contract(8)).burn(_orderID);
         } else {
             // burn order
-            OrderInterface(params.orderAddress).burn(_orderID);  
+            OrderInterface(nocturnalFinance._contract(8)).burn(_orderID);  
         }
+        // set tokenBalance to 0 and set order closed flag
+        CreateOrderInterface(nocturnalFinance._contract(1)).setAttributes(_orderID, 0);  
         // emit events
         emit orderClosed(_orderID);
     }

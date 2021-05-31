@@ -26,9 +26,7 @@ contract SettleOrder is SettleOrderInterface {
     
     uint256 public platformVolume;
     address WETH; 
-    
-    // may include all attributes in events
-    // someone may want to analyze trade data in future
+
     event orderSettled(uint256 _orderID);
     event platformVolumeUpdate(uint256 _volume);
     
@@ -79,7 +77,7 @@ contract SettleOrder is SettleOrderInterface {
         }
                    
         // distribute the NOCT rewards to the settler and the creator 
-        address orderOwnerAddress = OrderInterface(params.orderAddress).ownerOf(_orderID);
+        address orderOwnerAddress = OrderInterface(nocturnalFinance._contract(8)).ownerOf(_orderID);
         DistributeRewardsInterface(nocturnalFinance._contract(11)).distributeNOCT(params.fromTokenValueInETH, orderOwnerAddress);
         
         // increment platform volume tracker counter

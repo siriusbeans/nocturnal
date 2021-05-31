@@ -33,14 +33,14 @@ contract DepositOrder is DepositOrderInterface {
         WETH = _WETH;
     }
 
-    function depositOrder(uint256 _orderID, DepositParams calldata params) public override {
+    function depositOrder(uint256 _orderID, DepositParams calldata params, address _depositor) public override {
         require(msg.sender == nocturnalFinance._contract(1));
+        require(params.closedFlag == false);
         require(params.depositedFlag == false, "deposit filled");
-        address orderOwnerAddress = OrderInterface(params.orderAddress).ownerOf(_orderID);
        
         // transfer fromTokenBalance to order
-        // requires orderOwner to approve DepositOrder.sol trasnferFrom allowance 
-        require(IERC20(params.fromTokenAddress).transferFrom(orderOwnerAddress, params.orderAddress, params.tokenBalance), "owner to order balance transfer failed");
+        // requires depositor to approve DepositOrder.sol trasnferFrom allowance 
+        require(IERC20(params.fromTokenAddress).transferFrom(_depositor, params.orderAddress, params.tokenBalance), "owner to order balance transfer failed");
        
         // set fromTokenBalance in ETH attribute
         if (params.fromTokenAddress == WETH) {
