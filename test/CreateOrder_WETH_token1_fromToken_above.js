@@ -6,16 +6,20 @@ const Oracle = artifacts.require("./Oracle.sol");
 const Order = artifacts.require("./Order.sol");
 const OrderSlippage = artifacts.require("./OrderSlippage.sol");
 const CreateOrder = artifacts.require("./CreateOrder.sol");
+const DepositOrder = artifacts.require("./DepositOrder.sol");
 const SettleOrder = artifacts.require("./SettleOrder.sol");
 const CloseOrder = artifacts.require("./CloseOrder.sol");
 const Rewards = artifacts.require("./Rewards.sol");
 const Treasury = artifacts.require("./Treasury.sol");
 const TokenMinter = artifacts.require("./Mocks/TokenMinter.sol");
 const TokenSwapper = artifacts.require("./Mocks/TokenSwapper.sol");
-const LinkToken = artifacts.require("./Mocks/LinkToken.sol");
-const WethToken = artifacts.require("./Mocks/WethToken.sol");
 const SettleOrderTransfer = artifacts.require("./SettleOrderTransfer.sol");
 const DistributeRewards = artifacts.require("./DistributeRewards.sol");
+var WethToken = artifacts.require("WethToken");
+var LinkToken = artifacts.require("LinkToken");
+//var _Order = artifacts.require(_Order); // use to ensure no functions can be called on the new order nefariously
+//let orderAddress = await CreateOrderInstance._orders(orderID).orderAddress; // address of new order
+//const _OrderInstance = await _Order.at(OrderAddress); // instance of new order address (call functions from this)
 
 contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     const owner = accounts[0];
@@ -26,6 +30,7 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     let OrderInstance;
     let OrderSlippageInstance;
     let CreateOrderInstance;
+    let DepositOrderInstance;
     let SettleOrderInstance;
     let CloseOrderInstance;
     let SettleOrderTransferInstance;
@@ -36,6 +41,7 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     let DistributeRewardsInstance;
     let orderID;
     let orderAddress;
+ 
     const toWei = (value) => web3.utils.toWei(value.toString(), "ether");
     const testAddressCount = 3;  
     const orderURI = "";
@@ -43,31 +49,111 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     const treasuryFactor = 2000; // 20% of total rewards to treasury (basis points)
     const rewardsFactor = 8000;  // 80% of (total rewards - treasury allocation) to creators, 20% to settlers (basis points)
     const poolAddress = "0xEa9ab84751A2ef0db5f3601aE8EC0F1E4798728B"; // LINK/WETH pool address
-    const fromTokenAddress = "0x84fff9F8Bec0835494C4c9f43cfe32C7d37F82b5"; // WETH address
-    const toTokenAddress = "0x27E1A4409fa79E5380aDE99ED289DBF342613Ce6"; // LINK address
-    const fromTokenBalance = toWei(100); // 100 tokens in wei
+    const WETH = "0x84fff9F8Bec0835494C4c9f43cfe32C7d37F82b5";
+    const LINK = "0x27E1A4409fa79E5380aDE99ED289DBF342613Ce6";
+    const fromTokenAddress = WETH; // WETH address
+    const toTokenAddress = LINK; // LINK address
+    const fromTokenBalance1 = toWei(100); // 100 tokens in wei
+    const fromTokenBalance2 = toWei(50); // 50 tokens in wei
     const limitPrice = toWei(2);  // price in wei
     const slippage = 500; // 5% slippage (basis points)
     const limitType = true;
     const settlementGratuity = 200; // 2% of fromToken (basis points)
+    
 //=============================================================================================//    
 //=============================================================================================//      
-    async function createOrder() {
+
+    async function createOrder(orderAmount, fromAccount) {
     	it("creates a new order", async () => {
-            let order = await CreateOrderInstance.createOrder(
+            await CreateOrderInstance.createOrder(
             	[poolAddress,
                 fromTokenAddress,
                 toTokenAddress,
-                fromTokenBalance,
+                orderAmount, //fromTokenBalance
                 limitPrice,
-                slippage,
+                slippage,                                  
                 limitType,
-                settlementGratuity]
-            );     
+                settlementGratuity], 
+                { from: fromAccount }
+            );  
         });
     };   
+    
+    async function check_orderAttributes(orderID, fromAccount) {
+        let attributes;
+        it("checks order attributes", async () => {  
+            attributes = await CreateOrderInstance._orders(orderID, { from: fromAccount });
+            console.log("         order",orderID,"attributes","\n",
+                        "         orderAddress:",attributes.orderAddress,"\n",
+                        "         poolAddress:",attributes.poolAddress,"\n",
+                        "         fromTokenAddress:",attributes.fromTokenAddress,"\n",
+                        "         toTokenAddress:",attributes.toTokenAddress,"\n",
+                        "         tokenBalance:",attributes.tokenBalance.words,"\n",
+                        "         fromTokenValueInETH:",attributes.fromTokenValueInETH.words,"\n",
+                        "         limitPrice:",attributes.limitPrice.words,"\n",
+                        "         limitType:",attributes.limitType.words,"\n",
+                        "         slippage:",attributes.slippage.words,"\n",
+                        "         settlementGratuity:",attributes.settlementGratuity.words,"\n",
+                        "         depositedFlag:",attributes.depositedFlag,"\n",
+                        "         settledFlag:",attributes.settledFlag,"\n",
+                        "         closedFlag:",attributes.closedFlag);
+        });
+    };
+
+    async function approveDeposit(token, balance, fromAccount) {
+    	it("approves DepositOrder.sol to transfer to order", async () => {
+    	    if (token === LINK) {
+    	        const LinkInstance = await LinkToken.at(LINK);
+                await LinkInstance.approve(DepositOrderInstance.address, balance, { from: fromAccount });
+            } else if (token === WETH) {
+                const WethInstance = await WethToken.at(WETH);        
+                await WethInstance.approve(DepositOrderInstance.address, balance, { from: fromAccount });
+            }
+        });
+    };   
+    
+    async function balanceOfAccount(token, account, fromAccount) {
+        it("gets account's balance of token", async () => {
+    	    if (token === LINK) {
+    	        const LinkInstance = await LinkToken.at(LINK);
+                let balance = await LinkInstance.balanceOf(account, { from: fromAccount });
+                console.log("         account balance =",balance.words);
+            } else if (token === WETH) {
+                const WethInstance = await WethToken.at(WETH);        
+                let balance = await WethInstance.balanceOf(account, { from: fromAccount });
+                console.log("         account balance =",balance.words);
+            }
+        });
+    };
+    
+    async function depositOrder(orderID, fromAccount) {
+    	it("deposits tokenBalance to order", async () => {
+            await CreateOrderInstance.depositOrder(orderID, { from: fromAccount });
+        });
+    };   
+    
+    async function closeOrder(orderID, fromAccount) {
+    	it("closes an order", async () => {
+            await CreateOrderInstance.closeOrder(orderID, { from: fromAccount });
+        });
+    }; 
+    
+    async function transferOrder(from, to, orderID, fromAccount) {
+    	it("transfers orderID", async () => {
+            await OrderInstance.transferFrom(from, to, orderID, { from: fromAccount });
+        });
+    }; 
+    
+    async function orderOwner(orderID, fromAccount) {
+        it("checks owner of orderID", async () => {
+            let owner = await OrderInstance.ownerOf(orderID, { from: fromAccount });
+            console.log("         order owner =",owner);
+        });
+    }
+    
 //=============================================================================================//
 //=============================================================================================//    
+
     before("setup", async () => {
         NocturnalFinanceInstance = await NocturnalFinance.deployed();
         NoctInstance = await Noct.deployed();
@@ -80,50 +166,84 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
         SettleOrderTransferInstance = await SettleOrderTransfer.deployed();
     	CreateOrderInstance = await CreateOrder.deployed();
     	SettleOrderInstance = await SettleOrder.deployed();
+    	DepositOrderInstance = await DepositOrder.deployed();
     	CloseOrderInstance = await CloseOrder.deployed();
     	RewardsInstance = await Rewards.deployed();
     	TokenMinterInstance = await TokenMinter.deployed();
     	TokenSwapperInstance = await TokenSwapper.deployed();
     	DistributeRewardsInstance = await DistributeRewards.deployed();
+    	
+    	NocturnalFinanceInstance.setPlatformRate(depositRate);
+    	NocturnalFinanceInstance.setTreasuryFactor(treasuryFactor);
+    	NocturnalFinanceInstance.setRewardsFactor(rewardsFactor);
+        NocturnalFinanceInstance.setOrderURI(orderURI);
+        
+        for (let i = 0; i < accounts.length-1; i++) {
+            await TokenMinterInstance.mintTokens(fromTokenAddress, toTokenAddress, { from: accounts[i]});
+        }   
     });
 
     describe("tests new order creation", async () => {
-        before("set depositRate to " + depositRate + " basis points", () => 
-            NocturnalFinanceInstance.setPlatformRate(depositRate)
-        );
-        
-        before("set treasuryFactor to " + treasuryFactor + " basis points", () => 
-            NocturnalFinanceInstance.setTreasuryFactor(treasuryFactor)
-        );
-        
-        before("set rewardsFactor to " + rewardsFactor + " basis points", () => 
-            NocturnalFinanceInstance.setRewardsFactor(rewardsFactor)
-        );
-        
-        before("set orderURI to " + orderURI, () => 
-            NocturnalFinanceInstance.setOrderURI(orderURI)
-        );
 
-        before("seed addresses with MOCK0 and MOCK1 tokens", async () => {
-            for (let i = 0; i < accounts.length-1; i++) {
-                await TokenMinterInstance.mintTokens(fromTokenAddress, toTokenAddress);
-            }
-        });
+        // create a new order
+        createOrder(fromTokenBalance1, accounts[0]);
         
-        before("approve orderCreator.sol allowance", async () => {
-            let WethTokenInstance = await WethToken.at(fromTokenAddress);
-            for (let i = 0; i < accounts.length-1; i++) {
-                await WethTokenInstance.approve(CreateOrderInstance.address, fromTokenBalance, { from : accounts[0] });
-            }
-        }); 
+        // check order attributes
+        check_orderAttributes(1, accounts[0]);
         
-        //create a new limit order
-        createOrder();
-        // get order address from orderCreated emitted event
-        // check new order attributes
-        // check creator address balance
-        // check order address balance
-        // check staking contract balance
-       
+        // create a new order
+        createOrder(fromTokenBalance2, accounts[0]);
+        
+        // check order attributes
+        check_orderAttributes(2, accounts[0]); 
+        
+        // check address balance
+        balanceOfAccount(WETH, accounts[0], accounts[0]);
+        
+        // approve DepositOrder.sol allowance
+        approveDeposit(fromTokenAddress, fromTokenBalance1, accounts[0]);
+
+        // deposit to order
+        depositOrder(1, accounts[0]);
+        
+        // check order attributes
+        check_orderAttributes(1, accounts[0]);  
+        
+        // close order
+        closeOrder(1, accounts[0]);
+        
+        // check order attributes
+        check_orderAttributes(1, accounts[0]); 
+        
+        // check order attributes
+        check_orderAttributes(2, accounts[0]); 
+        
+        // check order owner address
+        orderOwner(2, accounts[0]);
+        
+        // transfer order 
+        transferOrder(accounts[0], accounts[1], 2, accounts[0]);  
+        
+        // check order owner address
+        orderOwner(2, accounts[0]);
+        
+        // check address balance
+        balanceOfAccount(WETH, accounts[0], accounts[0]);
+        
+        // approve DepositOrder.sol allowance
+        approveDeposit(fromTokenAddress, fromTokenBalance2, accounts[0]);
+        
+        // deposit to order
+        depositOrder(2, accounts[0]);
+        
+        // check order attributes
+        check_orderAttributes(2, accounts[0]);  
+        
+        // close order
+        closeOrder(2, accounts[1]);
+        
+        // check order attributes
+        check_orderAttributes(2, accounts[0]); 
+        
     });
 });
