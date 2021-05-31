@@ -49,13 +49,13 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     const limitPrice = toWei(2);  // price in wei
     const slippage = 500; // 5% slippage (basis points)
     const limitType = true;
-    const swapSettlementGratuity = 200; // 2% of fromToken (basis points)
+    const settlementGratuity = 200; // 2% of fromToken (basis points)
 //=============================================================================================//    
 //=============================================================================================//      
 
     async function createOrder() {
-    	it("creates a new limit order", async () => {
-            let order = await createOrderInstance.createOrder(
+    	it("creates a new order", async () => {
+            let order = await CreateOrderInstance.createOrder(
             	[poolAddress,
                 fromTokenAddress,
                 toTokenAddress,
@@ -90,9 +90,9 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
     	DistributeRewardsInstance = await DistributeRewards.deployed();
     });
 
-    describe("test new limit order creation", async () => {
+    describe("tests new order creation", async () => {
         before("set depositRate to " + depositRate + " basis points", () => 
-            NocturnalFinanceInstance.setDepositRate(depositRate)
+            NocturnalFinanceInstance.setPlatformRate(depositRate)
         );
         
         before("set treasuryFactor to " + treasuryFactor + " basis points", () => 
@@ -130,4 +130,3 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
        
     });
 });
-
