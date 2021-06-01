@@ -1,0 +1,37 @@
+Navigate to project directory (~/Truffle/nocturnal/nocturnal-mainV2)
+
+    *** ADD TEST ACCOUNT SEED PHRASE IN package.json LINE 6 ***
+
+Install nodejs:  sudo dnf install nodejs
+
+Install ganache-cli:  sudo yarn global add ganache-cli
+
+Run following commands:
+
+1)  yarn ganache-cli --fork https://rinkeby.infura.io/v3/<INFURA_API>
+
+    *** IN NEW TERMINAL TAB ***
+
+2)  npm install
+
+3)  truffle compile     
+
+4)  truffle migrate
+
+5)  truffle test --stacktrace-extra
+
+=================================================================================================
+
+Prior to testing, deploy 2 mock tokens to test net.  Ensure that both of the mock tokens have
+    public mint functions.  Record these mock token addresses for test script use.
+    Create a pool using the 2 mock tokens using the Uniswap V3 UI. Record the pool address 
+    for test script use. 
+    
+    Mock0 Token Address (LINK):     0x27E1A4409fa79E5380aDE99ED289DBF342613Ce6
+    Mock1 Token Address (WETH):     0x84fff9F8Bec0835494C4c9f43cfe32C7d37F82b5
+    
+    Mock Pool Address (LINK/WETH):  0xEa9ab84751A2ef0db5f3601aE8EC0F1E4798728B
+    Mock Pool Address (WETH/LINK):  
+    
+=================================================================================================
+
