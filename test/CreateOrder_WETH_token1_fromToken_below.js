@@ -308,7 +308,7 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
         //checkPoolPrice(1, accounts[0]);
 
         // make a swap 
-        // from LINK to WETH will decrease WETH in pool, increasing the pool price (LINK/WETH)
+        // perform swaps to manipulate pool price, as needed
         swap(LINK, WETH, toWei(100), accounts[0]);
         
         // check pool price
