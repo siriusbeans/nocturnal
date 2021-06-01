@@ -19,13 +19,13 @@ interface CreateOrderInterface {
         address fromTokenAddress;
         address toTokenAddress;
         uint256 tokenBalance;
-        uint256 fromTokenValueInETH;
         uint256 limitPrice;
         bool limitType;
-        uint24 slippage;
-        uint24 settlementGratuity;
+        uint256 amountOutMin;
+        uint256 settlementGratuity;
         bool depositedFlag;
         bool settledFlag;
+        bool closedFlag;
     }
 
     struct CreateParams {
@@ -34,9 +34,9 @@ interface CreateOrderInterface {
         address toTokenAddress;
         uint256 tokenBalance;
         uint256 limitPrice;
-        uint24 slippage;
         bool limitType;
-        uint24 settlementGratuity;
+        uint256 amountOutMin;
+        uint256 settlementGratuity;
     }
     
     struct DepositParams {
@@ -45,18 +45,19 @@ interface CreateOrderInterface {
         address fromTokenAddress;
         uint256 tokenBalance;
         bool depositedFlag;
+        bool closedFlag;
     }
     
     struct SettleParams {
         address orderAddress;
         address poolAddress;
         address fromTokenAddress;
+        address toTokenAddress;
         uint256 tokenBalance;
-        uint256 fromTokenValueInETH;
         uint256 limitPrice;
         bool limitType;
-        uint24 slippage;
-        uint24 settlementGratuity;
+        uint256 amountOutMin;
+        uint256 settlementGratuity;
         bool depositedFlag;
         bool settledFlag;
     }
@@ -67,20 +68,16 @@ interface CreateOrderInterface {
         address fromTokenAddress;
         address toTokenAddress;
         uint256 tokenBalance;
-        uint24 slippage;
         bool depositedFlag;
         bool settledFlag;
+        bool closedFlag;
     }
     
     function createOrder(CreateParams calldata params) external;
     function depositOrder(uint256) external;
     function settleOrder(uint256) external;
     function closeOrder(uint256) external;
-   
-    function orderAttributes(uint256) external view 
-        returns (address, address, address, address, uint256, uint256, uint256, bool, uint24, uint24, bool, bool); 
         
     function setAttributes(uint256, uint256) external; 
-
 
 }

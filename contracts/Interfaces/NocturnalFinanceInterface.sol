@@ -14,7 +14,7 @@ interface NocturnalFinanceInterface {
     function _contract(uint256) external view returns (address);
 
     function platformRate() external view returns (uint256);
-    function rewardsFactor() external view returns (uint256);
+    function rewardsRatioFactor() external view returns (uint256);
     function treasuryFactor() external view returns (uint256);
     function orderURI() external view returns (string memory);
 }

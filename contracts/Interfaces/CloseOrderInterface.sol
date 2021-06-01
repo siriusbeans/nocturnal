@@ -18,9 +18,9 @@ interface CloseOrderInterface {
         address fromTokenAddress;
         address toTokenAddress;
         uint256 tokenBalance;
-        uint24 slippage; 
         bool depositedFlag;
         bool settledFlag;
+        bool closedFlag;
     }
 
     function closeOrder(uint256, CloseParams calldata params) external;

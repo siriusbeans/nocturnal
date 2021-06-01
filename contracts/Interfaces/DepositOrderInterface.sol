@@ -18,8 +18,9 @@ interface DepositOrderInterface {
         address fromTokenAddress;
         uint256 tokenBalance;
         bool depositedFlag;
+        bool closedFlag;
     }
     
-    function depositOrder(uint256, DepositParams calldata params) external;
+    function depositOrder(uint256, DepositParams calldata params, address) external;
 
 }

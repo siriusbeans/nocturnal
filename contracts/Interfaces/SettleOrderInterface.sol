@@ -16,12 +16,12 @@ interface SettleOrderInterface {
         address orderAddress;
         address poolAddress;
         address fromTokenAddress;
+        address toTokenAddress;
         uint256 tokenBalance;
-        uint256 fromTokenValueInETH;
         uint256 limitPrice;
         bool limitType;
-        uint24 slippage;
-        uint24 settlementGratuity;
+        uint256 amountOutMin;
+        uint256 settlementGratuity;
         bool depositedFlag;
         bool settledFlag;
     }
