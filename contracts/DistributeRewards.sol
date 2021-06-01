@@ -38,7 +38,7 @@ contract DistributeRewards {
         totalRewards = totalRewards.sub(treasuryRewards);
     
         // distribute creator rewards
-        uint256 creatorRewards = totalRewards.mul(nocturnalFinance.rewardsFactor()).div(bPDivisor);
+        uint256 creatorRewards = totalRewards.mul(nocturnalFinance.rewardsRatioFactor()).div(bPDivisor);
         RewardsInterface(nocturnalFinance._contract(9)).unclaimedRewards(orderOwnerAddress).add(creatorRewards);
         RewardsInterface(nocturnalFinance._contract(9)).totalRewards().add(creatorRewards);
         

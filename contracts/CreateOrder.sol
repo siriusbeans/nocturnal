@@ -46,7 +46,8 @@ contract CreateOrder is CreateOrderInterface {
     
     function createOrder(CreateParams calldata params) external override {
         require((params.fromTokenAddress == WETH) || (params.toTokenAddress == WETH));
-        require(params.settlementGratuity < 10000);  
+        // ensure settlementGratuity is less than 100% of order value (in ETH) 
+        //require(params.settlementGratuity < 10000);  
         Order nocturnalOrder = new Order(nocturnalFinanceAddress); 
         orderCounter.increment();
         
@@ -59,10 +60,9 @@ contract CreateOrder is CreateOrderInterface {
             fromTokenAddress: params.fromTokenAddress,
             toTokenAddress: params.toTokenAddress,
             tokenBalance: params.tokenBalance,
-            fromTokenValueInETH: 0,
             limitPrice: params.limitPrice,
             limitType: params.limitType,
-            slippage: params.slippage, 
+            amountOutMin: params.amountOutMin,
             settlementGratuity: params.settlementGratuity,
             depositedFlag: false,
             settledFlag: false,
@@ -90,12 +90,12 @@ contract CreateOrder is CreateOrderInterface {
         SettleOrderInterface.SettleParams memory settleParams = SettleOrderInterface.SettleParams({
             orderAddress: _orders[_orderID].orderAddress,
             poolAddress: _orders[_orderID].poolAddress,
-            fromTokenAddress: _orders[_orderID].fromTokenAddress,              
+            fromTokenAddress: _orders[_orderID].fromTokenAddress,       
+            toTokenAddress: _orders[_orderID].toTokenAddress,       
             tokenBalance: _orders[_orderID].tokenBalance,
-            fromTokenValueInETH: _orders[_orderID].fromTokenValueInETH,
             limitPrice: _orders[_orderID].limitPrice,
             limitType: _orders[_orderID].limitType,
-            slippage: _orders[_orderID].slippage,
+            amountOutMin: _orders[_orderID].amountOutMin,
             settlementGratuity: _orders[_orderID].settlementGratuity,
             depositedFlag: _orders[_orderID].depositedFlag,
             settledFlag: _orders[_orderID].settledFlag
@@ -111,7 +111,6 @@ contract CreateOrder is CreateOrderInterface {
             fromTokenAddress: _orders[_orderID].fromTokenAddress,
             toTokenAddress: _orders[_orderID].toTokenAddress,
             tokenBalance: _orders[_orderID].tokenBalance,
-            slippage: _orders[_orderID].slippage,
             depositedFlag: _orders[_orderID].depositedFlag,
             settledFlag: _orders[_orderID].settledFlag,
             closedFlag: _orders[_orderID].closedFlag
@@ -123,7 +122,6 @@ contract CreateOrder is CreateOrderInterface {
         // removed due to contract size contraints
         //require(msg.sender == nocturnalFinance._contract(2) || msg.sender == nocturnalFinance._contract(6) || msg.sender == nocturnalFinance._contract(4));
         if (msg.sender == nocturnalFinance._contract(2)) {
-            _orders[_orderID].fromTokenValueInETH = _balance;
             _orders[_orderID].depositedFlag = true;
         } else if (msg.sender == nocturnalFinance._contract(6)) {
             _orders[_orderID].tokenBalance = _balance; 

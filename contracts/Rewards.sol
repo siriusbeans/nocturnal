@@ -54,7 +54,7 @@ contract Rewards {
     }
     
     function calcRewards(uint256 _valueETH) external view returns (uint256) {
-        require(msg.sender == nocturnalFinance._contract(3), "only order settler calls calcRewards");
+        require(msg.sender == nocturnalFinance._contract(11), "not DistributeRewards.sol");
         uint256 totalSupply = NoctInterface(nocturnalFinance._contract(12)).totalSupply();
         uint256 supplyDiff = totalSupply.sub(totalRewards);
         uint256 rewardsRate = _valueETH.div(rewardsRateDivisor); // equal to value in ETH / 1000000

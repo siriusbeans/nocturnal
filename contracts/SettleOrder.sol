@@ -39,9 +39,10 @@ contract SettleOrder is SettleOrderInterface {
     
     function settleOrder(uint256 _orderID, SettleParams calldata params) external override {
         require(msg.sender == nocturnalFinance._contract(1), "caller is not order manager address");
-        require(params.depositedFlag == true, "deposit filled");
+        require(params.depositedFlag == true, "order not deposited");
         require(params.settledFlag == false, "order settled");
         uint256 currentPrice;
+        uint256 noctVol;
         
         // the limit price value returned by the front end is denominated by ETH
         // so choose current pool price with WETH in denominator
@@ -61,27 +62,26 @@ contract SettleOrder is SettleOrderInterface {
             orderAddress: params.orderAddress,
             poolAddress: params.poolAddress,
             fromTokenAddress: params.fromTokenAddress,
+            toTokenAddress: params.toTokenAddress,
             tokenBalance: params.tokenBalance,
-            fromTokenValueInETH: params.fromTokenValueInETH,
-            slippage: params.slippage,
+            amountOutMin: params.amountOutMin,
             settlementGratuity: params.settlementGratuity,
             depositedFlag: params.depositedFlag
         });
         
-        // deduct gratuity and transfer to settler
-        // perform swap
+        // perform swap + send gratuity + send fee
         if (params.fromTokenAddress == WETH) {
-            SettleOrderTransferInterface(nocturnalFinance._contract(6)).fromWETHSettle(_orderID, settleTransferParams);        
+            noctVol = SettleOrderTransferInterface(nocturnalFinance._contract(6)).fromWETHSettle(_orderID, settleTransferParams);        
         } else {
-            SettleOrderTransferInterface(nocturnalFinance._contract(6)).toWETHSettle(_orderID, settleTransferParams);
+            noctVol = SettleOrderTransferInterface(nocturnalFinance._contract(6)).toWETHSettle(_orderID, settleTransferParams);
         }
                    
         // distribute the NOCT rewards to the settler and the creator 
         address orderOwnerAddress = OrderInterface(nocturnalFinance._contract(8)).ownerOf(_orderID);
-        DistributeRewardsInterface(nocturnalFinance._contract(11)).distributeNOCT(params.fromTokenValueInETH, orderOwnerAddress);
+        DistributeRewardsInterface(nocturnalFinance._contract(11)).distributeNOCT(noctVol, orderOwnerAddress);
         
         // increment platform volume tracker counter
-        platformVolume.add(params.fromTokenValueInETH);
+        platformVolume.add(noctVol);
         
         // emit events
         emit orderSettled(_orderID);

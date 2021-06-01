@@ -66,10 +66,10 @@ contract Order is ERC721Enumerable {
         _mint(to, tokenId);
     }
     
-    function getExactInputSingle(address _tokenIn, address _tokenOut, uint24 _fee, address _recipient, uint256 minOut, uint256 _amount) public returns (uint256){
-        require(_msgSender() == nocturnalFinance._contract(4) || _msgSender() == nocturnalFinance._contract(6), "caller is not a nocturnal contract");
+    function getExactInputSingle(address _tokenIn, address _tokenOut, uint24 _fee, address _recipient, uint256 minOut, uint256 _amount) external returns (uint256 amountOut) {
+        require(_msgSender() == nocturnalFinance._contract(6), "caller is not a nocturnal contract");
         require(IERC20(_tokenIn).approve(UniswapV3SwapRouter, _amount), "approve failed");
-		return swapRouter.exactInputSingle(
+		amountOut = swapRouter.exactInputSingle(
 		    ISwapRouter.ExactInputSingleParams({
 		        tokenIn: _tokenIn,
 		        tokenOut: _tokenOut,
