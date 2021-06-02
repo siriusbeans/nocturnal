@@ -27,12 +27,14 @@ contract Oracle {
     
     function getCurrentPrice(address _pool) external view returns (uint256) {
         (uint160 sqrtPriceX96,,,,,,) = IUniswapV3Pool(_pool).slot0();
-        return uint256(sqrtPriceX96).mul(uint256(sqrtPriceX96)).mul(1e18) >> (96*2);
+        //return uint256(sqrtPriceX96).mul(uint256(sqrtPriceX96)).mul(1e18) >> (96*2);
+        return uint256(sqrtPriceX96);
     }
     
     function getCurrentPriceReciprocal(address _pool) external view returns (uint256) {
         (uint160 sqrtPriceX96,,,,,,) = IUniswapV3Pool(_pool).slot0();
-        uint256 _price = uint256(sqrtPriceX96).mul(uint256(sqrtPriceX96)).mul(1e18) >> (96*2);
+        //uint256 _price = uint256(sqrtPriceX96).mul(uint256(sqrtPriceX96)).mul(1e18) >> (96*2);
+        uint256 _price = uint256(sqrtPriceX96);
         return (multiplicand.mul(multiplicand).div(_price));
     }
     
