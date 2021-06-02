@@ -15,13 +15,12 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/IPeripheryPayments.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 
-contract NoctStaking {
+contract NoctStaking is ERC20 ("Staked Nocturnal Token", "sNOCT") {
     using SafeMath for uint256;
     address public tA;
 
     uint256 public trg = 0;
     mapping(address => uint256) public lrc;
-    mapping(address => uint256) public staked;
     
     NocturnalFinanceInterface public nocturnalFinance;
     IPeripheryPayments public payment;
@@ -44,10 +43,7 @@ contract NoctStaking {
         ERC20 token = ERC20(tA);
         require(token.balanceOf(msg.sender) >= amount, "insufficent NOCT balance");
         require(token.transferFrom(msg.sender, address(this), amount), "staking failed");
-        if (staked[msg.sender] == 0) {
-            lrc[msg.sender] = trg;
-        }
-        staked[msg.sender] = staked[msg.sender].add(amount);
+        _mint(msg.sender, amount);
         emit Stake(amount, totalStaked());
     }
     
@@ -57,18 +53,15 @@ contract NoctStaking {
         ERC20 token = ERC20(tA);
         require(token.balanceOf(msg.sender) >= amount, "insufficent NOCT balance");
         require(token.transferFrom(msg.sender, address(this), amount), "staking failed");
-        if (staked[_claimantAddress] == 0) {
-            lrc[_claimantAddress] = trg;
-        }
-        staked[_claimantAddress] = staked[_claimantAddress].add(amount);
+        _mint(msg.sender, amount);
         emit Stake(amount, totalStaked());
     }
 
     function withdraw(uint256 amount) public {
-        require(staked[msg.sender] >= amount, "invalid amount");
+        require(balanceOf(msg.sender) >= amount, "invalid amount");
         ERC20 token = ERC20(tA);
         require(token.transfer(msg.sender, amount), "transfer failed");
-        staked[msg.sender] = staked[msg.sender].sub(amount);
+        _burn(msg.sender, amount);
 
         uint256 totalBalance = token.balanceOf(address(this));
         emit Withdraw(amount, totalBalance);
@@ -80,7 +73,7 @@ contract NoctStaking {
 
     function pendingETHRewards(address account) public view returns (uint256) {
         uint256 base = bRSLC(account);
-        return base.mul(staked[account]).div(totalStaked());
+        return base.mul(balanceOf(account)).div(totalStaked());
     }
 
     function claimETHRewards() public {
