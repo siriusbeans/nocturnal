@@ -60,4 +60,14 @@ contract Rewards {
         uint256 rewardsRate = _valueETH.div(rewardsRateDivisor); // equal to value in ETH / 1000000
         return (rewardsRate.mul(supplyDiff)); 
     }
+    
+    function addUnclaimedRewards(address _claimant, uint256 _rewards) public {
+        require(msg.sender == nocturnalFinance._contract(11), "not DistributeRewards.sol");
+        unclaimedRewards[_claimant] = _rewards;
+    }
+    
+    function addTotalRewards(uint256 _rewards) public {
+        require(msg.sender == nocturnalFinance._contract(11), "not DistributeRewards.sol");
+        totalRewards = totalRewards.add(_rewards);
+    }
 }

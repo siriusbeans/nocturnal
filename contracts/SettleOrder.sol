@@ -37,7 +37,7 @@ contract SettleOrder is SettleOrderInterface {
         WETH = _WETH;
     }
     
-    function settleOrder(uint256 _orderID, SettleParams calldata params) external override {
+    function settleOrder(uint256 _orderID, SettleParams calldata params, address settlerAddress) external override {
         require(msg.sender == nocturnalFinance._contract(1), "caller is not order manager address");
         require(params.depositedFlag == true, "order not deposited");
         require(params.settledFlag == false, "order settled");
@@ -78,7 +78,7 @@ contract SettleOrder is SettleOrderInterface {
                    
         // distribute the NOCT rewards to the settler and the creator 
         address orderOwnerAddress = OrderInterface(nocturnalFinance._contract(8)).ownerOf(_orderID);
-        DistributeRewardsInterface(nocturnalFinance._contract(11)).distributeNOCT(noctVol, orderOwnerAddress);
+        DistributeRewardsInterface(nocturnalFinance._contract(11)).distributeNOCT(noctVol, orderOwnerAddress, settlerAddress);
         
         // increment platform volume tracker counter
         platformVolume.add(noctVol);

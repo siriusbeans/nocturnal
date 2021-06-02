@@ -25,26 +25,24 @@ contract DistributeRewards {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
 
-    function distributeNOCT(uint256 sFTVIE, address orderOwnerAddress) public {
-        require(msg.sender == nocturnalFinance._contract(3), "not SettleOrder contract");
+    function distributeNOCT(uint256 sFTVIE, address orderOwnerAddress, address settlerAddress) public {
+        require(msg.sender == nocturnalFinance._contract(3), "not SettleOrder contract");  
         
-        uint256 totalRewards = RewardsInterface(nocturnalFinance._contract(9)).calcRewards(sFTVIE);
+        uint256 orderRewards = RewardsInterface(nocturnalFinance._contract(9)).calcRewards(sFTVIE);
+        RewardsInterface(nocturnalFinance._contract(9)).addTotalRewards(orderRewards);
         
         // distribute treasury rewards
-        uint256 treasuryRewards = totalRewards.mul(nocturnalFinance.treasuryFactor()).div(bPDivisor);
-        RewardsInterface(nocturnalFinance._contract(9)).unclaimedRewards(nocturnalFinance._contract(10)).add(treasuryRewards);
-        RewardsInterface(nocturnalFinance._contract(9)).totalRewards().add(treasuryRewards);
+        uint256 treasuryRewards = orderRewards.mul(nocturnalFinance.treasuryFactor()).div(bPDivisor);
+        RewardsInterface(nocturnalFinance._contract(9)).addUnclaimedRewards(nocturnalFinance._contract(10), treasuryRewards);
         
-        totalRewards = totalRewards.sub(treasuryRewards);
+        orderRewards = orderRewards.sub(treasuryRewards);
     
         // distribute creator rewards
-        uint256 creatorRewards = totalRewards.mul(nocturnalFinance.rewardsRatioFactor()).div(bPDivisor);
-        RewardsInterface(nocturnalFinance._contract(9)).unclaimedRewards(orderOwnerAddress).add(creatorRewards);
-        RewardsInterface(nocturnalFinance._contract(9)).totalRewards().add(creatorRewards);
+        uint256 creatorRewards = orderRewards.mul(nocturnalFinance.rewardsRatioFactor()).div(bPDivisor);
+        RewardsInterface(nocturnalFinance._contract(9)).addUnclaimedRewards(orderOwnerAddress, creatorRewards);
         
         // distribute settler rewards
-        uint256 settlerRewards = totalRewards.sub(creatorRewards);
-        RewardsInterface(nocturnalFinance._contract(9)).unclaimedRewards(msg.sender).add(settlerRewards);
-        RewardsInterface(nocturnalFinance._contract(9)).totalRewards().add(settlerRewards);
+        uint256 settlerRewards = orderRewards.sub(creatorRewards);
+        RewardsInterface(nocturnalFinance._contract(9)).addUnclaimedRewards(settlerAddress, settlerRewards);
     }
 }

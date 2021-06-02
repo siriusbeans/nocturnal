@@ -23,7 +23,7 @@ contract NocturnalFinance is Ownable {
     // 2: depositOrderAddress;
     // 3: settleOrderAddress;
     // 4: closeOrderAddress;
-    // 5: modifyOrderAddress;
+    // 5: 
     // 6: settleOrderTransferAddress;
     // 7: oracleAddress;
     // 8: orderAddress;

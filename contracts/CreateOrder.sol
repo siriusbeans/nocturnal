@@ -47,7 +47,10 @@ contract CreateOrder is CreateOrderInterface {
     function createOrder(CreateParams calldata params) external override {
         require((params.fromTokenAddress == WETH) || (params.toTokenAddress == WETH));
         // ensure settlementGratuity is less than 100% of order value (in ETH) 
-        //require(params.settlementGratuity < 10000);  
+        // if (params.fromTokenAddress == WETH) {
+        //     require(params.settlementGratuity < );
+        // } else {
+        //     require(params.settlementGratuity < );
         Order nocturnalOrder = new Order(nocturnalFinanceAddress); 
         orderCounter.increment();
         
@@ -100,7 +103,7 @@ contract CreateOrder is CreateOrderInterface {
             depositedFlag: _orders[_orderID].depositedFlag,
             settledFlag: _orders[_orderID].settledFlag
         });
-        SettleOrderInterface(nocturnalFinance._contract(3)).settleOrder(_orderID, settleParams); 
+        SettleOrderInterface(nocturnalFinance._contract(3)).settleOrder(_orderID, settleParams, msg.sender); 
     }
     
     function closeOrder(uint256 _orderID) public override {
