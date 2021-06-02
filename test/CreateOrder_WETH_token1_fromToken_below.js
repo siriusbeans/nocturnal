@@ -20,7 +20,7 @@ var LinkToken = artifacts.require("LinkToken");
 //let orderAddress = await CreateOrderInstance._orders(orderID).orderAddress; // address of new order
 //const _OrderInstance = await _Order.at(OrderAddress); // instance of new order address (call functions from this)
 
-contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
+contract('CreateOrder_WETH_token1_fromToken_below', accounts => {
     const owner = accounts[0];
     let NocturnalFinanceInstance;
     let NoctInstance;
@@ -308,7 +308,7 @@ contract('CreateOrder_WETH_token1_fromToken_above', accounts => {
         //checkPoolPrice(1, accounts[0]);
 
         // make a swap 
-        // perform swaps to manipulate pool price, as needed
+        // from LINK to WETH will decrease WETH in pool, increasing the pool price (LINK/WETH)
         swap(LINK, WETH, toWei(100), accounts[0]);
         
         // check pool price
