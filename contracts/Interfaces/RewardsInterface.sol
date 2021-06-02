@@ -15,6 +15,7 @@ interface RewardsInterface {
     function stakeRewards(uint256) external;
     function claimRewards(uint256) external;
     function totalRewards() external returns (uint256);
-    function unclaimedRewards(address) external view returns (uint256);
     function calcRewards(uint256) external returns (uint256);
+    function addUnclaimedRewards(address, uint256) external;
+    function addTotalRewards(uint256) external;
 }

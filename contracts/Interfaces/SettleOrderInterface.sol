@@ -26,6 +26,6 @@ interface SettleOrderInterface {
         bool settledFlag;
     }
     
-    function settleOrder(uint256, SettleParams calldata params) external;
+    function settleOrder(uint256, SettleParams calldata params, address) external;
     
 }

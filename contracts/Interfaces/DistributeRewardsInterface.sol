@@ -12,7 +12,7 @@ pragma solidity ^0.8.0;
 
 interface DistributeRewardsInterface {
 
-    function distributeNOCT(uint256, address) external;
+    function distributeNOCT(uint256, address, address) external;
 
 }
 
