@@ -17,9 +17,10 @@ const TokenMinter = artifacts.require("./Mocks/TokenMinter.sol");
 const TokenSwapper = artifacts.require("./Mocks/TokenSwapper.sol");
 
 module.exports = function(deployer, network, accounts) {
+    const toWei = (value) => web3.utils.toWei(value.toString(), "ether");
     const ownerAddress = accounts[0]; 
-    const initialSupply = 1100000;
-    const rewardsSupply = 20900000;   
+    const initialSupply = toWei(1100000);
+    const rewardsSupply = toWei(20900000);   
     const orderName = "Nocturnal Order";
     const orderSymbol = "oNOCT";
     const pRate = 200;
@@ -87,7 +88,7 @@ module.exports = function(deployer, network, accounts) {
         }).then(instance => {
             OrderInstance = instance;
             
-            return deployer.deploy(Rewards, NocturnalFinance.address, rewardsSupply, { from: ownerAddress });
+            return deployer.deploy(Rewards, NocturnalFinance.address, rewardsSupply, initialSupply, { from: ownerAddress });
         }).then(instance => {
             RewardsInstance = instance; 
                
