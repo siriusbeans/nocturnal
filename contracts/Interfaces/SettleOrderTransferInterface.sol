@@ -23,6 +23,6 @@ interface SettleOrderTransferInterface {
         bool depositedFlag;
     }
 
-    function fromWETHSettle(uint256, SettleTransferParams calldata params) external returns (uint256);
-    function toWETHSettle(uint256, SettleTransferParams calldata params) external returns (uint256);
+    function fromWETHSettle(uint256, SettleTransferParams calldata params, address) external returns (uint256);
+    function toWETHSettle(uint256, SettleTransferParams calldata params, address) external returns (uint256);
 }
