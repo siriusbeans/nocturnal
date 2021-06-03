@@ -53,7 +53,7 @@ contract NoctStaking is ERC20 ("Staked Nocturnal Token", "sNOCT") {
         ERC20 token = ERC20(tA);
         require(token.balanceOf(msg.sender) >= amount, "insufficent NOCT balance");
         require(token.transferFrom(msg.sender, address(this), amount), "staking failed");
-        _mint(msg.sender, amount);
+        _mint(_claimantAddress, amount);
         emit Stake(amount, totalStaked());
     }
 
@@ -89,3 +89,4 @@ contract NoctStaking is ERC20 ("Staked Nocturnal Token", "sNOCT") {
     //this function has to be present or transfers to the contract fail silently
     fallback () external payable {}
 }
+

@@ -20,8 +20,7 @@ import {NoctStakingInterface} from "./Interfaces/NoctStakingInterface.sol";
 contract Treasury is Ownable {
     using SafeMath for uint256;
 
-    uint256 rewardsSupply;
-    uint256 initialSupply;
+    uint256 totalSupply;
     address nocturnalFinanceAddress;
     
     mapping(address => uint256) treasuryBalance;
@@ -29,15 +28,14 @@ contract Treasury is Ownable {
     NocturnalFinanceInterface public nocturnalFinance;
     
     constructor(address _nocturnalFinance, uint256 _rewardsSupply, uint256 _initialSupply) {
-        rewardsSupply = _rewardsSupply;
-        initialSupply = _initialSupply;
+        totalSupply = _rewardsSupply.add(_initialSupply);
         nocturnalFinanceAddress = _nocturnalFinance;
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
     
     function approveStaking() external {
         require(msg.sender == nocturnalFinanceAddress, "not Nocturnal Finance");
-        IERC20(nocturnalFinance._contract(12)).approve(nocturnalFinance._contract(0), rewardsSupply.add(initialSupply));
+        IERC20(nocturnalFinance._contract(12)).approve(nocturnalFinance._contract(0), totalSupply);
     }
     
     function setClaimantBalance(address _claimant, uint _balance) external onlyOwner {

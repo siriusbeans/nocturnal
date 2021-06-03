@@ -30,12 +30,12 @@ contract SettleOrderTransfer is SettleOrderTransferInterface {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
     
-    function fromWETHSettle(uint256 _orderID, SettleTransferParams calldata params) external override returns (uint256) {
+    function fromWETHSettle(uint256 _orderID, SettleTransferParams calldata params, address _settler) external override returns (uint256) {
         require(msg.sender == nocturnalFinance._contract(3), "not SettleOrder contract");
         uint256 amountOut;
         // calculate fee prior to swap from WETH
         uint256 dFee = (params.tokenBalance).mul(nocturnalFinance.platformRate()).div(10000);
-        OrderInterface(params.orderAddress).orderTransfer(params.fromTokenAddress, msg.sender, params.settlementGratuity); 
+        OrderInterface(params.orderAddress).orderTransfer(params.fromTokenAddress, _settler, params.settlementGratuity); 
         OrderInterface(params.orderAddress).orderTransfer(params.fromTokenAddress, nocturnalFinance._contract(0), dFee);
         uint256 tokenBalance = IERC20(params.fromTokenAddress).balanceOf(params.orderAddress); 
         if (IUniswapV3Pool(params.poolAddress).token0() == params.fromTokenAddress) {
@@ -61,7 +61,7 @@ contract SettleOrderTransfer is SettleOrderTransferInterface {
         return (params.tokenBalance); // return amount of WETH involved in order swap (volume tracking)
     }
 
-    function toWETHSettle(uint256 _orderID, SettleTransferParams calldata params) external override returns (uint256) {
+    function toWETHSettle(uint256 _orderID, SettleTransferParams calldata params, address _settler) external override returns (uint256) {
         require(msg.sender == nocturnalFinance._contract(3), "not SettleOrder contract");
         uint256 amountOut;
         if (IUniswapV3Pool(params.poolAddress).token0() == params.fromTokenAddress) {
@@ -84,7 +84,7 @@ contract SettleOrderTransfer is SettleOrderTransferInterface {
         // calculate fee after swap to WETH 
         amountOut = IERC20(params.toTokenAddress).balanceOf(params.orderAddress);
         uint256 dFee = (amountOut).mul(nocturnalFinance.platformRate()).div(10000);
-        OrderInterface(params.orderAddress).orderTransfer(params.toTokenAddress, msg.sender, params.settlementGratuity); 
+        OrderInterface(params.orderAddress).orderTransfer(params.toTokenAddress, _settler, params.settlementGratuity); 
         OrderInterface(params.orderAddress).orderTransfer(params.toTokenAddress, nocturnalFinance._contract(0), dFee);
         // set Order toTokenBalance and settledFlag attributes
         amountOut = IERC20(params.toTokenAddress).balanceOf(params.orderAddress);

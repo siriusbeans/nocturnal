@@ -16,6 +16,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+//import "@uniswap/v3-periphery/contracts/interfaces/IPeripheryPayments.sol";
 import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.sol";
 import {OracleInterface} from "./Interfaces/OracleInterface.sol";
 
@@ -88,4 +89,8 @@ contract Order is ERC721Enumerable {
         require(IERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
     } 
     
+    /*function orderPayout(address _recipientAddress, uint256 _amount) public {
+        require(_msgSender() == nocturnalFinance._contract(6), "caller is not a nocturnal contract");
+        payment.unwrapWETH9(_amount, _recipientAddress);
+    }*/
 }

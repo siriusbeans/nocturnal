@@ -22,7 +22,7 @@ contract DistributeRewards {
     NocturnalFinanceInterface public nocturnalFinance;
     
     constructor(address _nocturnalFinance) {
-        nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
+        nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);    
     }
 
     function distributeNOCT(uint256 sFTVIE, address orderOwnerAddress, address settlerAddress) public {

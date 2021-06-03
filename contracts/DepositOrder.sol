@@ -42,7 +42,7 @@ contract DepositOrder is DepositOrderInterface {
         // requires depositor to approve DepositOrder.sol trasnferFrom allowance 
         require(IERC20(params.fromTokenAddress).transferFrom(_depositor, params.orderAddress, params.tokenBalance), "owner to order balance transfer failed");
         
-        CreateOrderInterface(nocturnalFinance._contract(1)).setAttributes(_orderID, params.tokenBalance);  
+        CreateOrderInterface(nocturnalFinance._contract(1)).setAttributes(_orderID, params.tokenBalance); 
        
         // emit events                                                
         emit orderDeposited(_orderID);

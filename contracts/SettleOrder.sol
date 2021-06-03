@@ -71,9 +71,9 @@ contract SettleOrder is SettleOrderInterface {
         
         // perform swap + send gratuity + send fee
         if (params.fromTokenAddress == WETH) {
-            noctVol = SettleOrderTransferInterface(nocturnalFinance._contract(6)).fromWETHSettle(_orderID, settleTransferParams);        
+            noctVol = SettleOrderTransferInterface(nocturnalFinance._contract(6)).fromWETHSettle(_orderID, settleTransferParams, settlerAddress);        
         } else {
-            noctVol = SettleOrderTransferInterface(nocturnalFinance._contract(6)).toWETHSettle(_orderID, settleTransferParams);
+            noctVol = SettleOrderTransferInterface(nocturnalFinance._contract(6)).toWETHSettle(_orderID, settleTransferParams, settlerAddress);
         }
                    
         // distribute the NOCT rewards to the settler and the creator 

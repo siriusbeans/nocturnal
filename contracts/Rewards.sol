@@ -21,22 +21,24 @@ contract Rewards {
     
     mapping(address => uint256) public unclaimedRewards;
     
-    uint256 rewardsSupply;
+    uint256 totalSupply;
     address nocturnalFinanceAddress;
     uint256 public totalRewards;
     uint256 internal constant rewardsRateDivisor = 1e12;
+    uint256 internal constant multiplicand = 1e18;
 
     NocturnalFinanceInterface public nocturnalFinance;
     
-    constructor(address _nocturnalFinance, uint256 _rewardsSupply) {
-        rewardsSupply = _rewardsSupply;
+    constructor(address _nocturnalFinance, uint256 _rewardsSupply, uint256 _initialSupply) {
+        totalRewards = _initialSupply;
+        totalSupply = _rewardsSupply.add(_initialSupply);
         nocturnalFinanceAddress = _nocturnalFinance;
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
     
     function approveStaking() external {
         require(msg.sender == nocturnalFinanceAddress, "not Nocturnal Finance");
-        IERC20(nocturnalFinance._contract(12)).approve(nocturnalFinance._contract(0), rewardsSupply);
+        IERC20(nocturnalFinance._contract(12)).approve(nocturnalFinance._contract(0), totalSupply);
     }
     
     function claimRewards(uint256 _amount) public {
@@ -54,16 +56,14 @@ contract Rewards {
     }
     
     function calcRewards(uint256 _valueETH) external view returns (uint256) {
-        require(msg.sender == nocturnalFinance._contract(11), "not DistributeRewards.sol");
-        uint256 totalSupply = NoctInterface(nocturnalFinance._contract(12)).totalSupply();
+        require(msg.sender == nocturnalFinance._contract(11), "not DistributeRewards.sol"); 
         uint256 supplyDiff = totalSupply.sub(totalRewards);
-        uint256 rewardsRate = _valueETH.div(rewardsRateDivisor); // equal to value in ETH / 1000000
-        return (rewardsRate.mul(supplyDiff)); 
+        return _valueETH.mul(supplyDiff).div(rewardsRateDivisor.mul(multiplicand)); 
     }
     
     function addUnclaimedRewards(address _claimant, uint256 _rewards) public {
         require(msg.sender == nocturnalFinance._contract(11), "not DistributeRewards.sol");
-        unclaimedRewards[_claimant] = _rewards;
+        unclaimedRewards[_claimant] = (unclaimedRewards[_claimant]).add(_rewards);
     }
     
     function addTotalRewards(uint256 _rewards) public {
