@@ -148,14 +148,71 @@ contract('CreateOrder_LINK_token0_fromToken_above', accounts => {
         });
     };
     
-    async function returnNoctBalances(owner, settler, fromAccount) {
-        it("returns NOCT account balances", async () => {
+    async function returnUnclaimedNoctBalances(owner, settler, fromAccount) {
+        it("returns unclaimed NOCT account balances", async () => {
             let ownerBalance = await RewardsInstance.unclaimedRewards(owner, { from: fromAccount });
-            console.log("         owner NOCT balance =",ownerBalance.toString());
+            console.log("         owner unclaimed NOCT balance =",ownerBalance.toString());
             let settlerBalance = await RewardsInstance.unclaimedRewards(settler, { from: fromAccount });
-            console.log("         settler NOCT balance =",settlerBalance.toString());
+            console.log("         settler unclaimed NOCT balance =",settlerBalance.toString());
             let treasuryBalance = await RewardsInstance.unclaimedRewards(TreasuryInstance.address, { from: fromAccount });
-            console.log("         treasury NOCT balance =",treasuryBalance.toString());
+            console.log("         treasury unclaimed NOCT balance =",treasuryBalance.toString());
+        });
+    };
+    
+    async function returnClaimedNoctBalances(owner, settler, fromAccount) {
+        it("returns claimed NOCT account balances", async () => {
+            let ownerBalance = await NoctInstance.balanceOf(owner, { from: fromAccount });
+            console.log("         owner claimed NOCT balance =",ownerBalance.toString());
+            let settlerBalance = await NoctInstance.balanceOf(settler, { from: fromAccount });
+            console.log("         settler claimed NOCT balance =",settlerBalance.toString());
+            let treasuryBalance = await NoctInstance.balanceOf(TreasuryInstance.address, { from: fromAccount });
+            console.log("         treasury claimed NOCT balance =",treasuryBalance.toString());
+        });
+    };
+    
+    async function returnStakedNoctBalance(owner, settler, fromAccount) {
+        it("returns sNOCT account balances", async () => {
+            let ownerBalance = await NoctStakingInstance.balanceOf(owner, { from: fromAccount });
+            console.log("         owner sNOCT balance =",ownerBalance.toString());
+            let settlerBalance = await NoctStakingInstance.balanceOf(settler, { from: fromAccount });
+            console.log("         settler sNOCT balance =",settlerBalance.toString());
+            let treasuryBalance = await NoctStakingInstance.balanceOf(TreasuryInstance.address, { from: fromAccount });
+            console.log("         treasury sNOCT balance =",treasuryBalance.toString());
+        });
+    };
+    
+    async function returnPendingEthRewardsBalance(owner, settler, fromAccount) {
+        it("returns pending ETH rewards balances", async () => {
+            let ownerBalance = await NoctStakingInstance.pendingETHRewards(owner, { from: fromAccount });
+            console.log("         owner pending ETH rewards balance =",ownerBalance.toString());
+            let settlerBalance = await NoctStakingInstance.pendingETHRewards(settler, { from: fromAccount });
+            console.log("         settler pending ETH rewards balance =",settlerBalance.toString());
+            let treasuryBalance = await NoctStakingInstance.pendingETHRewards(TreasuryInstance.address, { from: fromAccount });
+            console.log("         treasury pending ETH rewards balance =",treasuryBalance.toString());
+        });
+    };
+    
+    async function claimNOCT(owner, settler) {
+        it("claims unclaimed NOCT balances", async () => {
+            let ownerBalance = await RewardsInstance.unclaimedRewards(owner, { from: owner });
+            let ownerClaim = await RewardsInstance.claimRewards(ownerBalance, { from: owner });
+            //console.log("         owner pending ETH rewards balance =",ownerBalance.toString());
+            let settlerBalance = await RewardsInstance.unclaimedRewards(settler, { from: settler });
+            let settlerClaim = await RewardsInstance.claimRewards(settlerBalance, { from: settler });
+            //console.log("         settler pending ETH rewards balance =",settlerBalance.toString());
+        });
+    };
+    
+    async function stakeNOCT(owner, settler) {
+        it("stakes claimed NOCT balances", async () => {
+            let ownerBalance = await NoctInstance.balanceOf(owner, { from: owner });
+            let ownerApprove = await NoctInstance.approve(NoctStakingInstance.address, ownerBalance, { from: owner });
+            let ownerStake = await NoctStakingInstance.stake(ownerBalance, { from: owner });
+            //console.log("         owner pending ETH rewards balance =",ownerBalance.toString());
+            let settlerBalance = await NoctInstance.balanceOf(settler, { from: settler });
+            let settlerApprove = await NoctInstance.approve(NoctStakingInstance.address, settlerBalance, { from: settler });
+            let settlerStake = await NoctStakingInstance.stake(settlerBalance, { from: settler });
+            //console.log("         settler pending ETH rewards balance =",settlerBalance.toString());
         });
     };
     
@@ -167,8 +224,7 @@ contract('CreateOrder_LINK_token0_fromToken_above', accounts => {
             let stakersBalance = await WethInstance.balanceOf(NoctStakingInstance.address, { from: fromAccount });
             console.log("         stakers WETH balance =",stakersBalance.toString());
         });
-        
-    }
+    };
     
     async function returnEthBalances(settler) {
         it("returns ETH account balances", async () => {
@@ -177,7 +233,34 @@ contract('CreateOrder_LINK_token0_fromToken_above', accounts => {
             let stakersBalance = await web3.eth.getBalance(NoctStakingInstance.address);
             console.log("         stakers ETH balance =",stakersBalance);
         });
-    }
+    };
+    
+    async function returnTotalStaked(fromAccount) {
+    	it("returns total staked NOCT", async () => {
+            let totalStaked = await NoctStakingInstance.totalStaked({ from: fromAccount });
+            console.log("         total staked NOCT =",totalStaked.toString());
+        });
+    };   
+    
+    async function claimETH(owner, settler) {
+        it("claims ETH Rewards from Staking Contract", async () => {
+            //let ownerETHBalance0 = await web3.eth.getBalance(owner);
+            const WethInstance = await WethToken.at(WETH);        
+            let ownerETHBalance0 = await WethInstance.balanceOf(owner, { from: owner });
+            await NoctStakingInstance.claimETHRewards({ from: owner });
+            //let ownerETHBalance1 = await web3.eth.getBalance(owner);
+            let ownerETHBalance1 = await WethInstance.balanceOf(owner, { from: owner });
+            let ownerETHRewards = (ownerETHBalance1).sub(ownerETHBalance0);
+            console.log("         owner claimed ETH Rewards =",ownerETHRewards.toString());
+            //let settlerETHBalance0 = await web3.eth.getBalance(settler);
+            let settlerETHBalance0 = await WethInstance.balanceOf(settler, { from: settler });
+            await NoctStakingInstance.claimETHRewards({ from: settler });
+            //let settlerETHBalance1 = await web3.eth.getBalance(settler);
+            let settlerETHBalance1 = await WethInstance.balanceOf(settler, { from: settler });
+            let settlerETHRewards = (settlerETHBalance1).sub(settlerETHBalance0);
+            console.log("         settler claimed ETH Rewards =",settlerETHRewards.toString());
+        });
+    };
     
     async function depositOrder(orderID, fromAccount) {
     	it("deposits tokenBalance to order", async () => {
@@ -274,17 +357,6 @@ contract('CreateOrder_LINK_token0_fromToken_above', accounts => {
         // create a new order
         createOrder(fromTokenBalance, true, amountOutMin, accounts[0]);
         
-        // create a new order
-        createOrder(fromTokenBalance, true, amountOutMin, accounts[0]);
-        
-        // create a new order
-        createOrder(fromTokenBalance, true, amountOutMin, accounts[0]);
-        
-        // create a new order
-        createOrder(fromTokenBalance, true, amountOutMin, accounts[0]);
-        
-        // create a new order
-        createOrder(fromTokenBalance, true, amountOutMin, accounts[0]);
 
         
         
@@ -325,29 +397,7 @@ contract('CreateOrder_LINK_token0_fromToken_above', accounts => {
         // deposit to order
         depositOrder(6, accounts[0]);
         
-        // approve DepositOrder.sol allowance
-        approveDeposit(fromTokenAddress, fromTokenBalance, accounts[0]);
-        
-        // deposit to order
-        depositOrder(7, accounts[0]);
-        
-        // approve DepositOrder.sol allowance
-        approveDeposit(fromTokenAddress, fromTokenBalance, accounts[0]);
-        
-        // deposit to order
-        depositOrder(8, accounts[0]);
-        
-        // approve DepositOrder.sol allowance
-        approveDeposit(fromTokenAddress, fromTokenBalance, accounts[0]);
-        
-        // deposit to order
-        depositOrder(9, accounts[0]);
-        
-        // approve DepositOrder.sol allowance
-        approveDeposit(fromTokenAddress, fromTokenBalance, accounts[0]);
-        
-        // deposit to order
-        depositOrder(10, accounts[0]);
+
         
         
 
@@ -358,11 +408,21 @@ contract('CreateOrder_LINK_token0_fromToken_above', accounts => {
 
 
 
-        // check WETH balances
-        returnWethBalances(accounts[1], accounts[0]);
+
+
         
-        // check NOCT balances
-        returnNoctBalances(accounts[0], accounts[1], accounts[0]);
+        // check unclaimed NOCT balances
+        returnUnclaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
+        
+        // check claimed NOCT balances
+        returnClaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
+        
+        // check pending ETH Rewards
+        returnPendingEthRewardsBalance(accounts[0], accounts[1], accounts[0]);
+        
+        // check sNOCT balances
+        returnStakedNoctBalance(accounts[0], accounts[1], accounts[0]);
+        
   
   
   
@@ -372,12 +432,28 @@ contract('CreateOrder_LINK_token0_fromToken_above', accounts => {
         // perform swaps to manipulate pool price, as needed
         swap(WETH, LINK, toWei(100), accounts[3]);
         
-        // check WETH balances
-        returnWethBalances(accounts[1], accounts[0]);
+        // check unclaimed NOCT balances
+        returnUnclaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
         
-        // check NOCT balances
-        returnNoctBalances(accounts[0], accounts[1], accounts[0]);
+        // claim NOCT from Rewards.sol
+        claimNOCT(accounts[0], accounts[1]);
         
+        // check claimed NOCT balances
+        returnClaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
+        
+        // stake NOCT in NoctStaking.sol
+        stakeNOCT(accounts[0], accounts[1]);
+        
+        // return total staked NOCT
+        returnTotalStaked(accounts[0]);
+        
+        // check sNOCT balances
+        returnStakedNoctBalance(accounts[0], accounts[1], accounts[0]);
+        
+        // check pending ETH Rewards
+        returnPendingEthRewardsBalance(accounts[0], accounts[1], accounts[0]);
+
+
        
        
         // settle order 1 from accounts[1]
@@ -386,13 +462,29 @@ contract('CreateOrder_LINK_token0_fromToken_above', accounts => {
         // perform swaps to manipulate pool price, as needed
         swap(WETH, LINK, toWei(100), accounts[3]);
         
-        // check WETH balances
-        returnWethBalances(accounts[1], accounts[0]);
+        // check unclaimed NOCT balances
+        returnUnclaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
         
-        // check NOCT balances
-        returnNoctBalances(accounts[0], accounts[1], accounts[0]);
+        // claim NOCT from Rewards.sol
+        //claimNOCT(accounts[0], accounts[1]);
         
+        // check claimed NOCT balances
+        //returnClaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
         
+        // stake NOCT in NoctStaking.sol
+        //stakeNOCT(accounts[0], accounts[1]);
+        
+        // return total staked NOCT
+        //returnTotalStaked(accounts[0]);
+        
+        // check sNOCT balances
+        //returnStakedNoctBalance(accounts[0], accounts[1], accounts[0]);
+        
+        // check pending ETH Rewards
+        returnPendingEthRewardsBalance(accounts[0], accounts[1], accounts[0]);
+
+
+
         
         // settle order 1 from accounts[1]
         settleOrder(3, accounts[1]);
@@ -400,27 +492,59 @@ contract('CreateOrder_LINK_token0_fromToken_above', accounts => {
         // perform swaps to manipulate pool price, as needed
         swap(WETH, LINK, toWei(100), accounts[3]);
         
-        // check WETH balances
-        returnWethBalances(accounts[1], accounts[0]);
+        // check unclaimed NOCT balances
+        returnUnclaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
         
-        // check NOCT balances
-        returnNoctBalances(accounts[0], accounts[1], accounts[0]);
+        // claim NOCT from Rewards.sol
+        //claimNOCT(accounts[0], accounts[1]);
         
+        // check claimed NOCT balances
+        //returnClaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
         
+        // stake NOCT in NoctStaking.sol
+        //stakeNOCT(accounts[0], accounts[1]);
+        
+        // return total staked NOCT
+        //returnTotalStaked(accounts[0]);
+        
+        // check sNOCT balances
+        //returnStakedNoctBalance(accounts[0], accounts[1], accounts[0]);
+        
+        // check pending ETH Rewards
+        returnPendingEthRewardsBalance(accounts[0], accounts[1], accounts[0]);
+
+
+
         
         // settle order 1 from accounts[1]
         settleOrder(4, accounts[1]);
         
         // perform swaps to manipulate pool price, as needed
         swap(WETH, LINK, toWei(100), accounts[3]);
+        
+        // check unclaimed NOCT balances
+        returnUnclaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
+        
+        // claim NOCT from Rewards.sol
+        //claimNOCT(accounts[0], accounts[1]);
+        
+        // check claimed NOCT balances
+        //returnClaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
+        
+        // stake NOCT in NoctStaking.sol
+        //stakeNOCT(accounts[0], accounts[1]);
+        
+        // return total staked NOCT
+        //returnTotalStaked(accounts[0]);
+        
+        // check sNOCT balances
+        //returnStakedNoctBalance(accounts[0], accounts[1], accounts[0]);
+        
+        // check pending ETH Rewards
+        returnPendingEthRewardsBalance(accounts[0], accounts[1], accounts[0]);
 
-        // check WETH balances
-        returnWethBalances(accounts[1], accounts[0]);
-        
-        // check NOCT balances
-        returnNoctBalances(accounts[0], accounts[1], accounts[0]);
-        
-        
+
+
         
         // settle order 1 from accounts[1]
         settleOrder(5, accounts[1]);
@@ -428,83 +552,65 @@ contract('CreateOrder_LINK_token0_fromToken_above', accounts => {
         // perform swaps to manipulate pool price, as needed
         swap(WETH, LINK, toWei(100), accounts[3]);
         
-        // check WETH balances
-        returnWethBalances(accounts[1], accounts[0]);
+        // check unclaimed NOCT balances
+        returnUnclaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
         
-        // check NOCT balances
-        returnNoctBalances(accounts[0], accounts[1], accounts[0]);
+        // claim NOCT from Rewards.sol
+        //claimNOCT(accounts[0], accounts[1]);
         
-       
-       
+        // check claimed NOCT balances
+        //returnClaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
+        
+        // stake NOCT in NoctStaking.sol
+        //stakeNOCT(accounts[0], accounts[1]);
+        
+        // return total staked NOCT
+        //returnTotalStaked(accounts[0]);
+        
+        // check sNOCT balances
+        //returnStakedNoctBalance(accounts[0], accounts[1], accounts[0]);
+        
+        // check pending ETH Rewards
+        returnPendingEthRewardsBalance(accounts[0], accounts[1], accounts[0]);
+        
+        
+        
+     
         // settle order 1 from accounts[1]
         settleOrder(6, accounts[1]);
   
         // perform swaps to manipulate pool price, as needed
         swap(WETH, LINK, toWei(100), accounts[3]);
         
-        // check WETH balances
-        returnWethBalances(accounts[1], accounts[0]);
+        // check unclaimed NOCT balances
+        returnUnclaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
         
-        // check NOCT balances
-        returnNoctBalances(accounts[0], accounts[1], accounts[0]);
+        // claim NOCT from Rewards.sol
+        //claimNOCT(accounts[0], accounts[1]);
+        
+        // check claimed NOCT balances
+        //returnClaimedNoctBalances(accounts[0], accounts[1], accounts[0]);
+        
+        // stake NOCT in NoctStaking.sol
+        //stakeNOCT(accounts[0], accounts[1]);
+        
+        // return total staked NOCT
+        //returnTotalStaked(accounts[0]);
+        
+        // check sNOCT balances
+        //returnStakedNoctBalance(accounts[0], accounts[1], accounts[0]);
+        
+        // check pending ETH Rewards
+        returnPendingEthRewardsBalance(accounts[0], accounts[1], accounts[0]);
         
         
         
-        // settle order 1 from accounts[1]
-        settleOrder(7, accounts[1]);
 
-        // perform swaps to manipulate pool price, as needed
-        swap(WETH, LINK, toWei(100), accounts[3]);
         
-        // check WETH balances
-        returnWethBalances(accounts[1], accounts[0]);
+        // claim ETH Rewards from Staking Contract
+        claimETH(accounts[0], accounts[1]);
         
-        // check NOCT balances
-        returnNoctBalances(accounts[0], accounts[1], accounts[0]);
-        
-        
-        
-        // settle order 1 from accounts[1]
-        settleOrder(8, accounts[1]);
-        
-        // perform swaps to manipulate pool price, as needed
-        swap(WETH, LINK, toWei(100), accounts[3]);
 
-        // check WETH balances
-        returnWethBalances(accounts[1], accounts[0]);
-        
-        // check NOCT balances
-        returnNoctBalances(accounts[0], accounts[1], accounts[0]);
-        
-        
-        
-        // settle order 1 from accounts[1]
-        settleOrder(9, accounts[1]);
-
-        // perform swaps to manipulate pool price, as needed
-        swap(WETH, LINK, toWei(100), accounts[3]);
-        
-        // check WETH balances
-        returnWethBalances(accounts[1], accounts[0]);
-        
-        // check NOCT balances
-        returnNoctBalances(accounts[0], accounts[1], accounts[0]);
-        
-        
-        
-        // settle order 1 from accounts[1]
-        settleOrder(10, accounts[1]);
-        
-        // perform swaps to manipulate pool price, as needed
-        swap(WETH, LINK, toWei(100), accounts[3]);
-
-        // check WETH balances
-        returnWethBalances(accounts[1], accounts[0]);
-        
-        // check NOCT balances
-        returnNoctBalances(accounts[0], accounts[1], accounts[0]);
-        
-        
         
         
         // close order
@@ -525,18 +631,6 @@ contract('CreateOrder_LINK_token0_fromToken_above', accounts => {
         // close order
         closeOrder(6, accounts[0]);
         
-        // close order
-        closeOrder(7, accounts[0]);
-        
-        // close order
-        closeOrder(8, accounts[0]);
-        
-        // close order
-        closeOrder(9, accounts[0]);
-        
-        // close order
-        closeOrder(10, accounts[0]);
-
 
     });
 });
