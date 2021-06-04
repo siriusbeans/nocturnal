@@ -18,4 +18,5 @@ interface NoctStakingInterface {
     function bRSLC(address) external view returns (uint256);
     function pendingETHRewards(address) external view returns (uint256);
     function claimETHRewards() external; 
+    function updateTRG(uint256) external;
 }

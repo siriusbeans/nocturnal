@@ -16,5 +16,6 @@ interface OrderInterface {
     function mint(address, uint256) external;
     function getExactInputSingle(address, address, uint24, address, uint256, uint256) external returns (uint256);
     function orderTransfer(address, address, uint256) external;
+    //function orderPayment(address, uint256) external;
     function _setTokenURI(uint256, string memory) external;
 }
