@@ -57,7 +57,7 @@ module.exports = function(deployer, network, accounts) {
         });
     }).then(function() {
   
-            return deployer.deploy(NoctStaking, NocturnalFinance.address, { from: ownerAddress }).then(instance => {
+            return deployer.deploy(NoctStaking, NocturnalFinance.address, WETH, { from: ownerAddress }).then(instance => {
             NoctStakingInstance = instance;
             
             return deployer.deploy(CreateOrder, NocturnalFinance.address, WETH, { from: ownerAddress });
