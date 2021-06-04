@@ -18,6 +18,7 @@ import {NocturnalFinanceInterface} from "./Interfaces/NocturnalFinanceInterface.
 import {OrderInterface} from "./Interfaces/OrderInterface.sol";
 import {SettleOrderInterface} from "./Interfaces/SettleOrderInterface.sol";
 import {CreateOrderInterface} from "./Interfaces/CreateOrderInterface.sol";
+import {NoctStakingInterface} from "./Interfaces/NoctStakingInterface.sol";
 
 contract SettleOrderTransfer is SettleOrderTransferInterface {
     using SafeMath for uint256;
@@ -36,7 +37,10 @@ contract SettleOrderTransfer is SettleOrderTransferInterface {
         // calculate fee prior to swap from WETH
         uint256 dFee = (params.tokenBalance).mul(nocturnalFinance.platformRate()).div(10000);
         OrderInterface(params.orderAddress).orderTransfer(params.fromTokenAddress, _settler, params.settlementGratuity); 
+        //OrderInterface(params.orderAddress).orderPayment(_settler, params.settlementGratuity); 
         OrderInterface(params.orderAddress).orderTransfer(params.fromTokenAddress, nocturnalFinance._contract(0), dFee);
+        NoctStakingInterface(nocturnalFinance._contract(0)).updateTRG(dFee);
+        
         uint256 tokenBalance = IERC20(params.fromTokenAddress).balanceOf(params.orderAddress); 
         if (IUniswapV3Pool(params.poolAddress).token0() == params.fromTokenAddress) {
             amountOut = OrderInterface(params.orderAddress).getExactInputSingle(
@@ -73,7 +77,7 @@ contract SettleOrderTransfer is SettleOrderTransferInterface {
                 params.amountOutMin,
                 params.tokenBalance);
         } else { 
-           amountOut = OrderInterface(params.orderAddress).getExactInputSingle(
+           amountOut = OrderInterface(params.orderAddress).getExactInputSingle(     
                 IUniswapV3Pool(params.poolAddress).token1(),
                 IUniswapV3Pool(params.poolAddress).token0(), 
                 IUniswapV3Pool(params.poolAddress).fee(), 
@@ -85,7 +89,11 @@ contract SettleOrderTransfer is SettleOrderTransferInterface {
         amountOut = IERC20(params.toTokenAddress).balanceOf(params.orderAddress);
         uint256 dFee = (amountOut).mul(nocturnalFinance.platformRate()).div(10000);
         OrderInterface(params.orderAddress).orderTransfer(params.toTokenAddress, _settler, params.settlementGratuity); 
+        //OrderInterface(params.orderAddress).orderPayment(_settler, params.settlementGratuity); 
         OrderInterface(params.orderAddress).orderTransfer(params.toTokenAddress, nocturnalFinance._contract(0), dFee);
+        NoctStakingInterface(nocturnalFinance._contract(0)).updateTRG(dFee);
+
+        
         // set Order toTokenBalance and settledFlag attributes
         amountOut = IERC20(params.toTokenAddress).balanceOf(params.orderAddress);
         CreateOrderInterface(nocturnalFinance._contract(1)).setAttributes(_orderID, amountOut);  
