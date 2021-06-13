@@ -45,24 +45,30 @@ module.exports = function(deployer, network, accounts) {
     let TokenMinterInstance;
     let TokenSwapperInstance;
 
+    // need to deploy each contract one at a time for testing (in separate transaction)
+    // all contracts' bytecode is less than 24Kb size limit
+    // but during migration, max block gas limit is exceeded
+    // i suspect that this script is deploying multiple contracts in same transaction
     deployer.then(function() {
-        return deployer.deploy(NocturnalFinance, { from: ownerAddress }).then(instance => {
+            return deployer.deploy(NocturnalFinance, { from: ownerAddress });
+        }).then(instance => {
             NocturnalFinanceInstance = instance;
             
-        return deployer.deploy(TokenMinter, LINK, WETH, { from: ownerAddress }).then(instance => {
+            return deployer.deploy(TokenMinter, LINK, WETH, { from: ownerAddress });
+        }).then(instance => {
             TokenMinterInstance = instance;
             
-        return deployer.deploy(TokenSwapper, { from: ownerAddress }).then(instance => {
+            return deployer.deploy(TokenSwapper, { from: ownerAddress });
+        }).then(instance => {
             TokenSwapperInstance = instance;
-        });
-    }).then(function() {
-  
-            return deployer.deploy(NoctStaking, NocturnalFinance.address, WETH, { from: ownerAddress }).then(instance => {
-            NoctStakingInstance = instance;
-            
-            return deployer.deploy(CreateOrder, NocturnalFinance.address, WETH, { from: ownerAddress });
+    
+            return deployer.deploy(CreateOrder, NocturnalFinance.address, WETH, { from: ownerAddress , gas: 4600000 });
         }).then(instance => {
             CreateOrderInstance = instance;
+  
+            return deployer.deploy(NoctStaking, NocturnalFinance.address, WETH, { from: ownerAddress });
+        }).then(instance => {
+            NoctStakingInstance = instance;
             
             return deployer.deploy(DepositOrder, NocturnalFinance.address, WETH, { from: ownerAddress });
         }).then(instance => {
@@ -92,7 +98,7 @@ module.exports = function(deployer, network, accounts) {
         }).then(instance => {
             RewardsInstance = instance; 
                
-            return deployer.deploy(Treasury, NocturnalFinance.address, rewardsSupply, initialSupply, { from: ownerAddress });
+            return deployer.deploy(Treasury, NocturnalFinance.address, { from: ownerAddress });
         }).then(instance => {
             TreasuryInstance = instance;  
             
@@ -144,12 +150,6 @@ module.exports = function(deployer, network, accounts) {
         return NocturnalFinanceInstance.initNocturnal(0, NoctStakingInstance.address);    
     }).then(function() {
     
-        return NocturnalFinanceInstance.rewardsApproval();
-    }).then(function() {
-    
-        return NocturnalFinanceInstance.treasuryApproval(); 
-    }).then(function() {
-    
         return NocturnalFinanceInstance.setPlatformRate(pRate);
     }).then(function() {
 
@@ -161,4 +161,4 @@ module.exports = function(deployer, network, accounts) {
 
         return NocturnalFinanceInstance.setOrderURI(uri); 
     });
-});});};
+});};
