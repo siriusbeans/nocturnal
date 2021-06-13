@@ -1,0 +1,792 @@
+{
+  "contractName": "CloseOrderInterface",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "orderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "poolAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "fromTokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "toTokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tokenBalance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "depositedFlag",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "settledFlag",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "closedFlag",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct CloseOrderInterface.CloseParams",
+          "name": "params",
+          "type": "tuple"
+        }
+      ],
+      "name": "closeOrder",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"orderAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"fromTokenAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"toTokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenBalance\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"depositedFlag\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"settledFlag\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"closedFlag\",\"type\":\"bool\"}],\"internalType\":\"struct CloseOrderInterface.CloseParams\",\"name\":\"params\",\"type\":\"tuple\"}],\"name\":\"closeOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/knott/Desktop/nocturnal/contracts/Interfaces/CloseOrderInterface.sol\":\"CloseOrderInterface\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":1000000},\"remappings\":[]},\"sources\":{\"/Users/knott/Desktop/nocturnal/contracts/Interfaces/CloseOrderInterface.sol\":{\"keccak256\":\"0xa53727dcb9d69565e5e9df67fde84a2cd2830858fe734d72d4ce3a262c3281cd\",\"urls\":[\"bzz-raw://6ce1ccef3393d7fe70c127828d2bfaab31b64f6d09e02b57113d1271555ef4da\",\"dweb:/ipfs/QmZ25K3wUTGZNRRhuVZQQNvZGH3MPTM8tDRbP58JjH2acp\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "/*                              $$\\                                             $$\\                                                         \n                                $$ |                                            $$ |                                                  \n$$$$$$$\\   $$$$$$\\   $$$$$$$\\ $$$$$$\\   $$\\   $$\\  $$$$$$\\  $$$$$$$\\   $$$$$$\\  $$ |     \n$$  __$$\\ $$  __$$\\ $$  _____|\\_$$  _|  $$ |  $$ |$$  __$$\\ $$  __$$\\  \\____$$\\ $$ |    \n$$ |  $$ |$$ /  $$ |$$ /        $$ |    $$ |  $$ |$$ |  \\__|$$ |  $$ | $$$$$$$ |$$ |     \n$$ |  $$ |$$ |  $$ |$$ |        $$ |$$\\ $$ |  $$ |$$ |      $$ |  $$ |$$  __$$ |$$ |     \n$$ |  $$ |\\$$$$$$  |\\$$$$$$$\\   \\$$$$  |\\$$$$$$  |$$ |      $$ |  $$ |\\$$$$$$$ |$$ |      \n\\__|  \\__| \\______/  \\_______|   \\____/  \\______/ \\__|      \\__|  \\__| \\_______|\\__|     \n*/\n\npragma solidity ^0.8.0;\n\ninterface CloseOrderInterface {\n\n    struct CloseParams {\n        address orderAddress;\n        address poolAddress;\n        address fromTokenAddress;\n        address toTokenAddress;\n        uint256 tokenBalance;\n        bool depositedFlag;\n        bool settledFlag;\n        bool closedFlag;\n    }\n\n    function closeOrder(uint256, CloseParams calldata params) external;\n\n}\n",
+  "sourcePath": "/Users/knott/Desktop/nocturnal/contracts/Interfaces/CloseOrderInterface.sol",
+  "ast": {
+    "absolutePath": "/Users/knott/Desktop/nocturnal/contracts/Interfaces/CloseOrderInterface.sol",
+    "exportedSymbols": {
+      "CloseOrderInterface": [
+        886
+      ]
+    },
+    "id": 887,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 860,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "820:23:4"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 886,
+        "linearizedBaseContracts": [
+          886
+        ],
+        "name": "CloseOrderInterface",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "CloseOrderInterface.CloseParams",
+            "id": 877,
+            "members": [
+              {
+                "constant": false,
+                "id": 862,
+                "mutability": "mutable",
+                "name": "orderAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "911:20:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 861,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "911:7:4",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 864,
+                "mutability": "mutable",
+                "name": "poolAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "941:19:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 863,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "941:7:4",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 866,
+                "mutability": "mutable",
+                "name": "fromTokenAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "970:24:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 865,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "970:7:4",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 868,
+                "mutability": "mutable",
+                "name": "toTokenAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "1004:22:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 867,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1004:7:4",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 870,
+                "mutability": "mutable",
+                "name": "tokenBalance",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "1036:20:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 869,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1036:7:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 872,
+                "mutability": "mutable",
+                "name": "depositedFlag",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "1066:18:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 871,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1066:4:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 874,
+                "mutability": "mutable",
+                "name": "settledFlag",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "1094:16:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 873,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1094:4:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 876,
+                "mutability": "mutable",
+                "name": "closedFlag",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "1120:15:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 875,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1120:4:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "name": "CloseParams",
+            "nodeType": "StructDefinition",
+            "scope": 886,
+            "src": "882:260:4",
+            "visibility": "public"
+          },
+          {
+            "functionSelector": "b08b1f7c",
+            "id": 885,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "closeOrder",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 883,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 879,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 885,
+                  "src": "1168:7:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 878,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1168:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 882,
+                  "mutability": "mutable",
+                  "name": "params",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 885,
+                  "src": "1177:27:4",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_CloseParams_$877_calldata_ptr",
+                    "typeString": "struct CloseOrderInterface.CloseParams"
+                  },
+                  "typeName": {
+                    "id": 881,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 880,
+                      "name": "CloseParams",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 877,
+                      "src": "1177:11:4"
+                    },
+                    "referencedDeclaration": 877,
+                    "src": "1177:11:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_CloseParams_$877_storage_ptr",
+                      "typeString": "struct CloseOrderInterface.CloseParams"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1167:38:4"
+            },
+            "returnParameters": {
+              "id": 884,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1214:0:4"
+            },
+            "scope": 886,
+            "src": "1148:67:4",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 887,
+        "src": "845:373:4"
+      }
+    ],
+    "src": "820:399:4"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/knott/Desktop/nocturnal/contracts/Interfaces/CloseOrderInterface.sol",
+    "exportedSymbols": {
+      "CloseOrderInterface": [
+        886
+      ]
+    },
+    "id": 887,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 860,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "820:23:4"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 886,
+        "linearizedBaseContracts": [
+          886
+        ],
+        "name": "CloseOrderInterface",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "CloseOrderInterface.CloseParams",
+            "id": 877,
+            "members": [
+              {
+                "constant": false,
+                "id": 862,
+                "mutability": "mutable",
+                "name": "orderAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "911:20:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 861,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "911:7:4",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 864,
+                "mutability": "mutable",
+                "name": "poolAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "941:19:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 863,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "941:7:4",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 866,
+                "mutability": "mutable",
+                "name": "fromTokenAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "970:24:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 865,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "970:7:4",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 868,
+                "mutability": "mutable",
+                "name": "toTokenAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "1004:22:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 867,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1004:7:4",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 870,
+                "mutability": "mutable",
+                "name": "tokenBalance",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "1036:20:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 869,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1036:7:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 872,
+                "mutability": "mutable",
+                "name": "depositedFlag",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "1066:18:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 871,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1066:4:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 874,
+                "mutability": "mutable",
+                "name": "settledFlag",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "1094:16:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 873,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1094:4:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 876,
+                "mutability": "mutable",
+                "name": "closedFlag",
+                "nodeType": "VariableDeclaration",
+                "scope": 877,
+                "src": "1120:15:4",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 875,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1120:4:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "name": "CloseParams",
+            "nodeType": "StructDefinition",
+            "scope": 886,
+            "src": "882:260:4",
+            "visibility": "public"
+          },
+          {
+            "functionSelector": "b08b1f7c",
+            "id": 885,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "closeOrder",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 883,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 879,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 885,
+                  "src": "1168:7:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 878,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1168:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 882,
+                  "mutability": "mutable",
+                  "name": "params",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 885,
+                  "src": "1177:27:4",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_CloseParams_$877_calldata_ptr",
+                    "typeString": "struct CloseOrderInterface.CloseParams"
+                  },
+                  "typeName": {
+                    "id": 881,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 880,
+                      "name": "CloseParams",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 877,
+                      "src": "1177:11:4"
+                    },
+                    "referencedDeclaration": 877,
+                    "src": "1177:11:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_CloseParams_$877_storage_ptr",
+                      "typeString": "struct CloseOrderInterface.CloseParams"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1167:38:4"
+            },
+            "returnParameters": {
+              "id": 884,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1214:0:4"
+            },
+            "scope": 886,
+            "src": "1148:67:4",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 887,
+        "src": "845:373:4"
+      }
+    ],
+    "src": "820:399:4"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.0+commit.c7dfd78e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.3",
+  "updatedAt": "2021-06-13T20:21:24.442Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
