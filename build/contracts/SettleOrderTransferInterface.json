@@ -1,0 +1,1262 @@
+{
+  "contractName": "SettleOrderTransferInterface",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "orderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "poolAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "fromTokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "toTokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tokenBalance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountOutMin",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "settlementGratuity",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "depositedFlag",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct SettleOrderTransferInterface.SettleTransferParams",
+          "name": "params",
+          "type": "tuple"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "fromWETHSettle",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "orderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "poolAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "fromTokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "toTokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tokenBalance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountOutMin",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "settlementGratuity",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "depositedFlag",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct SettleOrderTransferInterface.SettleTransferParams",
+          "name": "params",
+          "type": "tuple"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "toWETHSettle",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"orderAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"fromTokenAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"toTokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenBalance\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountOutMin\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"settlementGratuity\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"depositedFlag\",\"type\":\"bool\"}],\"internalType\":\"struct SettleOrderTransferInterface.SettleTransferParams\",\"name\":\"params\",\"type\":\"tuple\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"fromWETHSettle\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"orderAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"fromTokenAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"toTokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenBalance\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amountOutMin\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"settlementGratuity\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"depositedFlag\",\"type\":\"bool\"}],\"internalType\":\"struct SettleOrderTransferInterface.SettleTransferParams\",\"name\":\"params\",\"type\":\"tuple\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"toWETHSettle\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/knott/Desktop/nocturnal/contracts/Interfaces/SettleOrderTransferInterface.sol\":\"SettleOrderTransferInterface\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":1000000},\"remappings\":[]},\"sources\":{\"/Users/knott/Desktop/nocturnal/contracts/Interfaces/SettleOrderTransferInterface.sol\":{\"keccak256\":\"0xedd561ca884e3d01f1cfc442a3b4481891bd31b265478362bc656490ee86ee38\",\"urls\":[\"bzz-raw://0a26eace7eb019d025a5b98391bb58800c270f58df6cea6845e34c7116c3b2c9\",\"dweb:/ipfs/QmYcAjyf6HtuQQxwitwy5qFkFjvNRc9tNDBs9DzD26e5hV\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "/*                              $$\\                                             $$\\                                                         \n                                $$ |                                            $$ |                                                  \n$$$$$$$\\   $$$$$$\\   $$$$$$$\\ $$$$$$\\   $$\\   $$\\  $$$$$$\\  $$$$$$$\\   $$$$$$\\  $$ |     \n$$  __$$\\ $$  __$$\\ $$  _____|\\_$$  _|  $$ |  $$ |$$  __$$\\ $$  __$$\\  \\____$$\\ $$ |    \n$$ |  $$ |$$ /  $$ |$$ /        $$ |    $$ |  $$ |$$ |  \\__|$$ |  $$ | $$$$$$$ |$$ |     \n$$ |  $$ |$$ |  $$ |$$ |        $$ |$$\\ $$ |  $$ |$$ |      $$ |  $$ |$$  __$$ |$$ |     \n$$ |  $$ |\\$$$$$$  |\\$$$$$$$\\   \\$$$$  |\\$$$$$$  |$$ |      $$ |  $$ |\\$$$$$$$ |$$ |      \n\\__|  \\__| \\______/  \\_______|   \\____/  \\______/ \\__|      \\__|  \\__| \\_______|\\__|     \n*/\n\npragma solidity ^0.8.0;\n\ninterface SettleOrderTransferInterface {\n\n    struct SettleTransferParams {\n        address orderAddress;\n        address poolAddress;\n        address fromTokenAddress;\n        address toTokenAddress;\n        uint256 tokenBalance;\n        uint256 amountOutMin;\n        uint256 settlementGratuity;\n        bool depositedFlag;\n    }\n\n    function fromWETHSettle(uint256, SettleTransferParams calldata params, address) external returns (uint256);\n    function toWETHSettle(uint256, SettleTransferParams calldata params, address) external returns (uint256);\n}\n",
+  "sourcePath": "/Users/knott/Desktop/nocturnal/contracts/Interfaces/SettleOrderTransferInterface.sol",
+  "ast": {
+    "absolutePath": "/Users/knott/Desktop/nocturnal/contracts/Interfaces/SettleOrderTransferInterface.sol",
+    "exportedSymbols": {
+      "SettleOrderTransferInterface": [
+        1428
+      ]
+    },
+    "id": 1429,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1386,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "820:23:15"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 1428,
+        "linearizedBaseContracts": [
+          1428
+        ],
+        "name": "SettleOrderTransferInterface",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "SettleOrderTransferInterface.SettleTransferParams",
+            "id": 1403,
+            "members": [
+              {
+                "constant": false,
+                "id": 1388,
+                "mutability": "mutable",
+                "name": "orderAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "929:20:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1387,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "929:7:15",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1390,
+                "mutability": "mutable",
+                "name": "poolAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "959:19:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1389,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "959:7:15",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1392,
+                "mutability": "mutable",
+                "name": "fromTokenAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "988:24:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1391,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "988:7:15",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1394,
+                "mutability": "mutable",
+                "name": "toTokenAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "1022:22:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1393,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1022:7:15",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1396,
+                "mutability": "mutable",
+                "name": "tokenBalance",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "1054:20:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 1395,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1054:7:15",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1398,
+                "mutability": "mutable",
+                "name": "amountOutMin",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "1084:20:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 1397,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1084:7:15",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1400,
+                "mutability": "mutable",
+                "name": "settlementGratuity",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "1114:26:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 1399,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1114:7:15",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1402,
+                "mutability": "mutable",
+                "name": "depositedFlag",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "1150:18:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 1401,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1150:4:15",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "name": "SettleTransferParams",
+            "nodeType": "StructDefinition",
+            "scope": 1428,
+            "src": "891:284:15",
+            "visibility": "public"
+          },
+          {
+            "functionSelector": "fa43bee6",
+            "id": 1415,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "fromWETHSettle",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1411,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1405,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1415,
+                  "src": "1205:7:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1404,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1205:7:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1408,
+                  "mutability": "mutable",
+                  "name": "params",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1415,
+                  "src": "1214:36:15",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_SettleTransferParams_$1403_calldata_ptr",
+                    "typeString": "struct SettleOrderTransferInterface.SettleTransferParams"
+                  },
+                  "typeName": {
+                    "id": 1407,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 1406,
+                      "name": "SettleTransferParams",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 1403,
+                      "src": "1214:20:15"
+                    },
+                    "referencedDeclaration": 1403,
+                    "src": "1214:20:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_SettleTransferParams_$1403_storage_ptr",
+                      "typeString": "struct SettleOrderTransferInterface.SettleTransferParams"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1410,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1415,
+                  "src": "1252:7:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1409,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1252:7:15",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1204:56:15"
+            },
+            "returnParameters": {
+              "id": 1414,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1413,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1415,
+                  "src": "1279:7:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1412,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1279:7:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1278:9:15"
+            },
+            "scope": 1428,
+            "src": "1181:107:15",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "6942f37c",
+            "id": 1427,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "toWETHSettle",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1423,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1417,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1427,
+                  "src": "1315:7:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1416,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1315:7:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1420,
+                  "mutability": "mutable",
+                  "name": "params",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1427,
+                  "src": "1324:36:15",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_SettleTransferParams_$1403_calldata_ptr",
+                    "typeString": "struct SettleOrderTransferInterface.SettleTransferParams"
+                  },
+                  "typeName": {
+                    "id": 1419,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 1418,
+                      "name": "SettleTransferParams",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 1403,
+                      "src": "1324:20:15"
+                    },
+                    "referencedDeclaration": 1403,
+                    "src": "1324:20:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_SettleTransferParams_$1403_storage_ptr",
+                      "typeString": "struct SettleOrderTransferInterface.SettleTransferParams"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1422,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1427,
+                  "src": "1362:7:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1421,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1362:7:15",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1314:56:15"
+            },
+            "returnParameters": {
+              "id": 1426,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1425,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1427,
+                  "src": "1389:7:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1424,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1389:7:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1388:9:15"
+            },
+            "scope": 1428,
+            "src": "1293:105:15",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 1429,
+        "src": "845:555:15"
+      }
+    ],
+    "src": "820:581:15"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/knott/Desktop/nocturnal/contracts/Interfaces/SettleOrderTransferInterface.sol",
+    "exportedSymbols": {
+      "SettleOrderTransferInterface": [
+        1428
+      ]
+    },
+    "id": 1429,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1386,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "820:23:15"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 1428,
+        "linearizedBaseContracts": [
+          1428
+        ],
+        "name": "SettleOrderTransferInterface",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "SettleOrderTransferInterface.SettleTransferParams",
+            "id": 1403,
+            "members": [
+              {
+                "constant": false,
+                "id": 1388,
+                "mutability": "mutable",
+                "name": "orderAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "929:20:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1387,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "929:7:15",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1390,
+                "mutability": "mutable",
+                "name": "poolAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "959:19:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1389,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "959:7:15",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1392,
+                "mutability": "mutable",
+                "name": "fromTokenAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "988:24:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1391,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "988:7:15",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1394,
+                "mutability": "mutable",
+                "name": "toTokenAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "1022:22:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1393,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1022:7:15",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1396,
+                "mutability": "mutable",
+                "name": "tokenBalance",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "1054:20:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 1395,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1054:7:15",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1398,
+                "mutability": "mutable",
+                "name": "amountOutMin",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "1084:20:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 1397,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1084:7:15",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1400,
+                "mutability": "mutable",
+                "name": "settlementGratuity",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "1114:26:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 1399,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1114:7:15",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1402,
+                "mutability": "mutable",
+                "name": "depositedFlag",
+                "nodeType": "VariableDeclaration",
+                "scope": 1403,
+                "src": "1150:18:15",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 1401,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1150:4:15",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "name": "SettleTransferParams",
+            "nodeType": "StructDefinition",
+            "scope": 1428,
+            "src": "891:284:15",
+            "visibility": "public"
+          },
+          {
+            "functionSelector": "fa43bee6",
+            "id": 1415,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "fromWETHSettle",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1411,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1405,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1415,
+                  "src": "1205:7:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1404,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1205:7:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1408,
+                  "mutability": "mutable",
+                  "name": "params",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1415,
+                  "src": "1214:36:15",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_SettleTransferParams_$1403_calldata_ptr",
+                    "typeString": "struct SettleOrderTransferInterface.SettleTransferParams"
+                  },
+                  "typeName": {
+                    "id": 1407,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 1406,
+                      "name": "SettleTransferParams",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 1403,
+                      "src": "1214:20:15"
+                    },
+                    "referencedDeclaration": 1403,
+                    "src": "1214:20:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_SettleTransferParams_$1403_storage_ptr",
+                      "typeString": "struct SettleOrderTransferInterface.SettleTransferParams"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1410,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1415,
+                  "src": "1252:7:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1409,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1252:7:15",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1204:56:15"
+            },
+            "returnParameters": {
+              "id": 1414,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1413,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1415,
+                  "src": "1279:7:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1412,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1279:7:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1278:9:15"
+            },
+            "scope": 1428,
+            "src": "1181:107:15",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "6942f37c",
+            "id": 1427,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "toWETHSettle",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1423,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1417,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1427,
+                  "src": "1315:7:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1416,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1315:7:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1420,
+                  "mutability": "mutable",
+                  "name": "params",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1427,
+                  "src": "1324:36:15",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_SettleTransferParams_$1403_calldata_ptr",
+                    "typeString": "struct SettleOrderTransferInterface.SettleTransferParams"
+                  },
+                  "typeName": {
+                    "id": 1419,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 1418,
+                      "name": "SettleTransferParams",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 1403,
+                      "src": "1324:20:15"
+                    },
+                    "referencedDeclaration": 1403,
+                    "src": "1324:20:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_SettleTransferParams_$1403_storage_ptr",
+                      "typeString": "struct SettleOrderTransferInterface.SettleTransferParams"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1422,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1427,
+                  "src": "1362:7:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1421,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1362:7:15",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1314:56:15"
+            },
+            "returnParameters": {
+              "id": 1426,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1425,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1427,
+                  "src": "1389:7:15",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1424,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1389:7:15",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1388:9:15"
+            },
+            "scope": 1428,
+            "src": "1293:105:15",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 1429,
+        "src": "845:555:15"
+      }
+    ],
+    "src": "820:581:15"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.0+commit.c7dfd78e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.3",
+  "updatedAt": "2021-06-13T20:21:24.462Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

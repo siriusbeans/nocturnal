@@ -123,7 +123,7 @@ contract CreateOrder is CreateOrderInterface {
     
     function orderAttributes(uint256 _orderID) 
         public
-        view override
+        view 
         returns (
             address orderAddress,
             address poolAddress,

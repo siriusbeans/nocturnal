@@ -1,0 +1,735 @@
+{
+  "contractName": "DepositOrderInterface",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "orderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "poolAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "fromTokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tokenBalance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "depositedFlag",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "closedFlag",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct DepositOrderInterface.DepositParams",
+          "name": "params",
+          "type": "tuple"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "depositOrder",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"address\",\"name\":\"orderAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"fromTokenAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenBalance\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"depositedFlag\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"closedFlag\",\"type\":\"bool\"}],\"internalType\":\"struct DepositOrderInterface.DepositParams\",\"name\":\"params\",\"type\":\"tuple\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"depositOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/knott/Desktop/nocturnal/contracts/Interfaces/DepositOrderInterface.sol\":\"DepositOrderInterface\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":1000000},\"remappings\":[]},\"sources\":{\"/Users/knott/Desktop/nocturnal/contracts/Interfaces/DepositOrderInterface.sol\":{\"keccak256\":\"0xf92dd45d135f663739a9fde0ba8202604a8776d87624a572960bcbc955d9bb4e\",\"urls\":[\"bzz-raw://353a6e2c9cb11a3292ff0ed6b97717fe5b3e49949fef1be69ed933d84be0e70b\",\"dweb:/ipfs/QmZnAdUdkahw2RRDMr1AdR3Ez4hJw7oo74umHf8GPvLogX\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "/*                              $$\\                                             $$\\                                                         \n                                $$ |                                            $$ |                                                  \n$$$$$$$\\   $$$$$$\\   $$$$$$$\\ $$$$$$\\   $$\\   $$\\  $$$$$$\\  $$$$$$$\\   $$$$$$\\  $$ |     \n$$  __$$\\ $$  __$$\\ $$  _____|\\_$$  _|  $$ |  $$ |$$  __$$\\ $$  __$$\\  \\____$$\\ $$ |    \n$$ |  $$ |$$ /  $$ |$$ /        $$ |    $$ |  $$ |$$ |  \\__|$$ |  $$ | $$$$$$$ |$$ |     \n$$ |  $$ |$$ |  $$ |$$ |        $$ |$$\\ $$ |  $$ |$$ |      $$ |  $$ |$$  __$$ |$$ |     \n$$ |  $$ |\\$$$$$$  |\\$$$$$$$\\   \\$$$$  |\\$$$$$$  |$$ |      $$ |  $$ |\\$$$$$$$ |$$ |      \n\\__|  \\__| \\______/  \\_______|   \\____/  \\______/ \\__|      \\__|  \\__| \\_______|\\__|     \n*/\n\npragma solidity ^0.8.0;\n\ninterface DepositOrderInterface {\n\n    struct DepositParams {\n        address orderAddress;\n        address poolAddress;\n        address fromTokenAddress;\n        uint256 tokenBalance;\n        bool depositedFlag;\n        bool closedFlag;\n    }\n    \n    function depositOrder(uint256, DepositParams calldata params, address) external;\n\n}\n",
+  "sourcePath": "/Users/knott/Desktop/nocturnal/contracts/Interfaces/DepositOrderInterface.sol",
+  "ast": {
+    "absolutePath": "/Users/knott/Desktop/nocturnal/contracts/Interfaces/DepositOrderInterface.sol",
+    "exportedSymbols": {
+      "DepositOrderInterface": [
+        1039
+      ]
+    },
+    "id": 1040,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1015,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "820:23:6"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 1039,
+        "linearizedBaseContracts": [
+          1039
+        ],
+        "name": "DepositOrderInterface",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "DepositOrderInterface.DepositParams",
+            "id": 1028,
+            "members": [
+              {
+                "constant": false,
+                "id": 1017,
+                "mutability": "mutable",
+                "name": "orderAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1028,
+                "src": "915:20:6",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1016,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "915:7:6",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1019,
+                "mutability": "mutable",
+                "name": "poolAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1028,
+                "src": "945:19:6",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1018,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "945:7:6",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1021,
+                "mutability": "mutable",
+                "name": "fromTokenAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1028,
+                "src": "974:24:6",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1020,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "974:7:6",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1023,
+                "mutability": "mutable",
+                "name": "tokenBalance",
+                "nodeType": "VariableDeclaration",
+                "scope": 1028,
+                "src": "1008:20:6",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 1022,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1008:7:6",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1025,
+                "mutability": "mutable",
+                "name": "depositedFlag",
+                "nodeType": "VariableDeclaration",
+                "scope": 1028,
+                "src": "1038:18:6",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 1024,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1038:4:6",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1027,
+                "mutability": "mutable",
+                "name": "closedFlag",
+                "nodeType": "VariableDeclaration",
+                "scope": 1028,
+                "src": "1066:15:6",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 1026,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1066:4:6",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "name": "DepositParams",
+            "nodeType": "StructDefinition",
+            "scope": 1039,
+            "src": "884:204:6",
+            "visibility": "public"
+          },
+          {
+            "functionSelector": "29288032",
+            "id": 1038,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "depositOrder",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1036,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1030,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1038,
+                  "src": "1120:7:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1029,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1120:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1033,
+                  "mutability": "mutable",
+                  "name": "params",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1038,
+                  "src": "1129:29:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_DepositParams_$1028_calldata_ptr",
+                    "typeString": "struct DepositOrderInterface.DepositParams"
+                  },
+                  "typeName": {
+                    "id": 1032,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 1031,
+                      "name": "DepositParams",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 1028,
+                      "src": "1129:13:6"
+                    },
+                    "referencedDeclaration": 1028,
+                    "src": "1129:13:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_DepositParams_$1028_storage_ptr",
+                      "typeString": "struct DepositOrderInterface.DepositParams"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1035,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1038,
+                  "src": "1160:7:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1034,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1160:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1119:49:6"
+            },
+            "returnParameters": {
+              "id": 1037,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1177:0:6"
+            },
+            "scope": 1039,
+            "src": "1098:80:6",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 1040,
+        "src": "845:336:6"
+      }
+    ],
+    "src": "820:362:6"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/knott/Desktop/nocturnal/contracts/Interfaces/DepositOrderInterface.sol",
+    "exportedSymbols": {
+      "DepositOrderInterface": [
+        1039
+      ]
+    },
+    "id": 1040,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1015,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "820:23:6"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 1039,
+        "linearizedBaseContracts": [
+          1039
+        ],
+        "name": "DepositOrderInterface",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "DepositOrderInterface.DepositParams",
+            "id": 1028,
+            "members": [
+              {
+                "constant": false,
+                "id": 1017,
+                "mutability": "mutable",
+                "name": "orderAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1028,
+                "src": "915:20:6",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1016,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "915:7:6",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1019,
+                "mutability": "mutable",
+                "name": "poolAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1028,
+                "src": "945:19:6",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1018,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "945:7:6",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1021,
+                "mutability": "mutable",
+                "name": "fromTokenAddress",
+                "nodeType": "VariableDeclaration",
+                "scope": 1028,
+                "src": "974:24:6",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                },
+                "typeName": {
+                  "id": 1020,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "974:7:6",
+                  "stateMutability": "nonpayable",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1023,
+                "mutability": "mutable",
+                "name": "tokenBalance",
+                "nodeType": "VariableDeclaration",
+                "scope": 1028,
+                "src": "1008:20:6",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 1022,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1008:7:6",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1025,
+                "mutability": "mutable",
+                "name": "depositedFlag",
+                "nodeType": "VariableDeclaration",
+                "scope": 1028,
+                "src": "1038:18:6",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 1024,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1038:4:6",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 1027,
+                "mutability": "mutable",
+                "name": "closedFlag",
+                "nodeType": "VariableDeclaration",
+                "scope": 1028,
+                "src": "1066:15:6",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                },
+                "typeName": {
+                  "id": 1026,
+                  "name": "bool",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1066:4:6",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  }
+                },
+                "visibility": "internal"
+              }
+            ],
+            "name": "DepositParams",
+            "nodeType": "StructDefinition",
+            "scope": 1039,
+            "src": "884:204:6",
+            "visibility": "public"
+          },
+          {
+            "functionSelector": "29288032",
+            "id": 1038,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "depositOrder",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1036,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1030,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1038,
+                  "src": "1120:7:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1029,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1120:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1033,
+                  "mutability": "mutable",
+                  "name": "params",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1038,
+                  "src": "1129:29:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_DepositParams_$1028_calldata_ptr",
+                    "typeString": "struct DepositOrderInterface.DepositParams"
+                  },
+                  "typeName": {
+                    "id": 1032,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 1031,
+                      "name": "DepositParams",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 1028,
+                      "src": "1129:13:6"
+                    },
+                    "referencedDeclaration": 1028,
+                    "src": "1129:13:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_DepositParams_$1028_storage_ptr",
+                      "typeString": "struct DepositOrderInterface.DepositParams"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1035,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1038,
+                  "src": "1160:7:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1034,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1160:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1119:49:6"
+            },
+            "returnParameters": {
+              "id": 1037,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1177:0:6"
+            },
+            "scope": 1039,
+            "src": "1098:80:6",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 1040,
+        "src": "845:336:6"
+      }
+    ],
+    "src": "820:362:6"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.0+commit.c7dfd78e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.3",
+  "updatedAt": "2021-06-13T20:21:24.446Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
