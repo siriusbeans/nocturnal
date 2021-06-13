@@ -73,6 +73,21 @@ interface CreateOrderInterface {
         bool closedFlag;
     }
     
+    function orderAttributes(uint256) 
+        external 
+        view 
+        returns (
+            address,
+            address,
+            address,
+            address,
+            uint256,
+            uint256,
+            bool,
+            uint256,
+            bool,
+            bool);
+    
     function createOrder(CreateParams calldata params) external;
     function depositOrder(uint256) external;
     function settleOrder(uint256) external;
