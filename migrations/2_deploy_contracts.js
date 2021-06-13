@@ -161,4 +161,4 @@ module.exports = function(deployer, network, accounts) {
 
         return NocturnalFinanceInstance.setOrderURI(uri); 
     });
-});};
+};
