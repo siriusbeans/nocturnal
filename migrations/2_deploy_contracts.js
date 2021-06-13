@@ -48,6 +48,7 @@ module.exports = async function(deployer, network, accounts) {
     // need to deploy each contract one at a time for testing (in separate transaction)
     // all contracts' bytecode is less than 24Kb size limit
     // but during migration, max block gas limit is exceeded
+    /*
     let NocturnalFinanceInstance = deployer.deploy(NocturnalFinance, { from: ownerAddress });
     let TokenMinterInstance = deployer.deploy(TokenMinter, LINK, WETH, { from: ownerAddress });
     let TokenSwapperInstance = deployer.deploy(TokenSwapper, { from: ownerAddress });
@@ -79,8 +80,8 @@ module.exports = async function(deployer, network, accounts) {
     NocturnalFinanceInstance.setRewardsFactor(rFactor);
     NocturnalFinanceInstance.setTreasuryFactor(tFactor);
     NocturnalFinanceInstance.setOrderURI(uri); 
+    */
     
-    /*
     deployer.then(function() {
             return deployer.deploy(NocturnalFinance, { from: ownerAddress });
         }).then(instance => {
@@ -220,5 +221,5 @@ module.exports = async function(deployer, network, accounts) {
 
         return NocturnalFinanceInstance.setOrderURI(uri); 
     });
-    */
+   
 };
