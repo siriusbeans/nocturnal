@@ -36,22 +36,10 @@ contract Rewards {
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
     }
     
-    function approveStaking() external {
-        require(msg.sender == nocturnalFinanceAddress, "not Nocturnal Finance");
-        IERC20(nocturnalFinance._contract(12)).approve(nocturnalFinance._contract(0), totalSupply);
-    }
-    
     function claimRewards(uint256 _amount) public {
         uint256 rBalance = unclaimedRewards[msg.sender];
         require(rBalance >= _amount, "insufficient rewards balance");
         require(NoctInterface(nocturnalFinance._contract(12)).transfer(msg.sender, _amount), "rewards transfer failed");
-        unclaimedRewards[msg.sender] = rBalance.sub(_amount);
-    }
-    
-    function stakeRewards(uint256 _amount) public {
-        uint256 rBalance = unclaimedRewards[msg.sender];
-        require(rBalance >= _amount, "insufficient rewards balance");
-        NoctStakingInterface(nocturnalFinance._contract(0)).autoStake(msg.sender, _amount);
         unclaimedRewards[msg.sender] = rBalance.sub(_amount);
     }
     

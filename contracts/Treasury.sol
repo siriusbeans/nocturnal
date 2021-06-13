@@ -20,22 +20,15 @@ import {NoctStakingInterface} from "./Interfaces/NoctStakingInterface.sol";
 contract Treasury is Ownable {
     using SafeMath for uint256;
 
-    uint256 totalSupply;
     address nocturnalFinanceAddress;
     
-    mapping(address => uint256) treasuryBalance;
+    mapping(address => uint256) public treasuryBalance;
     
     NocturnalFinanceInterface public nocturnalFinance;
     
-    constructor(address _nocturnalFinance, uint256 _rewardsSupply, uint256 _initialSupply) {
-        totalSupply = _rewardsSupply.add(_initialSupply);
+    constructor(address _nocturnalFinance) {
         nocturnalFinanceAddress = _nocturnalFinance;
         nocturnalFinance = NocturnalFinanceInterface(_nocturnalFinance);
-    }
-    
-    function approveStaking() external {
-        require(msg.sender == nocturnalFinanceAddress, "not Nocturnal Finance");
-        IERC20(nocturnalFinance._contract(12)).approve(nocturnalFinance._contract(0), totalSupply);
     }
     
     function setClaimantBalance(address _claimant, uint _balance) external onlyOwner {
@@ -46,11 +39,5 @@ contract Treasury is Ownable {
         require(treasuryBalance[msg.sender] > 0, "insufficient treasury balance");
         require(NoctInterface(nocturnalFinance._contract(12)).transfer(msg.sender, treasuryBalance[msg.sender]), "transfer failed");
         treasuryBalance[msg.sender] = 0;
-    }    
-    
-    function stakeTreasuryBalance() external {
-        require(treasuryBalance[msg.sender] > 0, "insufficient treasury balance");
-        NoctStakingInterface(nocturnalFinance._contract(0)).autoStake(msg.sender, treasuryBalance[msg.sender]);
-        treasuryBalance[msg.sender] = 0;
-    }   
+    }      
 }

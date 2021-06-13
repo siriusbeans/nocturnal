@@ -43,14 +43,6 @@ contract NocturnalFinance is Ownable {
     function initNocturnal(uint256 _index, address _address) external onlyOwner {
 		_contract[_index] = _address;
     }
-    
-    function rewardsApproval() external onlyOwner {
-        RewardsInterface(_contract[9]).approveStaking();
-    }
-    
-    function treasuryApproval() external onlyOwner {
-        TreasuryInterface(_contract[10]).approveStaking();
-    }
   
     function setPlatformRate(uint256 _pRateBasisPoints) external onlyOwner {
         platformRate = _pRateBasisPoints;

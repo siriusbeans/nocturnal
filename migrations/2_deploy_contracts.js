@@ -16,11 +16,11 @@ const DistributeRewards = artifacts.require("./DistributeRewards.sol");
 const TokenMinter = artifacts.require("./Mocks/TokenMinter.sol");
 const TokenSwapper = artifacts.require("./Mocks/TokenSwapper.sol");
 
-module.exports = async function(deployer, network, accounts) {
+module.exports = async function (deployer, network, accounts) {
     const toWei = (value) => web3.utils.toWei(value.toString(), "ether");
-    const ownerAddress = accounts[0]; 
+    const ownerAddress = accounts[0];
     const initialSupply = toWei(1100000);
-    const rewardsSupply = toWei(20900000);   
+    const rewardsSupply = toWei(20900000);
     const orderName = "Nocturnal Order";
     const orderSymbol = "oNOCT";
     const pRate = 200;
@@ -35,19 +35,19 @@ module.exports = async function(deployer, network, accounts) {
     // but during migration, max block gas limit is exceeded
     return deployer.deploy(NocturnalFinance, { from: ownerAddress }).then(NocturnalFinanceInstance => {
 
-        return deployer.deploy(TokenMinter, LINK, WETH,  { from: ownerAddress }).then(async (TokenMinterInstance) => {
-            return deployer.deploy(TokenSwapper,  { from: ownerAddress }).then(async (TokenSwapperInstance) => {
-                return deployer.deploy(CreateOrder, NocturnalFinance.address, WETH,  { from: ownerAddress }).then(async (CreateOrderInstance) => {
-                    return deployer.deploy(NoctStaking, NocturnalFinance.address, WETH,  { from: ownerAddress }).then(async (NoctStakingInstance) => {
-                        return deployer.deploy(DepositOrder, NocturnalFinance.address, WETH,   { from: ownerAddress }).then(async (DepositOrderInstance) => {
-                            return deployer.deploy(SettleOrder, NocturnalFinance.address, WETH,  { from: ownerAddress }).then(async (SettleOrderInstance) => {
+        return deployer.deploy(TokenMinter, LINK, WETH, { from: ownerAddress }).then(async (TokenMinterInstance) => {
+            return deployer.deploy(TokenSwapper, { from: ownerAddress }).then(async (TokenSwapperInstance) => {
+                return deployer.deploy(CreateOrder, NocturnalFinance.address, WETH, { from: ownerAddress }).then(async (CreateOrderInstance) => {
+                    return deployer.deploy(NoctStaking, NocturnalFinance.address, WETH, { from: ownerAddress }).then(async (NoctStakingInstance) => {
+                        return deployer.deploy(DepositOrder, NocturnalFinance.address, WETH, { from: ownerAddress }).then(async (DepositOrderInstance) => {
+                            return deployer.deploy(SettleOrder, NocturnalFinance.address, WETH, { from: ownerAddress }).then(async (SettleOrderInstance) => {
                                 return deployer.deploy(CloseOrder, NocturnalFinance.address, WETH, { from: ownerAddress }).then(async (CloseOrderInstance) => {
                                     return deployer.deploy(SettleOrderTransfer, NocturnalFinance.address, { from: ownerAddress }).then(async (SettleOrderTransferInstance) => {
-                                        return deployer.deploy(Oracle,   { from: ownerAddress }).then(async (OracleInstance) => {
+                                        return deployer.deploy(Oracle, { from: ownerAddress }).then(async (OracleInstance) => {
                                             return deployer.deploy(Order, NocturnalFinance.address, { from: ownerAddress }).then(async (OrderInstance) => {
-                                                return deployer.deploy(Rewards, NocturnalFinance.address, rewardsSupply, initialSupply,  { from: ownerAddress }).then(async (RewardsInstance) => {
-                                                    return deployer.deploy(Treasury, NocturnalFinance.address, 100, 100,  { from: ownerAddress }).then(async (TreasuryInstance) => {
-                                                        return deployer.deploy(DistributeRewards, NocturnalFinance.address,  { from: ownerAddress }).then(async (DistributeRewardsInstance) => {
+                                                return deployer.deploy(Rewards, NocturnalFinance.address, rewardsSupply, initialSupply, { from: ownerAddress }).then(async (RewardsInstance) => {
+                                                    return deployer.deploy(Treasury, NocturnalFinance.address, { from: ownerAddress }).then(async (TreasuryInstance) => {
+                                                        return deployer.deploy(DistributeRewards, NocturnalFinance.address, { from: ownerAddress }).then(async (DistributeRewardsInstance) => {
                                                             await NocturnalFinanceInstance.initNocturnal(1, CreateOrderInstance.address);
                                                             await NocturnalFinanceInstance.initNocturnal(2, DepositOrderInstance.address);
                                                             await NocturnalFinanceInstance.initNocturnal(3, SettleOrderInstance.address);
@@ -60,28 +60,27 @@ module.exports = async function(deployer, network, accounts) {
                                                             await NocturnalFinanceInstance.initNocturnal(11, DistributeRewardsInstance.address);
                                                             let NoctInstance = await deployer.deploy(Noct, NocturnalFinance.address, rewardsSupply, initialSupply, { from: ownerAddress });
                                                             await NocturnalFinanceInstance.initNocturnal(12, NoctInstance.address);
-                                                            await NocturnalFinanceInstance.initNocturnal(0, NoctStakingInstance.address);    
+                                                            await NocturnalFinanceInstance.initNocturnal(0, NoctStakingInstance.address);
                                                             await NocturnalFinanceInstance.setPlatformRate(pRate);
                                                             await NocturnalFinanceInstance.setRewardsFactor(rFactor);
                                                             await NocturnalFinanceInstance.setTreasuryFactor(tFactor);
-                                                            await NocturnalFinanceInstance.setOrderURI(uri); 
+                                                            await NocturnalFinanceInstance.setOrderURI(uri);
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
         });
     });
-});
-});
-});
-});
-});
-});
-});
-});
-});
-});
-        });
-    });        
- 
-    
-    /*
+
+    /* 
     deployer.then(function() {
             return deployer.deploy(NocturnalFinance, { from: ownerAddress });
         }).then(instance => {
@@ -220,6 +219,6 @@ module.exports = async function(deployer, network, accounts) {
     }).then(function() {
 
         return NocturnalFinanceInstance.setOrderURI(uri); 
-    });
-    */
+    }); */
+
 };
