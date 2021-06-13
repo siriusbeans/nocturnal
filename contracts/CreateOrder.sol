@@ -76,7 +76,7 @@ contract CreateOrder is CreateOrderInterface {
        
     function depositOrder(uint256 _orderID) public override {
         // removed due to contract size contraints
-        //require(IERC20(_orders[_orderID].fromTokenAddress).balanceOf(msg.sender) >= _orders[_orderID].tokenBalance);
+        require(IERC20(_orders[_orderID].fromTokenAddress).balanceOf(msg.sender) >= _orders[_orderID].tokenBalance);
         DepositOrderInterface.DepositParams memory depositParams = DepositOrderInterface.DepositParams({
             orderAddress: _orders[_orderID].orderAddress,
             poolAddress: _orders[_orderID].poolAddress,
@@ -154,7 +154,7 @@ contract CreateOrder is CreateOrderInterface {
 
     function setAttributes(uint256 _orderID, uint256 _balance) public override {
         // removed due to contract size contraints
-        //require(msg.sender == nocturnalFinance._contract(2) || msg.sender == nocturnalFinance._contract(6) || msg.sender == nocturnalFinance._contract(4));
+        require(msg.sender == nocturnalFinance._contract(2) || msg.sender == nocturnalFinance._contract(6) || msg.sender == nocturnalFinance._contract(4));
         if (msg.sender == nocturnalFinance._contract(2)) {
             _orders[_orderID].depositedFlag = true;
         } else if (msg.sender == nocturnalFinance._contract(6)) {

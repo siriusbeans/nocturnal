@@ -14,5 +14,4 @@ interface TreasuryInterface {
     function approveStaking() external;
     function setClaimBalance(address, uint256) external;
     function claimTreasuryBalance() external;
-    function stakeTreasuryBalance() external returns (uint256);
 }
