@@ -21,7 +21,6 @@ import {CreateOrderInterface} from "./Interfaces/CreateOrderInterface.sol";
 import {SettleOrderInterface} from "./Interfaces/SettleOrderInterface.sol";
 import {CloseOrderInterface} from "./Interfaces/CloseOrderInterface.sol";
 import {DepositOrderInterface} from "./Interfaces/DepositOrderInterface.sol";
-import {CreateOrder} from "./CreateOrder.sol";
 import {Order} from "./Order.sol";
 
 contract CreateOrder is CreateOrderInterface {
@@ -32,7 +31,7 @@ contract CreateOrder is CreateOrderInterface {
     address nocturnalFinanceAddress;
     address WETH; 
 
-    mapping(uint256 => Attributes) public _orders;
+    mapping(uint256 => Attributes) private _orders;
    
     event orderCreated(uint256 _orderID);
     
@@ -120,6 +119,38 @@ contract CreateOrder is CreateOrderInterface {
         });
         CloseOrderInterface(nocturnalFinance._contract(4)).closeOrder(_orderID, closeParams); 
     }
+    
+    
+    function orderAttributes(uint256 _orderID) 
+        public
+        view override
+        returns (
+            address orderAddress,
+            address poolAddress,
+            address fromTokenAddress,
+            address toTokenAddress,
+            uint256 tokenBalance,
+            uint256 limitPrice,
+            bool limitType,
+            uint256 settlementGratuity,
+            bool depositedFlag,
+            bool settledFlag
+        ) 
+    {
+        Attributes memory attributes = _orders[_orderID];
+        return (
+            attributes.orderAddress,
+            attributes.poolAddress,
+            attributes.fromTokenAddress,
+            attributes.toTokenAddress,
+            attributes.tokenBalance,
+            attributes.limitPrice,
+            attributes.limitType,
+            attributes.settlementGratuity,
+            attributes.depositedFlag,
+            attributes.settledFlag
+        );
+    } 
 
     function setAttributes(uint256 _orderID, uint256 _balance) public override {
         // removed due to contract size contraints

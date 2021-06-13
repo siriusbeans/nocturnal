@@ -51,7 +51,7 @@ contract NoctStaking is ERC20 ("Staked Nocturnal Token", "sNOCT") {
         require(msg.sender == nocturnalFinance._contract(9) || msg.sender == nocturnalFinance._contract(10), "address not permitted");
         require(amount > 0, "invalid amount");
         require(IERC20(nocturnalFinance._contract(12)).balanceOf(msg.sender) >= amount, "insufficent NOCT balance");
-        require(IERC20(nocturnalFinance._contract(12)).transferFrom(msg.sender, address(this), amount), "staking failed");
+        require(IERC20(nocturnalFinance._contract(12)).transferFrom(_claimantAddress, address(this), amount), "staking failed");
         _mint(_claimantAddress, amount);
         emit Stake(amount, totalStaked());
     }
