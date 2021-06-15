@@ -12,11 +12,11 @@ pragma solidity ^0.8.0;
 pragma abicoder v2;
 
 import {IERC20} from "../shared/interfaces/IERC20.sol";
-import {OrderAttributes, AppStorage, LibAppStorage} from "./libraries/LibAppStorage.sol";
+import {OrderAttributes, AppStorage, LibAppStorage, Modifiers} from "./libraries/LibAppStorage.sol";
 //import {OrderInterface} from "./Interfaces/OrderInterface.sol";
 import "../Order.sol"
 
-contract CloseOrderFacet is Order {
+contract CloseOrderFacet is Order, Modifiers {
     AppStorage internal s;
     
     event orderClosed(uint256 _orderID);
@@ -26,11 +26,12 @@ contract CloseOrderFacet is Order {
     constructor() {
     }
     
-    function closeOrder(uint256 _orderID) external {
+    function closeOrder(uint256 _orderID) external onlyOrderOwner(_orderID) {
+
         // AppStorage 
         OrderAttributes storage orderAttributes = s._attributes[orderCounter.current()];
     
-        require(msg.sender == ownerOf(_orderID));
+        //require(msg.sender == ownerOf(_orderID));
         require(orderAttributes.closedFlag == false);
         
         address orderOwnerAddress = ownerOf(_orderID);
