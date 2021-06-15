@@ -36,7 +36,7 @@ contract CreateOrderFacet {
         // AppStorage 
         OrderAttributes storage orderAttributes = s._attributes[orderCounter.current()];
         
-        Order nocturnalOrder = new Order(s.diamondAddress, s.orderURI); 
+        Order nocturnalOrder = new Order(s.orderURI); 
         orderCounter.increment();
 
         // Contracts.orderAddress from AppStorage will replace nocturnalFinance._contract(8)
