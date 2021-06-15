@@ -13,11 +13,10 @@ pragma abicoder v2;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import {OrderAttributes, AppStorage, LibAppStorage} from "./libraries/LibAppStorage.sol";
-import {OrderInterface} from "./Interfaces/OrderInterface.sol";
-import {CreateOrderFacetInterface} from "./Interfaces/CreateOrderFacetInterface.sol";
+//import {OrderInterface} from "./Interfaces/OrderInterface.sol";
 import {Order} from "./Order.sol";
 
-contract CreateOrderFacet {
+contract CreateOrderFacet is Order {
     AppStorage internal s;
     
     using Counters for Counters.Counter;
@@ -28,11 +27,22 @@ contract CreateOrderFacet {
    
     event orderCreated(uint256 _orderID);
     
+    struct CreateParams {
+        address poolAddress;
+        address fromTokenAddress;
+        address toTokenAddress;
+        uint256 tokenBalance;
+        uint256 limitPrice;
+        bool limitType;
+        uint256 amountOutMin;
+        uint256 settlementGratuity;
+    }
+    
     constructor(address _WETH) {
         WETH = _WETH;
     }
     
-    function createOrder(CreateOrderFacetInterface.CreateParams calldata params) external {
+    function createOrder(CreateParams calldata params) external {
         require((params.fromTokenAddress == WETH) || (params.toTokenAddress == WETH));
         
         // AppStorage 
@@ -42,7 +52,7 @@ contract CreateOrderFacet {
         orderCounter.increment();
 
         // Contracts.orderAddress from AppStorage will replace nocturnalFinance._contract(8)
-        OrderFacetInterface(s.orderAddress).mint(msg.sender, orderCounter.current());
+        mint(msg.sender, orderCounter.current());
         
         orderAttributes.orderAddress = address(nocturnalOrder);
         orderAttributes.poolAddress = params.poolAddress;

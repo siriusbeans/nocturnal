@@ -13,7 +13,8 @@ pragma abicoder v2;
 
 import {IERC20} from "../shared/interfaces/IERC20.sol";
 import {OrderAttributes, AppStorage, LibAppStorage} from "./libraries/LibAppStorage.sol";
-import {OrderInterface} from "./Interfaces/OrderInterface.sol";
+//import {OrderInterface} from "./Interfaces/OrderInterface.sol";
+import "../Order.sol"
 
 contract CloseOrderFacet is Order {
     AppStorage internal s;
@@ -29,24 +30,24 @@ contract CloseOrderFacet is Order {
         // AppStorage 
         OrderAttributes storage orderAttributes = s._attributes[orderCounter.current()];
     
-        require(msg.sender == OrderFacetInterface(s.orderFacetAddress).ownerOf(_orderID));
+        require(msg.sender == ownerOf(_orderID));
         require(orderAttributes.closedFlag == false);
         
-        address orderOwnerAddress = OrderFacetInterface(s.orderFacetAddress).ownerOf(_orderID);
+        address orderOwnerAddress = ownerOf(_orderID);
         
         if (orderAttributes[_orderID].settledFlag == true) {
             // transfer tokenBalance to owner address
-            OrderFacetInterface(orderAttributes_orderID].orderAddress).orderTransfer(orderAttributes[_orderID].toTokenAddress, orderOwnerAddress, (orderAttributes[_orderID].tokenBalance));
+            orderTransfer(orderAttributes[_orderID].toTokenAddress, orderOwnerAddress, (orderAttributes[_orderID].tokenBalance));
             // burn order
-            OrderFacetInterface(s.orderFacetAddress).burn(_orderID);  
+            burn(_orderID);  
         } else if (orderAttributes[_orderID].depositedFlag == true) {
             // transfer fromTokenBalance from order to order owner address
-            OrderFacetInterface(orderAttributes[_orderID].orderAddress).orderTransfer(orderAttributes[_orderID].fromTokenAddress, orderOwnerAddress, orderAttributes[_orderID].tokenBalance);
+            orderTransfer(orderAttributes[_orderID].fromTokenAddress, orderOwnerAddress, orderAttributes[_orderID].tokenBalance);
             // burn order
-            OrderFacetInterface(s.orderFacetAddress).burn(_orderID);
+            burn(_orderID);
         } else {
             // burn order
-            OrderFacetInterface(s.orderFacetAddress).burn(_orderID);  
+            burn(_orderID);  
         }
         // set tokenBalance to 0 and set order closed flag
         orderAttributes[_orderID].tokenBalance = 0;
