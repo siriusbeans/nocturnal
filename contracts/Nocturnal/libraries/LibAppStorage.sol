@@ -46,3 +46,11 @@ library LibAppStorage {
     }
 }
 
+contract Modifiers {
+    AppStorage internal s;
+    modifier onlyOrderOwner(uint256 _orderId) {
+        require(LibMeta.msgSender() == s.aavegotchis[_orderId].owner, "LibAppStorage: Only order owner can call this function");
+        _;
+    }
+}
+
