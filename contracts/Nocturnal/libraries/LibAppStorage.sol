@@ -20,17 +20,18 @@ import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 
     struct AppStorage {
         mapping (uint256 => OrderAttributes) _attributes;
+        address diamondAddress;
         address createOrderFacetAddress;
         address depositOrderFacetAddress;
         address settleOrderFacetAddress;
         address closeOrderFacetAddress;
-        address oracleFacetAddress;
+        address oracleAddress;
         address orderAddress;
-        address rewardsFacetAddress;
-        address treasuryFacetAddress;
-        address distributeRewardsFacetAddress;
-        address noctFacetAddress;
-        address noctStakingFacetAddress;
+        address rewardsAddress;
+        address treasuryAddress;
+        address distributeRewardsAddress;
+        address noctAddress;
+        address noctStakingAddress;
         uint256 platformRate;
         uint256 rewardsRatioFactor;
         uint256 treasuryFactor;
