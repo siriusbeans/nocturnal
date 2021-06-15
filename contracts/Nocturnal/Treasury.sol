@@ -19,9 +19,12 @@ contract Treasury {
     
     using SafeMath for uint256;
     
+    address private noctAddress
+    
     mapping(address => uint256) public treasuryBalance;
     
-    constructor(address noctAddress) {
+    constructor(address _noctAddress) {
+        noctAddress = _noctAddress;
     }
     
     function setClaimantBalance(address _claimant, uint _balance) external onlyOwner {

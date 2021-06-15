@@ -27,7 +27,7 @@ contract NoctStaking is ERC20 ("Staked Nocturnal Token", "sNOCT") {
     
     //IPeripheryPayments public payment;
 
-    constructor (address diamondAddress, address noctAddress, address _WETH) {
+    constructor (address noctAddress, address _WETH) {
       WETH = _WETH;
     }
 
@@ -77,9 +77,9 @@ contract NoctStaking is ERC20 ("Staked Nocturnal Token", "sNOCT") {
         require(IERC20(WETH).transfer(msg.sender, toSend), "transfer failed");
     }
     
-    function updateTRG(uint256 _rewards) internal {
+    function updateTRG(uint256 _rewards) external {
         //require(msg.sender == s.settleOrderFacetAddress, "not settleOrderFacet");
-        require(msg.sender == diamondAddress, "not nocturnal diamond");
+        require(msg.sender == s.diamondAddress, "not nocturnal diamond");
         trg = trg.add(_rewards);
     }
 

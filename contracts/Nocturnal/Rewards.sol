@@ -23,13 +23,14 @@ contract Rewards {
     mapping(address => uint256) public unclaimedRewards;
     
     uint256 totalSupply;
-
+    address private noctAddress;
     uint256 public totalRewards;
     uint256 internal constant rewardsRateDivisor = 1e12;
     uint256 internal constant multiplicand = 1e18;
 
     
-    constructor(address diamondAddress, address noctAddress, uint256 _rewardsSupply, uint256 _initialSupply) {
+    constructor(address _noctAddress, uint256 _rewardsSupply, uint256 _initialSupply) {
+        noctAddress = _noctAddress;
         totalRewards = _initialSupply;
         totalSupply = _rewardsSupply.add(_initialSupply);
     }
@@ -41,22 +42,22 @@ contract Rewards {
         unclaimedRewards[msg.sender] = rBalance.sub(_amount);
     }
     
-    function calcRewards(uint256 _valueETH) internal view returns (uint256) {
+    function calcRewards(uint256 _valueETH) external view returns (uint256) {
         //require(msg.sender == s.distributeRewardsFacetAddress, "not DistributeRewards.sol"); 
-        require(msg.sender == diamondAddress, "not nocturnal diamond"); 
+        require(msg.sender == s.diamondAddress, "not nocturnal diamond"); 
         uint256 supplyDiff = totalSupply.sub(totalRewards);
         return _valueETH.mul(supplyDiff).div(rewardsRateDivisor.mul(multiplicand)); 
     }
     
-    function addUnclaimedRewards(address _claimant, uint256 _rewards) internal {
+    function addUnclaimedRewards(address _claimant, uint256 _rewards) external {
         //require(msg.sender == s.distributeRewardsFacetAddress, "not DistributeRewards.sol");
-        require(msg.sender == diamondAddress, "not nocturnal diamond");
+        require(msg.sender == s.diamondAddress, "not nocturnal diamond");
         unclaimedRewards[_claimant] = (unclaimedRewards[_claimant]).add(_rewards);
     }
     
-    function addTotalRewards(uint256 _rewards) internal {
+    function addTotalRewards(uint256 _rewards) external {
         //require(msg.sender == s.distributeRewardsFacetAddress, "not DistributeRewards.sol");
-        require(msg.sender == diamondAddress, "not nocturnal diamond");
+        require(msg.sender == s.diamondAddress, "not nocturnal diamond");
         totalRewards = totalRewards.add(_rewards);
     }
 }
