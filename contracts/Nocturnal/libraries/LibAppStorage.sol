@@ -17,6 +17,17 @@ import {LibMeta} from "../../shared/libraries/LibMeta.sol";
         bool settledFlag;
         bool closedFlag;
     }
+    
+    struct CreateOrderParams {
+        address poolAddress;
+        address fromTokenAddress;
+        address toTokenAddress;
+        uint256 tokenBalance;
+        uint256 limitPrice;
+        bool limitType;
+        uint256 amountOutMin;
+        uint256 settlementGratuity;
+    }
 
     struct AppStorage {
         mapping (uint256 => OrderAttributes) _attributes;
