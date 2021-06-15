@@ -45,7 +45,7 @@ contract Order is ERC721Enumerable {
     mapping(address => uint[]) internal ownerTokenIndexes;
     mapping(uint => uint) internal tokenTokenIndexes;
     
-    constructor(address diamondAddress, string memory _URI) ERC721("Nocturnal Order", "oNOCT") {
+    constructor(string memory _URI) ERC721("Nocturnal Order", "oNOCT") {
         __name = "Nocturnal Order";
         __symbol = "oNOCT";
         __uriBase = _URI;
@@ -57,21 +57,18 @@ contract Order is ERC721Enumerable {
         return (__uriBase);
     }
     
-    function burn(uint256 tokenId) internal {
-        //require(_msgSender() == s.closeOrderFacetAddress, "not nocturnal facet"); // diamond address?
-        require(_msgSender() == diamondAddress, "not nocturnal diamond"); 
+    function burn(uint256 tokenId) external {
+        require(_msgSender() == s.diamondAddress, "not nocturnal diamond"); 
         _burn(tokenId);
     }
     
-    function mint(address to, uint256 tokenId) internal {
-        //require(_msgSender() == s.createOrderFacetAddress, "not nocturnal facet"); // diamond address?
-        require(_msgSender() == diamondAddress, "not nocturnal diamond"); // diamond address?
+    function mint(address to, uint256 tokenId) external {
+        require(_msgSender() == s.diamondAddress, "not nocturnal diamond"); // diamond address?
         _mint(to, tokenId);
     }
     
-    function getExactInputSingle(address _tokenIn, address _tokenOut, uint24 _fee, address _recipient, uint256 minOut, uint256 _amount) internal returns (uint256 amountOut) {
-        //require(_msgSender() == s.settleOrderFacetAddress, "not nocturnal facet"); // diamond address?
-        require(_msgSender() == diamondAddress, "not nocturnal diamond"); 
+    function getExactInputSingle(address _tokenIn, address _tokenOut, uint24 _fee, address _recipient, uint256 minOut, uint256 _amount) external returns (uint256 amountOut) {
+        require(_msgSender() == s.diamondAddress, "not nocturnal diamond"); 
         require(IERC20(_tokenIn).approve(UniswapV3SwapRouter, _amount), "approve failed");
 		amountOut = swapRouter.exactInputSingle(
 		    ISwapRouter.ExactInputSingleParams({
@@ -87,14 +84,13 @@ contract Order is ERC721Enumerable {
 		);
     }
     
-    function orderTransfer(address _tokenAddress, address _recipientAddress, uint256 _amount) internal {
-        //require(_msgSender() == s.closeOrderFacetAddress || _msgSender() == s.settleOrderFacetAddress, "not nocturnal facet");  // diamond address?
-        require(_msgSender() == diamondAddress, "not nocturnal diamond"); 
+    function orderTransfer(address _tokenAddress, address _recipientAddress, uint256 _amount) external {
+        require(_msgSender() == s.diamondAddress, "not nocturnal diamond"); 
         require(IERC20(_tokenAddress).transfer(_recipientAddress, _amount), "order transfer amount failed");
     } 
     
     /*function orderPayout(address _recipientAddress, uint256 _amount) public {
-        require(_msgSender() == s.settleOrderFacetAddress, "caller is not a nocturnal contract"); // diamond address?
+        require(_msgSender() == s.diamondAddress, "not nocturnal diamond"); 
         payment.unwrapWETH9(_amount, _recipientAddress);
     }*/
 }
