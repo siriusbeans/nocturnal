@@ -1,26 +1,35 @@
 "use strict";
 const BigNumber = require("../node_modules/bignumber.js");
-const Noct = artifacts.require("./Noct.sol");
-const NoctStaking = artifacts.require("./NoctStaking.sol");
-const NocturnalFinance = artifacts.require("./NocturnalFinance.sol");
-const Oracle = artifacts.require("./Oracle.sol");
-const Order = artifacts.require("./Order.sol");
-const CreateOrder = artifacts.require("./CreateOrder.sol");
-const DepositOrder = artifacts.require("./DepositOrder.sol");
-const SettleOrder = artifacts.require("./SettleOrder.sol");
-const CloseOrder = artifacts.require("./CloseOrder.sol");
-const SettleOrderTransfer = artifacts.require("./SettleOrderTransfer.sol");
-const Rewards = artifacts.require("./Rewards.sol");
-const Treasury = artifacts.require("./Treasury.sol");
-const DistributeRewards = artifacts.require("./DistributeRewards.sol");
+
+const Noct = artifacts.require("./Nocturnal/Noct.sol");
+const NoctStaking = artifacts.require("./Nocturnal/NoctStaking.sol");
+const Oracle = artifacts.require("./Nocturnal/Oracle.sol");
+const Order = artifacts.require("./Nocturnal/Order.sol");
+const Rewards = artifacts.require("./Nocturnal/Rewards.sol");
+const Treasury = artifacts.require("./Nocturnal/Treasury.sol");
+const DistributeRewards = artifacts.require("./Nocturnal/DistributeRewards.sol");
+const InitDiamond = artifacts.require("./Nocturnal/initDiamond.sol");
+
+const CreateOrderFacet = artifacts.require("./Nocturnal/facets/CreateOrderFacet.sol");
+const DepositOrderFacet = artifacts.require("./Nocturnal/facets/DepositOrderFacet.sol");
+const SettleOrderFacet = artifacts.require("./Nocturnal/facets/SettleOrderFacet.sol");
+const CloseOrderFacet = artifacts.require("./Nocturnal/facets/CloseOrderFacet.sol");
+
+const Diamond = artifacts.require("./shared/Diamond.sol");
+
+const DiamondCutFacet = artifacts.require("./shared/facets/DiamondCutFacet.sol");
+const DiamondLoupeFacet = artifacts.require("./shared/facets/DiamondLoupeFacet.sol");
+const OwnershipFacet = artifacts.require("./shared/facets/OwnershipFacet.sol");
+
 const TokenMinter = artifacts.require("./Mocks/TokenMinter.sol");
 const TokenSwapper = artifacts.require("./Mocks/TokenSwapper.sol");
 
-module.exports = async function (deployer, network, accounts) {
+module.exports = function(deployer, network, accounts) {
+
     const toWei = (value) => web3.utils.toWei(value.toString(), "ether");
-    const ownerAddress = accounts[0];
+    const ownerAddress = accounts[0]; 
     const initialSupply = toWei(1100000);
-    const rewardsSupply = toWei(20900000);
+    const rewardsSupply = toWei(20900000);   
     const orderName = "Nocturnal Order";
     const orderSymbol = "oNOCT";
     const pRate = 200;
@@ -29,196 +38,133 @@ module.exports = async function (deployer, network, accounts) {
     const uri = "tempURI";
     const WETH = "0x84fff9F8Bec0835494C4c9f43cfe32C7d37F82b5";
     const LINK = "0x27E1A4409fa79E5380aDE99ED289DBF342613Ce6";
+    
+    let NoctInstance;
+    let NoctStakingInstance;
+    let OracleInstance;
+    let OrderInstance;
+    let RewardsInstance;
+    let DistributeRewardsInstance;
+    let TreasuryInstance;
+    let InitDiamondInstance;
+    
+    let CreateOrderFacetInstance;
+    let DepositOrderFacetInstance;
+    let SettleOrderFacetInstance;
+    let CloseOrderFacetInstance;
+    
+    let DiamondInstance;
+    
+    let DiamondCutFacetInstance;
+    let DiamondLoupeFacetInstance;
+    let OwnershipFacetInstance;
+    
+    let TokenMinterInstance;
+    let TokenSwapperInstance;
 
-    // need to deploy each contract one at a time for testing (in separate transaction)
-    // all contracts' bytecode is less than 24Kb size limit
-    // but during migration, max block gas limit is exceeded
-    return deployer.deploy(NocturnalFinance, { from: ownerAddress }).then(NocturnalFinanceInstance => {
-
-        return deployer.deploy(TokenMinter, LINK, WETH, { from: ownerAddress }).then(async (TokenMinterInstance) => {
-            return deployer.deploy(TokenSwapper, { from: ownerAddress }).then(async (TokenSwapperInstance) => {
-                return deployer.deploy(CreateOrder, NocturnalFinance.address, WETH, { from: ownerAddress }).then(async (CreateOrderInstance) => {
-                    return deployer.deploy(NoctStaking, NocturnalFinance.address, WETH, { from: ownerAddress }).then(async (NoctStakingInstance) => {
-                        return deployer.deploy(DepositOrder, NocturnalFinance.address, WETH, { from: ownerAddress }).then(async (DepositOrderInstance) => {
-                            return deployer.deploy(SettleOrder, NocturnalFinance.address, WETH, { from: ownerAddress }).then(async (SettleOrderInstance) => {
-                                return deployer.deploy(CloseOrder, NocturnalFinance.address, WETH, { from: ownerAddress }).then(async (CloseOrderInstance) => {
-                                    return deployer.deploy(SettleOrderTransfer, NocturnalFinance.address, { from: ownerAddress }).then(async (SettleOrderTransferInstance) => {
-                                        return deployer.deploy(Oracle, { from: ownerAddress }).then(async (OracleInstance) => {
-                                            return deployer.deploy(Order, NocturnalFinance.address, { from: ownerAddress }).then(async (OrderInstance) => {
-                                                return deployer.deploy(Rewards, NocturnalFinance.address, rewardsSupply, initialSupply, { from: ownerAddress }).then(async (RewardsInstance) => {
-                                                    return deployer.deploy(Treasury, NocturnalFinance.address, { from: ownerAddress }).then(async (TreasuryInstance) => {
-                                                        return deployer.deploy(DistributeRewards, NocturnalFinance.address, { from: ownerAddress }).then(async (DistributeRewardsInstance) => {
-                                                            await NocturnalFinanceInstance.initNocturnal(1, CreateOrderInstance.address);
-                                                            await NocturnalFinanceInstance.initNocturnal(2, DepositOrderInstance.address);
-                                                            await NocturnalFinanceInstance.initNocturnal(3, SettleOrderInstance.address);
-                                                            await NocturnalFinanceInstance.initNocturnal(4, CloseOrderInstance.address);
-                                                            await NocturnalFinanceInstance.initNocturnal(6, SettleOrderTransferInstance.address);
-                                                            await NocturnalFinanceInstance.initNocturnal(7, OracleInstance.address);
-                                                            await NocturnalFinanceInstance.initNocturnal(8, OrderInstance.address);
-                                                            await NocturnalFinanceInstance.initNocturnal(9, RewardsInstance.address);
-                                                            await NocturnalFinanceInstance.initNocturnal(10, TreasuryInstance.address);
-                                                            await NocturnalFinanceInstance.initNocturnal(11, DistributeRewardsInstance.address);
-                                                            let NoctInstance = await deployer.deploy(Noct, NocturnalFinance.address, rewardsSupply, initialSupply, { from: ownerAddress });
-                                                            await NocturnalFinanceInstance.initNocturnal(12, NoctInstance.address);
-                                                            await NocturnalFinanceInstance.initNocturnal(0, NoctStakingInstance.address);
-                                                            await NocturnalFinanceInstance.setPlatformRate(pRate);
-                                                            await NocturnalFinanceInstance.setRewardsFactor(rFactor);
-                                                            await NocturnalFinanceInstance.setTreasuryFactor(tFactor);
-                                                            await NocturnalFinanceInstance.setOrderURI(uri);
-                                                        });
-                                                    });
-                                                });
-                                            });
-                                        });
-                                    });
-                                });
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    });
-
-    /* 
     deployer.then(function() {
-            return deployer.deploy(NocturnalFinance, { from: ownerAddress });
-        }).then(instance => {
-            NocturnalFinanceInstance = instance;
-            
-        });
-        
-    deployer.then(function() {
+      
+        // Deploy the "mock" test-helper contracts
             return deployer.deploy(TokenMinter, LINK, WETH, { from: ownerAddress });
         }).then(instance => {
             TokenMinterInstance = instance;
-        });
             
-    deployer.then(function() {            
             return deployer.deploy(TokenSwapper, { from: ownerAddress });
         }).then(instance => {
             TokenSwapperInstance = instance;
-        });
-        
-    deployer.then(function() {            
-            return deployer.deploy(CreateOrder, NocturnalFinance.address, WETH, { from: ownerAddress });
+            
+            
+            
+        // Deploy the non-facet Nocturnal Contracts
+            return deployer.deploy(Noct, { from: ownerAddress });
         }).then(instance => {
-            CreateOrderInstance = instance;
-        });
- 
-    deployer.then(function() {             
-            return deployer.deploy(NoctStaking, NocturnalFinance.address, WETH, { from: ownerAddress });
+            NoctInstance = instance;
+            
+            return deployer.deploy(NoctStaking, Noct.address, { from: ownerAddress });
         }).then(instance => {
             NoctStakingInstance = instance;
-        });
-
-    deployer.then(function() {                         
-            return deployer.deploy(DepositOrder, NocturnalFinance.address, WETH, { from: ownerAddress });
-        }).then(instance => {
-            DepositOrderInstance = instance;
-        });
-         
-    deployer.then(function() {                
-            return deployer.deploy(SettleOrder, NocturnalFinance.address, WETH, { from: ownerAddress });
-        }).then(instance => {
-            SettleOrderInstance = instance;
-        });
-
-    deployer.then(function() {                  
-            return deployer.deploy(CloseOrder, NocturnalFinance.address, WETH, { from: ownerAddress });
-        }).then(instance => {
-            CloseOrderInstance = instance;
-        });
             
-    deployer.then(function() {                  
-            return deployer.deploy(SettleOrderTransfer, NocturnalFinance.address, { from: ownerAddress });
-        }).then(instance => {
-            SettleOrderTransferInstance = instance;
-        });
-            
-    deployer.then(function() {                  
             return deployer.deploy(Oracle, { from: ownerAddress });
         }).then(instance => {
             OracleInstance = instance;
-        });
-
-    deployer.then(function() {                  
-            return deployer.deploy(Order, NocturnalFinance.address, { from: ownerAddress });
+            
+            return deployer.deploy(Order, uri, { from: ownerAddress });
         }).then(instance => {
             OrderInstance = instance;
-        });
-
-    deployer.then(function() {                             
-            return deployer.deploy(Rewards, NocturnalFinance.address, rewardsSupply, initialSupply, { from: ownerAddress });
+            
+            return deployer.deploy(Rewards, Noct.address, rewardsSupply, initialSupply, { from: ownerAddress });
         }).then(instance => {
             RewardsInstance = instance; 
-        });
-           
-    deployer.then(function() {                                 
-            return deployer.deploy(Treasury, NocturnalFinance.address, { from: ownerAddress });
+               
+            return deployer.deploy(Treasury, Noct.address, { from: ownerAddress });
         }).then(instance => {
             TreasuryInstance = instance;  
-        });
             
-    deployer.then(function() {                                 
-            return deployer.deploy(DistributeRewards, NocturnalFinance.address, { from: ownerAddress });
+            return deployer.deploy(DistributeRewards, { from: ownerAddress });
         }).then(instance => {
-            DistributeRewardsInstance = instance;  
-        });
+            DistributeRewardsInstance = instance;   
+
+            return deployer.deploy(InitDiamond, { from: ownerAddress });
+        }).then(instance => {
+            InitDiamondInstance = instance; 
+
+
+
+        // Deploy the Nocturnal Facets
+            return deployer.deploy(CreateOrderFacet, WETH, { from: ownerAddress });
+        }).then(instance => {
+            CreateOrderFacetInstance = instance;
             
-    deployer.then(function() {
+            return deployer.deploy(DepositOrderFacet, { from: ownerAddress });
+        }).then(instance => {
+            DepositOrderFacetInstance = instance;
+            
+            return deployer.deploy(SettleOrderFacet, WETH, { from: ownerAddress });
+        }).then(instance => {
+            SettleOrderFacetInstance = instance;
+            
+            return deployer.deploy(CloseOrderFacet, { from: ownerAddress });
+        }).then(instance => {
+            CloseOrderFacetInstance = instance;
+            
+            
+        // Deploy the Diamond
+            return deployer.deploy(Diamond, ownerAddress, { from: ownerAddress });
+        }).then(instance => {
+            DiamondInstance = instance;
+            
+            
+            
+        // Deploy the Diamon Facets
+            return deployer.deploy(DiamondCutFacet, { from: ownerAddress });
+        }).then(instance => {
+            DiamondCutFacetInstance = instance;
+            
+            return deployer.deploy(DiamondLoupeFacet, { from: ownerAddress });
+        }).then(instance => {
+            DiamondLupeFacetInstance = instance;
+            
+            return deployer.deploy(OwnershipFacet, { from: ownerAddress });
+        }).then(instance => {
+            OwnershipFacetInstance = instance;
+            
+            
+            
+        // initialize initDiamond.sol and mint NOCT
+        }).then(function() {
 
-        return NocturnalFinanceInstance.initNocturnal(1, CreateOrderInstance.address);
-    }).then(function() {
+            return InitDiamondInstance.init( , { from: ownerAddress });
+        }).then(function() {
 
-        return NocturnalFinanceInstance.initNocturnal(2, DepositOrderInstance.address);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.initNocturnal(3, SettleOrderInstance.address);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.initNocturnal(4, CloseOrderInstance.address);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.initNocturnal(6, SettleOrderTransferInstance.address);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.initNocturnal(7, OracleInstance.address);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.initNocturnal(8, OrderInstance.address);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.initNocturnal(9, RewardsInstance.address);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.initNocturnal(10, TreasuryInstance.address);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.initNocturnal(11, DistributeRewardsInstance.address);
-    }).then(function() {
-    
-        return deployer.deploy(Noct, NocturnalFinance.address, rewardsSupply, initialSupply, { from: ownerAddress }).then(instance => {
-        NoctInstance = instance;
+            return NoctInstance.initialMint(Rewards.address, Treasury.address, rewardsSupply, initialSupply, { from: ownerAddress });
         });
-    }).then(function() {
-    
-        return NocturnalFinanceInstance.initNocturnal(12, NoctInstance.address);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.initNocturnal(0, NoctStakingInstance.address);    
-    }).then(function() {
-    
-        return NocturnalFinanceInstance.setPlatformRate(pRate);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.setRewardsFactor(rFactor);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.setTreasuryFactor(tFactor);
-    }).then(function() {
-
-        return NocturnalFinanceInstance.setOrderURI(uri); 
-    }); */
-
+        
+        
+        
+        
+        // SPECIFY DIAMOND FACETS
+        
+        
+        
+        
 };
