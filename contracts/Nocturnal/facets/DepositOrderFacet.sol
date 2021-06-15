@@ -12,7 +12,7 @@ pragma solidity ^0.8.0;
 pragma abicoder v2;
 
 import {IERC20} from "../shared/interfaces/IERC20.sol";
-import {OrderAttributes, AppStorage, LibAppStorage} from "./libraries/LibAppStorage.sol";
+import {OrderAttributes, AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 
 contract DepositOrderFacet {
     AppStorage internal s;
@@ -22,7 +22,7 @@ contract DepositOrderFacet {
     constructor() {
     }
 
-    function depositOrder(uint256 _orderID) external {s
+    function depositOrder(uint256 _orderID) external {
         // AppStorage 
         OrderAttributes storage orderAttributes = s._attributes[_orderID];
         

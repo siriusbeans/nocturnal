@@ -13,15 +13,15 @@ pragma abicoder v2;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
-import {IERC20} from "../shared/interfaces/IERC20.sol";
-import {OrderAttributes, AppStorage, LibAppStorage} from "./OrderStorage.sol";
-//import {OrderInterface} from "./Interfaces/OrderInterface.sol";
-import {NoctStakingInterface} from "./Interfaces/NoctStakingInterface.sol";
-import {DistributeRewardsInterface} from "./Interfaces/DistributeRewardsInterface.sol";
-import {OracleInterface} from "./Interfaces/OracleInterface.sol";
-import "../Order.sol";
+import {IERC20} from "../../shared/interfaces/IERC20.sol";
+import {OrderAttributes, AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
+import {OrderInterface} from "../Interfaces/OrderInterface.sol";
+import {NoctStakingInterface} from "../Interfaces/NoctStakingInterface.sol";
+import {DistributeRewardsInterface} from "../Interfaces/DistributeRewardsInterface.sol";
+import {OracleInterface} from "../Interfaces/OracleInterface.sol";
 
-contract SettleOrderFacet is Order {
+
+contract SettleOrderFacet {
     AppStorage internal s;
 
     using SafeMath for uint256;
@@ -86,14 +86,14 @@ contract SettleOrderFacet is Order {
         uint256 amountOut;
         // calculate fee prior to swap from WETH
         uint256 dFee = (orderAttributes.tokenBalance).mul(nocturnalFinance.platformRate()).div(10000);
-        orderTransfer(orderAttributes.fromTokenAddress, _settler, orderAttributes.settlementGratuity); 
+        OrderInterface(orderAttributes[_orderID].orderAddress).orderTransfer(orderAttributes.fromTokenAddress, _settler, orderAttributes.settlementGratuity); 
         //OrderInterface(orderAttributes.orderAddress).orderPayment(_settler, orderAttributes.settlementGratuity); 
-        orderTransfer(orderAttributes.fromTokenAddress, s.noctStakingAddress, dFee);
+        OrderInterface(orderAttributes[_orderID].orderAddress).orderTransfer(orderAttributes.fromTokenAddress, s.noctStakingAddress, dFee);
         NoctStakingInterface(s.noctStakingAddress).updateTRG(dFee);
         
         uint256 tokenBalance = IERC20(orderAttributes.fromTokenAddress).balanceOf(orderAttributes.orderFacetAddress); 
         if (IUniswapV3Pool(orderAttributes.poolAddress).token0() == orderAttributes.fromTokenAddress) {
-            amountOut = getExactInputSingle(
+            amountOut = OrderInterface(orderAttributes[_orderID].orderAddress).getExactInputSingle(
                 IUniswapV3Pool(orderAttributes.poolAddress).token0(),
                 IUniswapV3Pool(orderAttributes.poolAddress).token1(), 
                 IUniswapV3Pool(orderAttributes.poolAddress).fee(), 
@@ -101,7 +101,7 @@ contract SettleOrderFacet is Order {
                 orderAttributes.amountOutMin,
                 tokenBalance);
         } else {
-            amountOut = getExactInputSingle(                   
+            amountOut = OrderInterface(orderAttributes[_orderID].orderAddress).getExactInputSingle(                   
                 IUniswapV3Pool(orderAttributes.poolAddress).token1(),
                 IUniswapV3Pool(orderAttributes.poolAddress).token0(), 
                 IUniswapV3Pool(orderAttributes.poolAddress).fee(), 
@@ -122,7 +122,7 @@ contract SettleOrderFacet is Order {
         
         uint256 amountOut;
         if (IUniswapV3Pool(orderAttributes.poolAddress).token0() == orderAttributes.fromTokenAddress) {
-           amountOut = getExactInputSingle(                 
+           amountOut = OrderInterface(orderAttributes[_orderID].orderAddress).getExactInputSingle(                 
                 IUniswapV3Pool(orderAttributes.poolAddress).token0(),
                 IUniswapV3Pool(orderAttributes.poolAddress).token1(), 
                 IUniswapV3Pool(orderAttributes.poolAddress).fee(), 
@@ -130,7 +130,7 @@ contract SettleOrderFacet is Order {
                 orderAttributes.amountOutMin,
                 orderAttributes.tokenBalance);
         } else { 
-           amountOut = getExactInputSingle(     
+           amountOut = OrderInterface(orderAttributes[_orderID].orderAddress).getExactInputSingle(     
                 IUniswapV3Pool(orderAttributes.poolAddress).token1(),
                 IUniswapV3Pool(orderAttributes.poolAddress).token0(), 
                 IUniswapV3Pool(orderAttributes.poolAddress).fee(), 
@@ -141,9 +141,9 @@ contract SettleOrderFacet is Order {
         // calculate fee after swap to WETH 
         amountOut = IERC20(orderAttributes.toTokenAddress).balanceOf(orderAttributes.orderFacetAddress);
         uint256 dFee = (amountOut).mul(nocturnalFinance.platformRate()).div(10000);
-        orderTransfer(orderAttributes.toTokenAddress, _settler, orderAttributes.settlementGratuity); 
+        OrderInterface(orderAttributes[_orderID].orderAddress).orderTransfer(orderAttributes.toTokenAddress, _settler, orderAttributes.settlementGratuity); 
         //OrderInterface(orderAttributes.orderAddress).orderPayment(_settler, orderAttributes.settlementGratuity); 
-        orderTransfer(orderAttributes.toTokenAddress, s.noctStakingAddress, dFee);
+        OrderInterface(orderAttributes[_orderID].orderAddress).orderTransfer(orderAttributes.toTokenAddress, s.noctStakingAddress, dFee);
         NoctStakingInterface(s.noctStakingAddress).updateTRG(dFee);
 
         
