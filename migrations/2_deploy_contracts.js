@@ -164,8 +164,18 @@ module.exports = function(deployer, network, accounts) {
         
         
         // SPECIFY DIAMOND FACETS
+
+        // [CreateOrderFacet.address, Add, bytes4(keccak256("createOrder(CreateOrderParams calldata params)"))]
         
+        // [DepositOrderFacet.address, Add, bytes4(keccak256("depositOrder(uint256 _orderID)"))]
         
+        // [SettleOrderFacet.address, Add, bytes4(keccak256("settleOrder(uint256 _orderID)"))]
+        
+        // [SettleOrderFacet.address, Add, bytes4(keccak256("fromWETHSettle(uint256 _orderID, address _settler)"))]
+        
+        // [SettleOrderFacet.address, Add, bytes4(keccak256("toWETHSettle(uint256 _orderID, address _settler)"))]
+        
+        // [CloseOrderFacet.address, Add, bytes4(keccak256("closeOrder(uint256 _orderID)"))]
         
         
 };
