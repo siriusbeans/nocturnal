@@ -135,7 +135,7 @@ module.exports = function(deployer, network, accounts) {
             
             
             
-        // Deploy the Diamon Facets
+        // Deploy the shared Facets (redundant)
             return deployer.deploy(DiamondCutFacet, { from: ownerAddress });
         }).then(instance => {
             DiamondCutFacetInstance = instance;
