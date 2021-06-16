@@ -127,6 +127,7 @@ module.exports = function(deployer, network, accounts) {
         }).then(instance => {
             CloseOrderFacetInstance = instance;
             
+        
             
         // Deploy the Diamond
             return deployer.deploy(Diamond, ownerAddress, { from: ownerAddress });
