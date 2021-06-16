@@ -161,10 +161,25 @@ module.exports = function(deployer, network, accounts) {
         });
         
         
-        
-        
-        // SPECIFY DIAMOND FACETS
 
+        // SPECIFY DIAMOND FACETS
+        
+        // [DiamondCutFacet.address, Add, bytes4(keccak256("diamondCut(FacetCut[] calldata _diamondCut, address _init, bytes calldata _calldata)"))]
+        
+        // [DiamondLoupeFacet.address, Add, bytes4(keccak256("facets()"))]
+        
+        // [DiamondLoupeFacet.address, Add, bytes4(keccak256("facetFunctionSelectors(address _facet)"))]
+        
+        // [DiamondLoupeFacet.address, Add, bytes4(keccak256("facetAddresses()"))]
+        
+        // [DiamondLoupeFacet.address, Add, bytes4(keccak256("facetAddress(bytes4 _functionSelector)"))]
+        
+        // [DiamondLoupeFacet.address, Add, bytes4(keccak256("supportsInterface(bytes4 _interfaceId)"))]
+        
+        // [OwnershipFacet.address, Add, bytes4(keccak256("transferOwnership(address _newOwner)"))]
+        
+        // [OwnershipFacet.address, Add, bytes4(keccak256("owner()"))]
+        
         // [CreateOrderFacet.address, Add, bytes4(keccak256("createOrder(CreateOrderParams calldata params)"))]
         
         // [DepositOrderFacet.address, Add, bytes4(keccak256("depositOrder(uint256 _orderID)"))]
