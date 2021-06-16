@@ -14,6 +14,8 @@ pragma abicoder v2;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import {CreateOrderParams, OrderAttributes, AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 import {OrderInterface} from "../Interfaces/OrderInterface.sol";
+import {Order} from "../Order.sol";
+import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 
 contract CreateOrderFacet {
     AppStorage internal s;
@@ -40,7 +42,7 @@ contract CreateOrderFacet {
         orderCounter.increment();
 
         // Contracts.orderAddress from AppStorage will replace nocturnalFinance._contract(8)
-        OrderInterface(s.orderAddress).mint(msg.sender, orderCounter.current());
+        OrderInterface(s.orderAddress).mint(LibMeta.msgSender(), orderCounter.current());
         
         orderAttributes.orderAddress = address(nocturnalOrder);
         orderAttributes.poolAddress = params.poolAddress;

@@ -11,8 +11,9 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 pragma solidity ^0.8.0;
 pragma abicoder v2;
 
-import {IERC20} from "../shared/interfaces/IERC20.sol";
+import {IERC20} from "../../shared/interfaces/IERC20.sol";
 import {OrderAttributes, AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
+import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 
 contract DepositOrderFacet {
     AppStorage internal s;
@@ -31,7 +32,7 @@ contract DepositOrderFacet {
        
         // transfer fromTokenBalance to order
         // requires depositor to approve DepositOrder.sol trasnferFrom allowance 
-        require(IERC20(orderAttributes.fromTokenAddress).transferFrom(msg.sender, orderAttributes.orderAddress, orderAttributes.tokenBalance), "owner to order balance transfer failed");
+        require(IERC20(orderAttributes.fromTokenAddress).transferFrom(LibMeta.msgSender(), orderAttributes.orderAddress, orderAttributes.tokenBalance), "owner to order balance transfer failed");
         
         orderAttributes.depositedFlag = true;
        
