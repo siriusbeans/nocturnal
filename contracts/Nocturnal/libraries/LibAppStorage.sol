@@ -4,6 +4,7 @@ import {LibDiamond} from "../../shared/libraries/LibDiamond.sol";
 import {LibMeta} from "../../shared/libraries/LibMeta.sol";
 
     struct OrderAttributes {
+        address ownerAddress;
         address orderAddress;
         address poolAddress;
         address fromTokenAddress;
@@ -47,6 +48,7 @@ import {LibMeta} from "../../shared/libraries/LibMeta.sol";
         uint256 rewardsRatioFactor;
         uint256 treasuryFactor;
         string orderURI;
+        bytes32 domainSeparator;
     }
 
 library LibAppStorage {
@@ -56,12 +58,3 @@ library LibAppStorage {
         }
     }
 }
-
-contract Modifiers {
-    AppStorage internal s;
-    modifier onlyOrderOwner(uint256 _orderId) {
-        require(LibMeta.msgSender() == s.aavegotchis[_orderId].owner, "LibAppStorage: Only order owner can call this function");
-        _;
-    }
-}
-
