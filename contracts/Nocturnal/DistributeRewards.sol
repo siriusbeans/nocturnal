@@ -27,20 +27,20 @@ contract DistributeRewards {
 
     function distributeNOCT(uint256 _orderID, uint256 sFTVIE, address settlerAddress) external {
 
-        require(msg.sender == s.settleOrderAddress, "not SettleOrder contract");  
+        require(msg.sender == s.diamondAddress, "not diamond contract");  
         address orderOwnerAddress = OrderInterface(s.orderAddress).ownerOf(_orderID);
         
         uint256 orderRewards = RewardsInterface(s.rewardsAddress).calcRewards(sFTVIE);
         RewardsInterface(s.rewardsAddress).addTotalRewards(orderRewards);
         
         // distribute treasury rewards
-        uint256 treasuryRewards = orderRewards.mul(s.treasuryFactor()).div(bPDivisor);
+        uint256 treasuryRewards = orderRewards.mul(s.treasuryFactor).div(bPDivisor);
         RewardsInterface(s.rewardsAddress).addUnclaimedRewards(s.treasuryAddress, treasuryRewards);
         
         orderRewards = orderRewards.sub(treasuryRewards);
     
         // distribute creator rewards
-        uint256 creatorRewards = orderRewards.mul(s.rewardsRatioFactor()).div(bPDivisor);
+        uint256 creatorRewards = orderRewards.mul(s.rewardsRatioFactor).div(bPDivisor);
         RewardsInterface(s.rewardsAddress).addUnclaimedRewards(orderOwnerAddress, creatorRewards);
         
         // distribute settler rewards

@@ -18,13 +18,13 @@ contract InitDiamond {
         address depositOrderFacetAddress;
         address settleOrderFacetAddress;
         address closeOrderFacetAddress;
-        address oracleFacetAddress;
+        address oracleAddress;
         address orderAddress;
-        address rewardsFacetAddress;
-        address treasuryFacetAddress;
-        address distributeRewardsFacetAddress;
-        address noctFacetAddress;
-        address noctStakingFacetAddress;
+        address rewardsAddress;
+        address treasuryAddress;
+        address distributeRewardsAddress;
+        address noctAddress;
+        address noctStakingAddress;
         uint256 platformRate;
         uint256 rewardsRatioFactor;
         uint256 treasuryFactor;
@@ -37,13 +37,13 @@ contract InitDiamond {
         s.depositOrderFacetAddress = _args.depositOrderFacetAddress;
         s.settleOrderFacetAddress = _args.settleOrderFacetAddress;
         s.closeOrderFacetAddress = _args.closeOrderFacetAddress;
-        s.oracleFacetAddress = _args.oracleFacetAddress;
-        s.orderFacetAddress = _args.orderFacetAddress;
-        s.rewardsFacetAddress = _args.rewardsFacetAddress;
-        s.treasuryFacetAddress = _args.treasuryFacetAddress;
-        s.distributeRewardsFacetAddress = _args.distributeRewardsFacetAddress;
-        s.noctFacetAddress = _args.noctFacetAddress;
-        s.noctStakingFacetAddress = _args.noctStakingFacetAddress;
+        s.oracleAddress = _args.oracleAddress;
+        s.orderAddress = _args.orderAddress;
+        s.rewardsAddress = _args.rewardsAddress;
+        s.treasuryAddress = _args.treasuryAddress;
+        s.distributeRewardsAddress = _args.distributeRewardsAddress;
+        s.noctAddress = _args.noctAddress;
+        s.noctStakingAddress = _args.noctStakingAddress;
 
         s.domainSeparator = LibMeta.domainSeparator("NocturnalDiamond", "V1");
 

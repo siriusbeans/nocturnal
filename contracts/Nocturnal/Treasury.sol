@@ -15,11 +15,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "../shared/interfaces/IERC20.sol";
 import {NoctInterface} from "./Interfaces/NoctInterface.sol";
 
-contract Treasury {
+contract Treasury is Ownable {
     
     using SafeMath for uint256;
     
-    address private noctAddress
+    address private noctAddress;
     
     mapping(address => uint256) public treasuryBalance;
     

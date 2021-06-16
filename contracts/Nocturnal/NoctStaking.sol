@@ -10,8 +10,8 @@ $$ |  $$ |\$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      $$ |  $$ |\$$$$$$$ |
 
 pragma solidity ^0.8.0;
 
-import {ERC20} from "../shared/libraries/ERC20.sol";
-import {IERC20} from "../shared/interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import {AppStorage} from "./libraries/LibAppStorage.sol";
 //import "@uniswap/v3-periphery/contracts/interfaces/IPeripheryPayments.sol";
@@ -23,11 +23,13 @@ contract NoctStaking is ERC20 ("Staked Nocturnal Token", "sNOCT") {
 
     uint256 public trg;
     mapping(address => uint256) public lrc;
-    address WETH;
+    address private noctAddress;
+    address private WETH;
     
     //IPeripheryPayments public payment;
 
-    constructor (address noctAddress, address _WETH) {
+    constructor (address _noctAddress, address _WETH) {
+      noctAddress = _noctAddress;
       WETH = _WETH;
     }
 
